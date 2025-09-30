@@ -1,18 +1,23 @@
-package main.java.com.mjprestaurant.controller;
+package com.mjprestaurant.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mjprestaurant.model.Restaurant;
 
 public class RestaurantController {
-    private final List<Hotel> hoteles;
+    private final List<Restaurant> restaurants;
 
-    public HotelController() {
-        hoteles = new ArrayList<>();
+    public RestaurantController() {
+        restaurants = new ArrayList<>();
     }
 
-    public void agregarHotel(Hotel hotel) {
-        hoteles.add(hotel);
+    public void addHotel(Restaurant restaurant) {
+        restaurants.add(restaurant);
     }
 
-    public List<Hotel> obtenerHoteles() {
-        return new ArrayList<>(hoteles);
+    public List<Restaurant> getRestaurants() {
+        return new ArrayList<>(restaurants);
     }
 }
 
