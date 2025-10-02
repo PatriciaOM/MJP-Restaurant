@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
         subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 12));
 
         // Panel de login con GridLayout 2x3
-        JPanel loginPanel = new JPanel(new GridLayout(2, 3, 5, 5));
+        JPanel loginPanel = new JPanel(new GridLayout(2, 2, 5, 5));
 
         // JLabel iconUser = new JLabel(new ImageIcon("/assets/img/users.png"));
         // iconUser.setHorizontalAlignment(SwingConstants.CENTER);
