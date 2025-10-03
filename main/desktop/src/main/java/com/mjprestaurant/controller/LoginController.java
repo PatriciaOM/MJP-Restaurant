@@ -1,5 +1,6 @@
 package com.mjprestaurant.controller;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,11 +13,16 @@ import javax.swing.JOptionPane;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjprestaurant.model.User;
 import com.mjprestaurant.view.LoginFrame;
+import com.mjprestaurant.view.WaiterFrame;
+import com.mjprestaurant.view.AdminFrame;
 
 public class LoginController {
     //Variables de classe
     private LoginFrame login;
     private final String LOGIN_URL = "http://tu-servidor.com/api/login"; // URL server
+    private AdminFrame admin;
+    private WaiterFrame waiter;
+    private User responseUser;
 
     
     public LoginController(LoginFrame login) {
@@ -27,8 +33,9 @@ public class LoginController {
     private void initController() {
         login.getBtnLogin().addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                login();
+            public void actionPerformed(ActionEvent e) {
+                //login();
+                loginTest(false, new User("Patricia", "1234", true));
             }
         });
     }
@@ -66,7 +73,7 @@ public class LoginController {
             //Rebem la resposta
             if (conn.getResponseCode() == 200) {
                 try (InputStream is = conn.getInputStream()) {
-                    User responseUser = mapper.readValue(is, User.class);
+                    responseUser = mapper.readValue(is, User.class);
                     JOptionPane.showMessageDialog(login,
                             "Login correcte. Es admin: " + responseUser.isAdmin());
                 }
@@ -81,6 +88,28 @@ public class LoginController {
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(login, "Error de connexió amb el servidor");
+        }
+    }
+
+    //Mètode de prova
+    public void loginTest(boolean correctLogin, User user) {
+        if (!correctLogin){
+            JOptionPane.showMessageDialog(login, 
+                    "Les credencials introduïdes no son correctes", 
+                    "Error", 
+                    JOptionPane.WARNING_MESSAGE);
+        } else if (correctLogin && user.isAdmin()) {
+            login.setVisible(false);
+            admin = new AdminFrame(user.getName());
+            admin.initComponents();
+            admin.setLocationRelativeTo(null); // centrado
+            admin.setVisible(true);
+        } else {
+            login.setVisible(false);
+            waiter = new WaiterFrame(user.getName());
+            waiter.initComponents();
+            waiter.setLocationRelativeTo(null);
+            waiter.setVisible(true);
         }
     }
 

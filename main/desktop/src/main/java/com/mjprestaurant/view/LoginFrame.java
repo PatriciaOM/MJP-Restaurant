@@ -1,6 +1,9 @@
 package com.mjprestaurant.view;
 
 import javax.swing.*;
+
+import com.mjprestaurant.model.CustomComponents;
+
 import java.awt.*;
 import java.net.URL;
 
@@ -12,8 +15,8 @@ public class LoginFrame extends JFrame {
     private JButton btnLogin;
 
     public LoginFrame() {
-        JFrame frame = new JFrame("Login");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Login");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Panell principal
         JPanel mainPanel = new JPanel();
@@ -87,37 +90,8 @@ public class LoginFrame extends JFrame {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
         // Botó custom de login
-        btnLogin = new JButton("Entrar") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Fons i border
-                g2.setColor(new Color(0, 128, 0)); 
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 32, 32);
-
-                super.paintComponent(g2);
-                g2.dispose();
-            }
-
-            @Override
-            public boolean isContentAreaFilled() {
-                // Es necessari per a que el fons del botó no es repinti amb les opcions per defecte
-                return false;
-            }
-
-        };
-
-        btnLogin.setBorder(BorderFactory.createEmptyBorder());
-
-        // Preferencies del botó
-        btnLogin.setForeground(Color.WHITE);
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 14));
-        btnLogin.setPreferredSize(new Dimension(100, 30));
-        btnLogin.setMargin(new Insets(10, 32, 10, 32));
-        btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
+        new CustomComponents().setCustomButton("Entrar");
+        btnLogin = CustomComponents.getCustomButton();
 
         buttonPanel.add(btnLogin);
 
@@ -130,11 +104,11 @@ public class LoginFrame extends JFrame {
         mainPanel.add(Box.createRigidArea(new Dimension(0, 64)));
         mainPanel.add(buttonPanel);
 
-        frame.add(mainPanel);
-        frame.pack(); //ajusta la finestra als components
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null); // centrem la finestra a la pantalla
-        frame.setVisible(true);
+        add(mainPanel);
+        pack(); //ajusta la finestra als components
+        setResizable(false);
+        setLocationRelativeTo(null); // centrem la finestra a la pantalla
+        setVisible(true);
     }
 
     public String getUsername() { return txtUser.getText(); }

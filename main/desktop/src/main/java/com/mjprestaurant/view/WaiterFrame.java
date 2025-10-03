@@ -11,7 +11,7 @@ public class WaiterFrame extends AbstractFrame {
     }
 
     @Override
-    protected void initComponents() {
+    public void initComponents() {
         JLabel label = new JLabel("Pantalla Cambrers", SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 36));
         add(label, BorderLayout.CENTER);
