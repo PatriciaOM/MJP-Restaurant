@@ -10,10 +10,13 @@ package mjp.server.queryData;
  */
 public class LogoutInfo {
     String sessionToken;
+    
     LogoutInfo(){};
+    
     LogoutInfo(String sessionToken){
         this.sessionToken = sessionToken;
     }
+    
     public void setSessionToken(String sessionToken){this.sessionToken = sessionToken;}
     public String getSessionToken(){return this.sessionToken;}
     

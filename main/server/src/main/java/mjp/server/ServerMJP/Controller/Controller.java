@@ -5,12 +5,14 @@
 
 package mjp.server.ServerMJP.Controller;
 
+import mjp.server.responseData.UserResponse;
 import com.google.gson.Gson;
+import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.LoginInfo;
 import mjp.server.queryData.LogoutInfo;
+import mjp.server.queryData.UserInfo;
 import mjp.server.responseData.LoginResponse;
 import mjp.server.responseData.LogoutResponse;
-import mjp.server.responseData.UnknownUserResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,7 +31,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class Controller {
-    boolean logged = false;
+    boolean userLogged = false;
+    boolean adminLogged = false;
     private Gson gson;
     
     public Controller(){
@@ -37,13 +40,17 @@ public class Controller {
         
     }
         
-    public String handleLogin(LoginInfo info) {
+    public LoginResponse handleLogin(LoginInfo info) {
         System.out.println(String.format("Loggin attempt with username: %s, password: %s.", info.getUsername(), info.getPassword()));
         if(info.getUsername() == null || info.getPassword() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (info.getUsername().equals("Twiki") && info.getPassword().equals("Tuki")){
-            logged = true;
-            return "1234";
+            userLogged = true;
+            return new LoginResponse("1234", UserRole.USER);
+        }
+        if (info.getUsername().equals("Ping") && info.getPassword().equals("Pong")){
+            adminLogged = true;
+            return new LoginResponse("4321", UserRole.USER);
         }
         else    
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -53,9 +60,12 @@ public class Controller {
         if (logoutInfo.getSessionToken() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         System.out.println("Logging out !!!!!  " + logoutInfo.getSessionToken());
-        if (!logoutInfo.getSessionToken().equals("1234"))
+        if (logoutInfo.getSessionToken().equals("1234"))
+            this.userLogged = false;
+        else if (logoutInfo.getSessionToken().equals("4321"))
+            this.adminLogged = false;
+        else    
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        this.logged = false;
         return true;
     }
         
@@ -64,10 +74,28 @@ public class Controller {
         return enter*2;
     }
     
+    
     @GetMapping("/user")
-    public String unknownUser() {
-        return  this.gson.toJson(new UnknownUserResponse(this.logged));
+    public String user(@RequestBody UserInfo userInfo){ 
+        String error = userInfo.getDataError();
+        if (error != null) 
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, error);
+        String sessionToken = userInfo.getSessionToken();
+        boolean logged = false;
+        UserRole role = null;
+        if (sessionToken.equals("1234")) {
+            logged = this.userLogged;
+            role = UserRole.USER;
+        }
+        else if (sessionToken.equals("4321")) {
+            logged = this.adminLogged;
+            role = UserRole.ADMIN;
+        }
+        UserResponse response = new UserResponse(logged, role);
+        
+        return this.gson.toJson(response) ;
     }
+   
     
     @GetMapping(value = "/user", params = "username")
     public String user(@RequestParam String username){
@@ -77,9 +105,8 @@ public class Controller {
             
     
     @PostMapping("login")
-    public String login(@RequestBody LoginInfo loginInfo){      
-        String token = handleLogin(loginInfo);
-        LoginResponse response = new LoginResponse(token);
+    public String login(@RequestBody LoginInfo loginInfo){ 
+        LoginResponse response = handleLogin(loginInfo);
         String responseJSON = this.gson.toJson(response);
         System.out.println("THE LOGIN RESPONSE IS: " + responseJSON);
         return this.gson.toJson(response);
