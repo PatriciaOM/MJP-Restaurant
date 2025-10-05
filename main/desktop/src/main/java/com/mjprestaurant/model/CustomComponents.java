@@ -36,7 +36,7 @@ public class CustomComponents {
         // Preferencies del botó
         customButton.setForeground(Color.WHITE);
         customButton.setFont(new Font("Arial", Font.BOLD, 14));
-        customButton.setPreferredSize(new Dimension(100, 30));
+        customButton.setPreferredSize(new Dimension(150, 30));
         customButton.setMargin(new Insets(10, 32, 10, 32));
         customButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         customButton.setAlignmentX(Component.CENTER_ALIGNMENT);

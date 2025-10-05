@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +36,7 @@ public class LoginController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //login();
-                loginTest(false, new User("Patricia", "1234", true));
+                loginTest(true, new User("Patricia", "1234", true));
             }
         });
     }
@@ -112,5 +113,8 @@ public class LoginController {
             waiter.setVisible(true);
         }
     }
+        
+    public AdminFrame getAdminFrame() { return admin; }
+    public WaiterFrame getWaiterFrame() { return waiter; }
 
 }
