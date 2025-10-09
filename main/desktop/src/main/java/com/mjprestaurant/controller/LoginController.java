@@ -16,14 +16,17 @@ import com.mjprestaurant.model.User;
 import com.mjprestaurant.view.LoginFrame;
 import com.mjprestaurant.view.WaiterFrame;
 import com.mjprestaurant.view.AdminFrame;
+import com.mjprestaurant.model.*;
+
+import com.mjprestaurant.*;
 
 public class LoginController {
     //Variables de classe
     private LoginFrame login;
-    private final String LOGIN_URL = "http://tu-servidor.com/api/login"; // URL server
+    private final String LOGIN_URL = "http://localhost:8080/login"; // URL server
     private AdminFrame admin;
     private WaiterFrame waiter;
-    private User responseUser;
+    private LoginResponse responseUser;
 
     
     public LoginController(LoginFrame login) {
@@ -35,8 +38,8 @@ public class LoginController {
         login.getBtnLogin().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //login();
-                loginTest(true, new User("Patricia", "1234", true));
+                login();
+                //loginTest(true, new User("Patricia", "1234", true));
             }
         });
     }
@@ -52,11 +55,12 @@ public class LoginController {
                 return;
             }
 
-            User userToSend = new User(username, password, false);
+            User userToSend = new User(username, password);
 
             //Fem servir una llibreria externa per poder enviar més fàcilment les dades de l'usuari
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(userToSend);
+            System.out.println(json);
 
             URI uri = new URI(LOGIN_URL);
             URL url = uri.toURL(); 
@@ -72,15 +76,30 @@ public class LoginController {
             }
 
             //Rebem la resposta
-            if (conn.getResponseCode() == 200) {
+            if (conn.getResponseCode() == 200) { //Login correcte
                 try (InputStream is = conn.getInputStream()) {
-                    responseUser = mapper.readValue(is, User.class);
-                    JOptionPane.showMessageDialog(login,
-                            "Login correcte. Es admin: " + responseUser.isAdmin());
+                    responseUser = mapper.readValue(is, LoginResponse.class);
+                    /*JOptionPane.showMessageDialog(login,
+                            "Login correcte. Es admin: " + responseUser.isAdmin());*/
+                    if (responseUser.role.equals(UserRole.ADMIN.getRole())){ //Usuari administrador
+                        login.setVisible(false);
+                        admin = new AdminFrame(username);
+                        admin.initComponents();
+                        admin.setLocationRelativeTo(null); // centrado
+                        admin.setVisible(true);
+                    } else if (responseUser.role.equals(UserRole.USER.getRole())){ // Usuari cambrer
+                        login.setVisible(false);
+                        waiter = new WaiterFrame(username);
+                        waiter.initComponents();
+                        waiter.setLocationRelativeTo(null);
+                        waiter.setVisible(true);
+                    } else {
+                        System.out.println("Error de login");
+                    }
                 }
-            } else if (conn.getResponseCode() == 401) {
+            } else if (conn.getResponseCode() == 401) { //Login invàlid
                 JOptionPane.showMessageDialog(login, "Usuari o contrasenya incorrecte");
-            } else {
+            } else { //Error de connexió
                 JOptionPane.showMessageDialog(login, "Error del servidor: " + conn.getResponseCode());
             }
 
@@ -93,7 +112,7 @@ public class LoginController {
     }
 
     //Mètode de prova
-    public void loginTest(boolean correctLogin, User user) {
+    /*public void loginTest(boolean correctLogin, User user) {
         if (!correctLogin){
             JOptionPane.showMessageDialog(login, 
                     "Les credencials introduïdes no son correctes", 
@@ -101,18 +120,18 @@ public class LoginController {
                     JOptionPane.WARNING_MESSAGE);
         } else if (correctLogin && user.isAdmin()) {
             login.setVisible(false);
-            admin = new AdminFrame(user.getName());
+            admin = new AdminFrame(user.getUsername());
             admin.initComponents();
             admin.setLocationRelativeTo(null); // centrado
             admin.setVisible(true);
         } else {
             login.setVisible(false);
-            waiter = new WaiterFrame(user.getName());
+            waiter = new WaiterFrame(user.getUsername());
             waiter.initComponents();
             waiter.setLocationRelativeTo(null);
             waiter.setVisible(true);
         }
-    }
+    }*/
         
     public AdminFrame getAdminFrame() { return admin; }
     public WaiterFrame getWaiterFrame() { return waiter; }
