@@ -7,12 +7,23 @@ package mjp.server.ServerMJP.Controller;
 
 import mjp.server.responseData.UserResponse;
 import com.google.gson.Gson;
+import mjp.server.ServerMJP.database.Customer;
+import mjp.server.ServerMJP.database.CustomerRepository;
+import java.util.ArrayList;
+//import database.Customer;
+//import database.CustomerRepository;
+import mjp.server.ServerMJP.ServerMjpApplication;
+import mjp.server.ServerMJP.database.AplicationUser;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.LoginInfo;
 import mjp.server.queryData.LogoutInfo;
 import mjp.server.queryData.UserInfo;
 import mjp.server.responseData.LoginResponse;
 import mjp.server.responseData.LogoutResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import mjp.server.ServerMJP.database.AplicationUserRepository;
 
 
 
@@ -34,6 +46,11 @@ public class Controller {
     boolean userLogged = false;
     boolean adminLogged = false;
     private Gson gson;
+        private CustomerRepository repository;
+        final Logger log = LoggerFactory.getLogger(ServerMjpApplication.class);
+        
+        
+        private AplicationUserRepository userRepository;
     
     public Controller(){
         this.gson = new Gson();
@@ -74,6 +91,38 @@ public class Controller {
         return enter*2;
     }
     
+        
+    @GetMapping("allusers")
+    public String allusers() {
+        log.info("Users found with findAll()");
+        ArrayList<AplicationUser> users = new ArrayList();
+        String result = "";
+        
+        userRepository.findAll().forEach(user -> {
+            log.info(user.toString());
+            users.add(user);
+        });
+        for (AplicationUser user: users) {
+            result += user.toString() + '\n';
+        }
+        return "users: " + result;
+    }
+    
+    @GetMapping("customers")
+    public String hello() {
+        log.info("Customers found with findAll()");
+        ArrayList<Customer> customers = new ArrayList();
+        String result = "";
+        
+        repository.findAll().forEach(customer -> {
+            log.info(customer.toString());
+            customers.add(customer);
+        });
+        for (Customer customer: customers) {
+            result += customer.toString() + '\n';
+        }
+        return result;
+    }
     
     @GetMapping("/user")
     public String user(@RequestBody UserInfo userInfo){ 
@@ -112,17 +161,41 @@ public class Controller {
         return this.gson.toJson(response);
     }
                
-//    @PostMapping("logout")
-//    public String logout(@ModelAttribute LogoutInfo logoutInfo){
-//        boolean result = handleLogout();
-//        return String.format("This is logout with ModelAttribute logoutSession: %s, logged: %s.", logoutInfo.getSession(), ""+result);
-//    }
-    
+  
     @PostMapping("logout")
     public String logout(@RequestBody LogoutInfo logoutInfo){
         boolean result = handleLogout(logoutInfo);
         return this.gson.toJson(new LogoutResponse("Logged out"));
         
+    }
+    
+    
+    @Bean
+    public CommandLineRunner controllerDemo(CustomerRepository repository) {
+        this.repository = repository;
+        return (args) -> {
+           repository.save(new Customer("Jack", "Bauer")) ;
+           repository.save(new Customer("Chloe", "O'Brian")) ;
+           repository.save(new Customer("David", "Palmer")) ;
+
+           System.out.println("CONTROLER DEMOOOOOOOOOOOOOOOOOOO");
+        };
+    }
+    
+        @Bean
+        public CommandLineRunner userDemo(AplicationUserRepository repository) {
+        this.userRepository = repository;
+        return (args) -> {
+            
+           System.out.println("CONTROLER USER DEMOOOOOOOOOOOOOOOOOOO");
+           AplicationUser user = new AplicationUser("Twiki", "Tuki", UserRole.ADMIN.getRole());
+           repository.save(user) ;
+           System.out.println("REGISTERED: " + user);
+            user = new AplicationUser("Ping", "Pong", UserRole.USER.getRole());
+           System.out.println("REGISTERED: " + user);
+           repository.save(user) ;
+
+        };
     }
     
 }
