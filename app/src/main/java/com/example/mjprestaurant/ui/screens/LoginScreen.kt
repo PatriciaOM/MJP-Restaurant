@@ -1,5 +1,6 @@
 package com.example.mjprestaurant.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -7,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,8 +39,8 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
+            // Pantalla de login
             if (isLoggedIn) {
-                // Pantalla després de login correcte
                 Column(
                     modifier = Modifier.align(Alignment.Center),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -50,20 +52,25 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
                     Spacer(Modifier.height(8.dp))
                     Text("El teu rol és: $role")
                     Spacer(Modifier.height(16.dp))
-                    Button(onClick = { viewModel.onLogoutClick() }) {
+                    Button(
+                        onClick = { viewModel.onLogoutClick() },
+                        enabled = !isLoading
+                    ){
                         Text("Logout")
                     }
                 }
             } else {
-                // Pantalla de login
+
                 Column(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Iniciar sessió", style = MaterialTheme.typography.headlineSmall)
-
+                    Text(
+                        text = "Iniciar sessió",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
                     Spacer(modifier = Modifier.height(20.dp))
 
                     OutlinedTextField(
@@ -71,6 +78,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
                         onValueChange = { viewModel.username.value = it },
                         label = { Text("Usuari") },
                         singleLine = true,
+                        enabled = !isLoading,
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
@@ -86,6 +94,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
                         label = { Text("Contrasenya") },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
+                        enabled = !isLoading,
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
@@ -130,6 +139,18 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
                         }
                         Text(text = "Entrar")
                     }
+                }
+            }
+
+            //Overlay de càrrega
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0x80000000)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         }
