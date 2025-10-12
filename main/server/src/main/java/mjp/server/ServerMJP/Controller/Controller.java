@@ -50,7 +50,7 @@ public class Controller {
         }
         if (info.getUsername().equals("Ping") && info.getPassword().equals("Pong")){
             adminLogged = true;
-            return new LoginResponse("4321", UserRole.USER);
+            return new LoginResponse("4321", UserRole.ADMIN);
         }
         else    
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
