@@ -3,7 +3,6 @@ package com.mjprestaurant.view;
 import java.awt.*;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,8 +12,8 @@ import com.mjprestaurant.model.CustomComponents;
 
 public class AdminFrame  extends AbstractFrame {
 
-    public AdminFrame(String title) {
-        super(title);
+    public AdminFrame(String username) {
+        super(username);
     }
 
     @Override

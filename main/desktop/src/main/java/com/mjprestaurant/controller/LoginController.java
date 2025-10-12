@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,8 +17,10 @@ import com.mjprestaurant.view.WaiterFrame;
 import com.mjprestaurant.view.AdminFrame;
 import com.mjprestaurant.model.*;
 
-import com.mjprestaurant.*;
-
+/**
+ * Controlador del Login de l'aplicació desktop
+ * @author Patricia Oliva
+ */
 public class LoginController {
     //Variables de classe
     private LoginFrame login;
@@ -27,6 +28,7 @@ public class LoginController {
     private AdminFrame admin;
     private WaiterFrame waiter;
     private LoginResponse responseUser;
+    private LogoutController logoutController;
 
     
     public LoginController(LoginFrame login) {
@@ -39,12 +41,14 @@ public class LoginController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 login();
-                //loginTest(true, new User("Patricia", "1234", true));
             }
         });
     }
 
-    // Mètode que fa POST al server i rep la resposta: ENCARA NO OPERATIU
+    /**
+     * Mètode que recull de la pantalla del login les credencials username i password,
+     * fa POST al servidor i rep la resposta
+     */
     private void login() {
         try {
             String username = login.getUsername();
@@ -79,20 +83,37 @@ public class LoginController {
             if (conn.getResponseCode() == 200) { //Login correcte
                 try (InputStream is = conn.getInputStream()) {
                     responseUser = mapper.readValue(is, LoginResponse.class);
-                    /*JOptionPane.showMessageDialog(login,
-                            "Login correcte. Es admin: " + responseUser.isAdmin());*/
+                    System.out.println(responseUser.role); 
                     if (responseUser.role.equals(UserRole.ADMIN.getRole())){ //Usuari administrador
                         login.setVisible(false);
                         admin = new AdminFrame(username);
                         admin.initComponents();
-                        admin.setLocationRelativeTo(null); // centrado
+                        admin.setLocationRelativeTo(null); 
                         admin.setVisible(true);
+
+                        //Control de logout
+                        admin.getBtnLogout().addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                logoutController = new LogoutController(admin, login);
+                                logoutController.logout(responseUser.token);
+                            }
+                        });
                     } else if (responseUser.role.equals(UserRole.USER.getRole())){ // Usuari cambrer
                         login.setVisible(false);
                         waiter = new WaiterFrame(username);
                         waiter.initComponents();
                         waiter.setLocationRelativeTo(null);
                         waiter.setVisible(true);
+
+                        //Control de logout
+                        waiter.getBtnLogout().addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                logoutController = new LogoutController(waiter, login);
+                                logoutController.logout(responseUser.token);
+                            }
+                        });
                     } else {
                         System.out.println("Error de login");
                     }
@@ -110,30 +131,16 @@ public class LoginController {
             JOptionPane.showMessageDialog(login, "Error de connexió amb el servidor");
         }
     }
-
-    //Mètode de prova
-    /*public void loginTest(boolean correctLogin, User user) {
-        if (!correctLogin){
-            JOptionPane.showMessageDialog(login, 
-                    "Les credencials introduïdes no son correctes", 
-                    "Error", 
-                    JOptionPane.WARNING_MESSAGE);
-        } else if (correctLogin && user.isAdmin()) {
-            login.setVisible(false);
-            admin = new AdminFrame(user.getUsername());
-            admin.initComponents();
-            admin.setLocationRelativeTo(null); // centrado
-            admin.setVisible(true);
-        } else {
-            login.setVisible(false);
-            waiter = new WaiterFrame(user.getUsername());
-            waiter.initComponents();
-            waiter.setLocationRelativeTo(null);
-            waiter.setVisible(true);
-        }
-    }*/
-        
+    
+    /**
+     * Retorna la pantalla de l'admin
+     * @return
+     */
     public AdminFrame getAdminFrame() { return admin; }
+    /**
+     * Retorna la pantalla del user (cambrer)
+     * @return
+     */
     public WaiterFrame getWaiterFrame() { return waiter; }
 
 }

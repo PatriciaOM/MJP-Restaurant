@@ -6,8 +6,8 @@ import javax.swing.SwingConstants;
 
 public class WaiterFrame extends AbstractFrame {
 
-    public WaiterFrame(String title) {
-        super(title);
+    public WaiterFrame(String username) {
+        super(username);
     }
 
     @Override
