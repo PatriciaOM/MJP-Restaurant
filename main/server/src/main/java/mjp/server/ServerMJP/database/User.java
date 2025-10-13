@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import mjp.server.dataClasses.UserRole;
 
 /**
@@ -15,17 +16,18 @@ import mjp.server.dataClasses.UserRole;
  * @author twiki
  */
 @Entity
-public class AplicationUser {
+@Table(name = "ApplicationUser")
+public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     private String username;
-    private String role;
     private String password;
+    private UserRole role;
     
-    protected AplicationUser() {};
+    protected User() {};
     
-    public AplicationUser(String username, String password, String role) {
+    public User(String username, String password, UserRole role) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -34,7 +36,7 @@ public class AplicationUser {
     @Override    
     public String toString() {
         return String.format(
-            "Customer[id=%d, username='%s', password='%s', role='%s']",
+            "User[id=%d, username='%s', password='%s', role='%s']",
             id, username, password, role 
         );
     }
@@ -47,7 +49,7 @@ public class AplicationUser {
         return username;
     }
     
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
     

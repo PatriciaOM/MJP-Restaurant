@@ -9,11 +9,14 @@ import org.springframework.data.repository.CrudRepository;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls
  */
-public interface CustomerRepository extends CrudRepository<Customer, Long> {
+public interface UserRepository extends CrudRepository<User, Long>{
     
-    List<Customer> findByLastName(String lastName);
+    List<User> findByUsername(String username);
     
-    Customer findById(long id);
+//    List<User> findByRole(String role);
+    
+    User findById(long id);
+    
 }

@@ -9,8 +9,8 @@ package mjp.server.dataClasses;
  * @author twiki
  */
 public enum UserRole {
-    USER ("user"),
-    ADMIN ("admin");
+    USER ("User"),
+    ADMIN ("Admin");
     
     private final String role;
     
@@ -30,4 +30,8 @@ public enum UserRole {
         return this.role;
     }
     
+    @Override
+    public String toString() {
+        return this.getRole();
+    }
 }
