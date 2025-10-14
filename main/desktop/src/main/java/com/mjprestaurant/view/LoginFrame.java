@@ -7,13 +7,18 @@ import com.mjprestaurant.model.CustomComponents;
 import java.awt.*;
 import java.net.URL;
 
-
+/**
+ * Pantalla de login. Aquesta conté dos camps (un pel nom i un altre per la contrasenya) i un botó
+ */
 public class LoginFrame extends JFrame {
     //Variables de classe
     private JTextField txtUser;
     private JPasswordField txtPass;
     private JButton btnLogin;
 
+    /**
+     * Constructor principal
+     */
     public LoginFrame() {
         setTitle("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -111,8 +116,52 @@ public class LoginFrame extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Retorna el nom de l'usuari introduït
+     * @return nom d'usuari
+     */
     public String getUsername() { return txtUser.getText(); }
+    /**
+     * Retorna la contrasenya introduïda
+     * @return contrasenya introduïda
+     */
     public String getPassword() { return new String(txtPass.getPassword()); }
+    /**
+     * Retorna el botó per fer el login
+     * @return botó del login
+     */
     public JButton getBtnLogin() { return btnLogin; }
+
+    /**
+     * Inicialitza el text field del nom
+     * @param txtUser text pel textfield del nom
+     */
+    public void setTxtUser(JTextField txtUser) {this.txtUser = txtUser;}
+    /**
+     * Inicialitza el text field de la contrasenya
+     * @param txtPass text pel textfield de la contrasenya
+     */
+    public void setTxtPass(JPasswordField txtPass) {this.txtPass = txtPass;}
+    /**
+     * Inicialitza el botó de la pantalla de login
+     * @param btnLogin
+     */
+    public void setBtnLogin(JButton btnLogin) {this.btnLogin = btnLogin;}
+
+    /**
+     * Retorna el text field del user
+     * @return text field de l'usuari
+     */
+    public JTextField getTxtUser(){
+        return txtUser;
+    }
+
+    /**
+     * Retorna el text field de la contrasenya
+     * @return text field de la contrasenya
+     */
+    public JPasswordField getTxtPass(){
+        return txtPass;
+    }
 
 }

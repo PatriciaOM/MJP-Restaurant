@@ -13,18 +13,32 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjprestaurant.model.LogoutInfo;
 import com.mjprestaurant.view.*;
 
+/**
+ * Controlador del logout de l'aplicació desktop
+ * @author Patricia Oliva
+ */
 public class LogoutController {
     private AbstractFrame userWindow;
     private LoginFrame login;
+    private LoginController loginController;
     private final String LOGOUT_URL = "http://localhost:8080/logout"; // URL server
 
-
-    public LogoutController(AbstractFrame userWindow, LoginFrame login) {
+    /**
+     * Constructor principal del logout, que necessita la finestra en la que es troba actualment l'usuari 
+     * i la pantalla del login
+     * @param userWindow pantalla en la que es troba l'usuari
+     * @param login pantalla de login
+     */
+    public LogoutController(AbstractFrame userWindow, LoginFrame login, LoginController loginController) {
         this.login = login;
         this.userWindow = userWindow;
+        this.loginController = loginController;
         initController();
     }
 
+    /**
+     * Mètode init per iniciar els components
+     */
     private void initController() {
         userWindow.getBtnLogout().addActionListener(new ActionListener() {
             @Override
@@ -34,10 +48,14 @@ public class LogoutController {
         });
     }
 
+    /**
+     * Mètode que fa el logout de l'aplicació desktop. Necessita el token de sessió per cancelar-la
+     * @param token token de sessió
+     */
     public void logout(String token) {
         try {
             System.out.println(token);
-            // Crear objeto User para enviar al servidor
+            // Creem un objecte de tipus LogoutInfo que s'enviarà al server amb el token de sessió
             LogoutInfo logoutinfo = new LogoutInfo(token);
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(logoutinfo);
@@ -65,7 +83,9 @@ public class LogoutController {
 
             // Tornem al login
             if (userWindow != null) userWindow.dispose();
-
+            loginController.setResponseUser(null);
+            login.getTxtUser().setText("");
+            login.getTxtPass().setText("");
             login.setVisible(true);
 
         } catch (Exception e) {
@@ -73,4 +93,38 @@ public class LogoutController {
             JOptionPane.showMessageDialog(null, "Error en desconnectar del servidor");
         }
     }
+
+    /**
+     * Retorna la pantalla en la que es troba l'usuari actualment
+     * @return pantalla del user
+     */
+    public AbstractFrame getUserWindow() {
+        return userWindow;
+    }
+
+    /**
+     * Inicialitza la pantalla en la que es troba l'usuari
+     * @param userWindow pantalla del user, de tipus AbstractFrame (pot ser admin o user)
+     */
+    public void setUserWindow(AbstractFrame userWindow) {
+        this.userWindow = userWindow;
+    }
+
+    /**
+     * Retorna la pantalla del login
+     * @return pantalla de login
+     */
+    public LoginFrame getLogin() {
+        return login;
+    }
+
+    /**
+     * Inicialitza la pantalla del login
+     * @param login pantalla de login
+     */
+    public void setLogin(LoginFrame login) {
+        this.login = login;
+    }
+
+    
 }

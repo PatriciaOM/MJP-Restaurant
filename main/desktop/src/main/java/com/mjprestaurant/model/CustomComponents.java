@@ -5,9 +5,18 @@ import java.awt.*;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
+/**
+ * Classe per crear components custom reutilitzables
+ * @author Patricia Oliva
+ */
 public class CustomComponents {
     private static JButton customButton;
 
+    /**
+     * Inicialitza un botó custom amb el text passat per paràmetre
+     * D'aquesta manera obtenim botons amb el mateix estil, per treballar fàcilment la coherència
+     * @param text Text del botó
+     */
     public void setCustomButton (String text){
         customButton = new JButton(text) {
             @Override
@@ -42,7 +51,12 @@ public class CustomComponents {
         customButton.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 
+    /**
+     * Retorna el botó custom
+     * @return botó amb estil predeterminat
+     */
     public static JButton getCustomButton(){
         return customButton;
     }
+
 }

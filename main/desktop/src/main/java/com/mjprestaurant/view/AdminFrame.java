@@ -10,12 +10,23 @@ import javax.swing.SwingConstants;
 
 import com.mjprestaurant.model.CustomComponents;
 
+/**
+ * Pantalla d'administradors
+ * @author Patricia Oliva
+ */
 public class AdminFrame  extends AbstractFrame {
 
+    /**
+     * Constructor principal que seteja com a títol de la pantalla el nom de l'usuari loguejat
+     * @param username nom de l'usuari
+     */
     public AdminFrame(String username) {
         super(username);
     }
 
+    /**
+     * Mètode que sobreescriu el pare amb la inicialització dels components de la pantalla d'administradors
+     */
     @Override
     public void initComponents() {
         JLabel title = new JLabel("Administració de: ", SwingConstants.CENTER);

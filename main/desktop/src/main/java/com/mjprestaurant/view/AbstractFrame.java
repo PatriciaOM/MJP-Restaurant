@@ -5,11 +5,19 @@ import javax.swing.*;
 
 import com.mjprestaurant.model.CustomComponents;
 
+/**
+ * Classe abstracta que crea els components bàsics per qualsevol tipus de pantalla
+ * @author Patricia Oliva
+ */
 public abstract class AbstractFrame extends JFrame {
 
     String username;
     private JButton btnLogout;
 
+    /**
+     * Constructor principal que crea la pantalla amb el títol passat per paràmetre
+     * @param title títol de la pantalla
+     */
     public AbstractFrame(String title) {
         super(title);
 
@@ -27,8 +35,13 @@ public abstract class AbstractFrame extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Mètode que crea la barra de menú compartida per totes les pantalles
+     */
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+        menuBar.setLayout(new FlowLayout(FlowLayout.RIGHT, 30, 10)); // margen horizontal y vertical
+
         new CustomComponents().setCustomButton("Tanca la sessió");
         btnLogout = CustomComponents.getCustomButton();
 
@@ -36,14 +49,28 @@ public abstract class AbstractFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
+
+
+    /**
+     * Retorna el botó del logout
+     * @return botó del logout
+     */
     public JButton getBtnLogout() {
         return btnLogout;
     }
 
+    /**
+     * Inicialitza el nom de l'usuari. Es fa servir com a títol de la pantalla
+     * @param username nom de l'usuari
+     */
     public void setUserame(String username){
         this.username = username;
     }
 
+    /**
+     * Retorna el nom de l'usuari. Es fa servir com a títol de la pantalla
+     * @return nom de l'usuari
+     */
     public String getUsername(){
         return username;
     }

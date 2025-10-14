@@ -30,12 +30,18 @@ public class LoginController {
     private LoginResponse responseUser;
     private LogoutController logoutController;
 
-    
+    /**
+     * Constructor principal
+     * @param login pantalla de login
+     */
     public LoginController(LoginFrame login) {
         this.login = login;
         initController();
     }
 
+    /**
+     * Mètode init per iniciar els components
+     */
     private void initController() {
         login.getBtnLogin().addActionListener(new ActionListener() {
             @Override
@@ -73,7 +79,7 @@ public class LoginController {
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
-            //Aconseguir l'stream de sortida del context actual i enviem les dades
+            //Aconseguim l'stream de sortida del context actual i enviem les dades
             try (OutputStream os = conn.getOutputStream()) {
                 os.write(json.getBytes());
                 os.flush();
@@ -95,7 +101,7 @@ public class LoginController {
                         admin.getBtnLogout().addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                logoutController = new LogoutController(admin, login);
+                                logoutController = new LogoutController(admin, login, LoginController.this);
                                 logoutController.logout(responseUser.token);
                             }
                         });
@@ -110,7 +116,7 @@ public class LoginController {
                         waiter.getBtnLogout().addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                logoutController = new LogoutController(waiter, login);
+                                logoutController = new LogoutController(waiter, login, LoginController.this);
                                 logoutController.logout(responseUser.token);
                             }
                         });
@@ -134,13 +140,61 @@ public class LoginController {
     
     /**
      * Retorna la pantalla de l'admin
-     * @return
+     * @return pantalla d'administrador
      */
     public AdminFrame getAdminFrame() { return admin; }
     /**
      * Retorna la pantalla del user (cambrer)
-     * @return
+     * @return pantalla de cambrers
      */
     public WaiterFrame getWaiterFrame() { return waiter; }
+
+    /**
+     * Retorna la pantalla de login
+     * @return pantalla login
+     */
+    public LoginFrame getLogin() {
+        return login;
+    }
+
+    /**
+     * Inicialitza la pantalla de login
+     * @param login
+     */
+    public void setLogin(LoginFrame login) {
+        this.login = login;
+    }
+
+    /**
+     * Retorna la resposta de l'usuari
+     * @return usuari de resposta
+     */
+    public LoginResponse getResponseUser() {
+        return responseUser;
+    }
+
+    /**
+     * Inicialitza l'usuari que rep la resposta
+     * @param responseUser
+     */
+    public void setResponseUser(LoginResponse responseUser) {
+        this.responseUser = responseUser;
+    }
+
+    /**
+     * Retorna el controlador del logout
+     * @return controlador de logout
+     */
+    public LogoutController getLogoutController() {
+        return logoutController;
+    }
+
+    /**
+     * Inicialitza el controlador de logout
+     * @param logoutController
+     */
+    public void setLogoutController(LogoutController logoutController) {
+        this.logoutController = logoutController;
+    }
 
 }

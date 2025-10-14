@@ -1,5 +1,9 @@
 package com.mjprestaurant.model;
 
+/**
+ * Classe per l'objecte restaurant amb el nom i la direcció
+ * Falta implementar-la amb més detall
+ */
 public class Restaurant {
     private String nombre;
     private String direccion;
