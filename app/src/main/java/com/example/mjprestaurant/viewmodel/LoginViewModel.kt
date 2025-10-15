@@ -64,11 +64,12 @@ class LoginViewModel(
     fun onLogoutClick() {
         viewModelScope.launch {
             try {
-                token.value?.let {
-                    repository.logout(it, role.value ?: "user")
+                token.value?.let { sessionToken ->
+                    repository.logout(sessionToken)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                errorMessage.value = "Error al logout: ${e.message}"
             } finally {
                 // Reset UI
                 isLoggedIn.value = false

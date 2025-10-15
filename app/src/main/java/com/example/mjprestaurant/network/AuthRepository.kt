@@ -1,5 +1,6 @@
 package com.example.mjprestaurant.network
 
+import android.util.Log
 import com.example.mjprestaurant.model.LoginRequest
 import com.example.mjprestaurant.model.LoginResponse
 import com.example.mjprestaurant.model.LogoutRequest
@@ -13,8 +14,8 @@ class AuthRepository {
         return RetrofitInstance.api.login(request)
     }
 
-    suspend fun logout(token: String, role: String): Response<Unit> {
-        val request = LogoutRequest(token, role)
+    suspend fun logout(token: String): Response<Unit> {
+        val request = LogoutRequest(sessionToken = token)
         return RetrofitInstance.api.logout(request)
     }
 }
