@@ -9,8 +9,8 @@ package mjp.server.dataClasses;
  * @author twiki
  */
 public enum UserRole {
-    USER ("User"),
-    ADMIN ("Admin");
+    USER ("user"),
+    ADMIN ("admin");
     
     private final String role;
     
