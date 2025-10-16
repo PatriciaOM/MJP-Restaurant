@@ -1,4 +1,26 @@
 {
     "version": "0.2.0",
-    "configurations": []
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run Desktop Main",
+            "request": "launch",
+            "mainClass": "com.mjprestaurant.app.Main",
+            "projectName": "desktop"
+        },
+        {
+            "type": "java",
+            "name": "Run Mobile Main",
+            "request": "launch",
+            "mainClass": "com.mjprestaurant.mobile.Main",
+            "projectName": "mobile"
+        },
+        {
+            "type": "java",
+            "name": "Run Server Main",
+            "request": "launch",
+            "mainClass": "com.mjprestaurant.server.Main",
+            "projectName": "server"
+        }
+    ]
 }

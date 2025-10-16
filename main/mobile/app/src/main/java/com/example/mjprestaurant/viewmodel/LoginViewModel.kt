@@ -15,7 +15,7 @@ class LoginViewModel(
     var username = mutableStateOf("")
     var password = mutableStateOf("")
 
-    // Estados UI
+    // Estats UI
     var isLoading = mutableStateOf(false)
     var errorMessage = mutableStateOf<String?>(null)
     var isLoggedIn = mutableStateOf(false)
