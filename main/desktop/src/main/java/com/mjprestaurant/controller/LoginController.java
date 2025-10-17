@@ -53,7 +53,12 @@ public class LoginController {
 
     /**
      * Mètode que recull de la pantalla del login les credencials username i password,
-     * fa POST al servidor i rep la resposta
+     * fa POST al servidor i rep la resposta.
+     * Segons el tipus de user que es logueja, crea un tipus de pantalla AdminFrame o WaiterFrame
+     * Les pantalles s'inicien amb el nom de l'usuari que s'ha loguejat, amaguen la pantalla del login
+     * i inicialitzen els components corresponents. També es genera l'ActionListener necessari pel Logout
+     * En cas de login invàlid, es genera un avís amb JOptionPane, igual que si n'hi ha problema de connexió
+     * amb el servidor
      */
     private void login() {
         try {
@@ -93,7 +98,6 @@ public class LoginController {
                     if (responseUser.role.equals(UserRole.ADMIN.getRole())){ //Usuari administrador
                         login.setVisible(false);
                         admin = new AdminFrame(username);
-                        admin.initComponents();
                         admin.setLocationRelativeTo(null); 
                         admin.setVisible(true);
 
@@ -108,7 +112,6 @@ public class LoginController {
                     } else if (responseUser.role.equals(UserRole.USER.getRole())){ // Usuari cambrer
                         login.setVisible(false);
                         waiter = new WaiterFrame(username);
-                        waiter.initComponents();
                         waiter.setLocationRelativeTo(null);
                         waiter.setVisible(true);
 

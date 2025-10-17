@@ -25,6 +25,8 @@ public abstract class AbstractFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLayout(new BorderLayout());
+        ImageIcon icon = new ImageIcon(getClass().getResource("/assets/img/sushi.png"));
+        setIconImage(icon.getImage());
 
         // Afegim la barra de menú
         createMenuBar();

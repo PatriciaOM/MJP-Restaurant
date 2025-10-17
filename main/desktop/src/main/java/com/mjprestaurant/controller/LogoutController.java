@@ -50,6 +50,10 @@ public class LogoutController {
 
     /**
      * Mètode que fa el logout de l'aplicació desktop. Necessita el token de sessió per cancelar-la
+     * Un cop s'ha rebut la resposta del servidor de la sessió tancada, genera un avís amb un JOptionPane
+     * tanca la pantalla actual, posa la variable responseUser a null per permetre el login posterior d'un usuari
+     * diferent, esborra els textos que hi havien al TextField i el PasswordField i torna a mostrar 
+     * la pantalla de login
      * @param token token de sessió
      */
     public void logout(String token) {
