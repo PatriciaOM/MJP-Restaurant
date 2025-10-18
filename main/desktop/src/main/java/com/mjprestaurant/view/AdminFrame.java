@@ -30,6 +30,7 @@ public class AdminFrame  extends AbstractFrame {
     @Override
     public void initComponents() {
         JLabel title = new JLabel("Administració de: ", SwingConstants.CENTER);
+        System.out.println(title);
         title.setFont(new Font("Arial", Font.PLAIN, 24));
         
         new CustomComponents().setCustomButton("Taules");

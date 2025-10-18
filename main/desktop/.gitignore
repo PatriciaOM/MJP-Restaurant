@@ -1,0 +1,5 @@
+# Carpeta de compilación de Maven
+target/
+
+# Carpeta de configuración del IDE
+.vscode/

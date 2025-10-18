@@ -15,13 +15,15 @@ public class LoginFrame extends JFrame {
     private JTextField txtUser;
     private JPasswordField txtPass;
     private JButton btnLogin;
-
     /**
      * Constructor principal
      */
     public LoginFrame() {
-        setTitle("Login");
+        setTitle("MJPRestaurant");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ImageIcon icon = new ImageIcon(getClass().getResource("/assets/img/sushi.png"));
+        setIconImage(icon.getImage());
+
 
         // Panell principal
         JPanel mainPanel = new JPanel();
@@ -51,12 +53,14 @@ public class LoginFrame extends JFrame {
             System.err.println("No s'ha trobat users.png");
         }
         
+        //Apartat user
         JLabel lblUser = new JLabel("Usuari:", iconUser, JLabel.LEFT);
         lblUser.setHorizontalTextPosition(SwingConstants.RIGHT);
         lblUser.setIconTextGap(3); 
         lblUser.setHorizontalAlignment(SwingConstants.LEFT);
-        txtUser = new JTextField();
-        txtUser.setPreferredSize(new Dimension(150, 25)); // alçada fixe
+        CustomComponents.setCustomTextField();
+        txtUser = CustomComponents.getCustomTextField();
+        txtUser.setPreferredSize(new Dimension(180, 25)); // alçada fixe
 
         //Contrasenya row: controlem errors a l'hora de no trobar els recursos
         URL passIconURL = getClass().getResource("/assets/img/lock.png");   
@@ -74,7 +78,8 @@ public class LoginFrame extends JFrame {
         lblPass.setHorizontalTextPosition(SwingConstants.RIGHT);
         lblPass.setIconTextGap(3); 
         lblPass.setHorizontalAlignment(SwingConstants.LEFT);
-        txtPass = new JPasswordField();
+        CustomComponents.setCustomPasswordField();
+        txtPass = CustomComponents.getCustomPwdField();
         txtPass.setPreferredSize(new Dimension(150, 25)); // alçada fixe
 
         loginPanel.setBorder(BorderFactory.createEmptyBorder(0, 70, 0,0));
