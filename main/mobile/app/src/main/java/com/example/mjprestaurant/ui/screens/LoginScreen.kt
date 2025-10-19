@@ -19,13 +19,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mjprestaurant.viewmodel.LoginViewModel
 
 
-//LoginScreen
+/**
+ * Pantalla d'inici de sessió de l'aplicació.
+ *
+ * Aquesta pantalla consta de:
+ *  - Formulari d'auntenticació amb camps d'usuari i contrasenya.
+ *  - Validació visual de camps.
+ *  - Maneig d'estats de càrrega i error.
+ *  - Navegació automàtica tras login exitos.
+ *
+ *  @see LoginViewModel
+ *  @see MainActivity
+ *
+ *  @author Martin Muñoz Pozuelo
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel(),
     onLoginSuccess: () -> Unit
 ) {
+    //Estats observats del ViewModel
     val username by viewModel.username
     val password by viewModel.password
     val isLoading by viewModel.isLoading
@@ -34,13 +48,17 @@ fun LoginScreen(
 
     val focusManager = LocalFocusManager.current
 
-    // 🔹 Si el login es exitoso, navega automáticamente
+    /**
+     * Efecte que observe canvis en l'estat d'autenticació
+     * Navegació automàtica quan el login es exitos.
+     */
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
             onLoginSuccess()
         }
     }
 
+    //Layout Principal de la pantalla
     Scaffold { innerPadding ->
         Box(
             modifier = Modifier
@@ -48,7 +66,7 @@ fun LoginScreen(
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            // Pantalla de login
+            // Contingut formulari de login
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -61,6 +79,7 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
+                //Camp de nom d'usuari
                 OutlinedTextField(
                     value = username,
                     onValueChange = { viewModel.username.value = it },
@@ -76,6 +95,7 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                // Camp de contrasenya
                 OutlinedTextField(
                     value = password,
                     onValueChange = { viewModel.password.value = it },
@@ -98,6 +118,7 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
+                // Mostrar error si n'hi ha
                 if (errorMessage != null) {
                     Text(
                         text = errorMessage ?: "",
@@ -108,6 +129,7 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
+                // Botó de login
                 Button(
                     onClick = {
                         focusManager.clearFocus()
@@ -129,7 +151,7 @@ fun LoginScreen(
                 }
             }
 
-            // Overlay de càrrega
+            // Overlay de càrrega durant peticions.
             if (isLoading) {
                 Box(
                     modifier = Modifier
@@ -145,7 +167,11 @@ fun LoginScreen(
 }
 
 
-
+/**
+ * Previsualització de pantalla de login a Android Studio.
+ *
+ * Mostra el disseny bàsic sense funcionalitat real.
+ */
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview(){
