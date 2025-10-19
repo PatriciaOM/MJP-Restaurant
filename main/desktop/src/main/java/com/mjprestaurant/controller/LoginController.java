@@ -8,10 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-import javax.swing.JOptionPane;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mjprestaurant.model.User;
 import com.mjprestaurant.view.LoginFrame;
 import com.mjprestaurant.view.WaiterFrame;
 import com.mjprestaurant.view.AdminFrame;
@@ -46,7 +44,11 @@ public class LoginController {
         login.getBtnLogin().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                login();
+                try {
+                    login();
+                } catch (ControllerException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
@@ -59,15 +61,15 @@ public class LoginController {
      * i inicialitzen els components corresponents. També es genera l'ActionListener necessari pel Logout
      * En cas de login invàlid, es genera un avís amb JOptionPane, igual que si n'hi ha problema de connexió
      * amb el servidor
+     * @throws ControllerException 
      */
-    private void login() {
+    public void login() throws ControllerException {
         try {
             String username = login.getUsername();
             String password = login.getPassword();
 
             if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(login, "Has d'introduïr l'usuari i la contrasenya");
-                return;
+                throw new ControllerException("Has d'introduïr l'usuari i la contrasenya", login);
             }
 
             User userToSend = new User(username, password);
@@ -106,7 +108,11 @@ public class LoginController {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 logoutController = new LogoutController(admin, login, LoginController.this);
-                                logoutController.logout(responseUser.token);
+                                try {
+                                    logoutController.logout(responseUser.token);
+                                } catch (ControllerException e1) {
+                                    e1.printStackTrace();
+                                }
                             }
                         });
                     } else if (responseUser.role.equals(UserRole.USER.getRole())){ // Usuari cambrer
@@ -120,24 +126,31 @@ public class LoginController {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 logoutController = new LogoutController(waiter, login, LoginController.this);
-                                logoutController.logout(responseUser.token);
+                                try {
+                                    logoutController.logout(responseUser.token);
+                                } catch (ControllerException e1) {
+                                    e1.printStackTrace();
+                                }
                             }
                         });
                     } else {
-                        System.out.println("Error de login");
+                        throw new ControllerException("Error de login, tipus d'usuari no vàlid", login);
                     }
                 }
             } else if (conn.getResponseCode() == 401) { //Login invàlid
-                JOptionPane.showMessageDialog(login, "Usuari o contrasenya incorrecte");
+                throw new ControllerException("Usuari o contrasenya incorrecte", login);
             } else { //Error de connexió
-                JOptionPane.showMessageDialog(login, "Error del servidor: " + conn.getResponseCode());
+                throw new ControllerException("Error del servidor", login);
             }
 
             conn.disconnect();
 
-        } catch (Exception ex) {
+        } catch (ControllerException e) {
+            throw e;
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(login, "Error de connexió amb el servidor");
+            throw new ControllerException( "Error de connexió amb el servidor", login);
         }
     }
     

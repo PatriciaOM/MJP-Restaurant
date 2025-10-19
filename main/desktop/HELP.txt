@@ -1,0 +1,19 @@
+Aquest document pretèn explicar la funcionalitat de l'aplicació desktop.
+Per arrancar l'aplicació i que pugui funcionar correctament, s'ha hagut d'haver arrancat el servidor abans. En cas contrari, quan s'intenti accedir apareixerà un avís informatiu.
+IMPORTANT: 
+    Pot aparèixer, el primer cop, un error de compilació Maven quan fem RUN. Això passa perquè primerament s'ha de compilar el projecte maven amb "mvn compile". 
+    Un cop fet, el programa ha de funcionar correctament.
+
+Primerament, es genera una pantalla de login a on s'han d'introduir les credencials de l'usuari.
+Fent clic al botó "Envia" s'emmagatzemen aquestes variables i s'envien al servidor, a on es comprova si són correctes.
+Aquestes credencials s'envien amb un objecte de tipus User, i el servidor retorna un objecte de tipus LoginResponse, amb el rol i el token de sessió de l'usuari.
+
+Els rols permesos son "admin" i "user".
+Si el rol que arriba del servidor es "admin", l'aplicació crea una pantalla de tipus AdminFrame, que permetrà gestionar les taules i els treballadors.
+En cas de que el rol sigui "user", l'aplicació crea una pantalla de tipus WaiterFrame, que permetrà actualitzar les taules (si estan buides o no i quants comensals 
+hi han a cadascuna), fent una petició al servidor i tancar la comanda d'una taula fent clic a la corresponent icona.
+Finalment, cada pantalla compta amb una barra de menú i un botó que ens permet tancar la sessió, retornant a la pantalla de login anterior.
+
+Aquesta pantalla a la que retornem, elimina l'usuari anterior loguejat i esborra les credencials introduïdes als espais d'usuari i contrasenya, per evitar problemes de seguretat.
+
+Per tancar la sessió amb el servidor i tancar per complet l'aplicació, hem de fer clic a la 'X' pròpia del panell.
