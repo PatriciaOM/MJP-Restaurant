@@ -7,8 +7,8 @@ package mjp.server.responseData;
 import mjp.server.dataClasses.UserRole;
 
 /**
- *
- * @author twiki
+ * This class is responsible for holding the return information sent to the endpoint defined in {@link mjp.server.ServerMJP.Controller.Controller#login}
+ * @author Joan Renau Valls
  */
 public class LoginResponse {
     public String token;
@@ -17,6 +17,10 @@ public class LoginResponse {
     public LoginResponse(){
     }
     
+    /**
+     * @param token The sessionToken crated for this session. It will have to be returned on successive calls to endpoints with authentication required.
+     * @param role The role of the user that is being logged in.
+     */
     public LoginResponse(String token, UserRole role){
         this.token = token;
         this.role = role.getRole();

@@ -12,8 +12,9 @@ import jakarta.persistence.Table;
 import mjp.server.dataClasses.UserRole;
 
 /**
- *
- * @author twiki
+ * Class that defines the User data to be stored in the database. 
+ * 
+ * @author Joan Renau Valls
  */
 @Entity
 @Table(name = "ApplicationUser")
@@ -21,8 +22,17 @@ public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
+    /**
+     * The user's username.
+     */
     private String username;
+    /**
+     * The user's password.
+     */
     private String password;
+    /**
+     * The user's role.
+     */
     private UserRole role;
     
     protected User() {};

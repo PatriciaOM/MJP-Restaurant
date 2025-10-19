@@ -5,7 +5,7 @@
 package mjp.server.queryData;
 
 /**
- *
+ * This class is responsible for holding the information sent to the endpoint defined in {@link mjp.server.ServerMJP.Controller.Controller#login}
  * @author Joan Renau Valls
  */
 public class LoginInfo {

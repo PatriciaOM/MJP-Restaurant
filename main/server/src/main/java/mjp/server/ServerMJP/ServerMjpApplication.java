@@ -7,6 +7,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * This class is the entry point for the server application. 
+ * 
+ * By default it listens on port 8080.
+ * The port can be customized with the file /main/server/src/main/resources
+ * 
+ * @author twiki
+ */
 @SpringBootApplication
 public class ServerMjpApplication {
     private static final Logger log = LoggerFactory.getLogger(ServerMjpApplication.class);

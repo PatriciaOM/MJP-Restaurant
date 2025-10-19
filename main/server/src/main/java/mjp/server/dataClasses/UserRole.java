@@ -5,7 +5,7 @@
 package mjp.server.dataClasses;
 
 /**
- *
+ * Data class used to specify the possible roles of a user.
  * @author twiki
  */
 public enum UserRole {
@@ -14,10 +14,15 @@ public enum UserRole {
     
     private final String role;
     
-    UserRole(String role) {
+    private UserRole(String role) {
         this.role = role;
     }
     
+    /**
+     * @param roleName The string representation fo the role to return
+     * @return Returns the corresponding {@link UserRole}
+     * @throws IllegalArgumentException 
+     */
     public static UserRole fromString(String roleName) throws IllegalArgumentException {
         for (UserRole r: UserRole.values()){
             if (r.role.equals(roleName))
@@ -26,10 +31,16 @@ public enum UserRole {
         throw new IllegalArgumentException("Invalid role: " + roleName);
     }
     
+    /**
+     * @return The spring representation of this role.
+     */
     public String getRole() {
         return this.role;
     }
-    
+        
+    /**
+     * @return The spring representation of this role.
+     */
     @Override
     public String toString() {
         return this.getRole();

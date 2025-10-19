@@ -5,8 +5,8 @@
 package mjp.server.queryData;
 
 /**
- *
- * @author twiki
+ * This class is responsible for holding the information sent to the endpoint defined in {@link mjp.server.ServerMJP.Controller.Controller#logout}
+ * @author Joan Renau Valls
  */
 public class LogoutInfo {
     String sessionToken;
