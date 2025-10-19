@@ -1,4 +1,8 @@
 Aquest document pretèn explicar la funcionalitat de l'aplicació desktop.
+Per arrancar l'aplicació i que pugui funcionar correctament, s'ha hagut d'haver arrancat el servidor abans. En cas contrari, quan s'intenti accedir apareixerà un avís informatiu.
+IMPORTANT: 
+    Pot aparèixer, el primer cop, un error de compilació Maven quan fem RUN. Això passa perquè primerament s'ha de compilar el projecte maven amb "mvn compile". 
+    Un cop fet, el programa ha de funcionar correctament.
 
 Primerament, es genera una pantalla de login a on s'han d'introduir les credencials de l'usuari.
 Fent clic al botó "Envia" s'emmagatzemen aquestes variables i s'envien al servidor, a on es comprova si són correctes.
