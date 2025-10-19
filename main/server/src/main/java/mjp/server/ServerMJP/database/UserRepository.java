@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /**
+ * Class responsible for accessing the User table of the database.
  *
  * @author Joan Renau Valls
  */

@@ -4,9 +4,10 @@
  */
 package mjp.server.responseData;
 
+
 /**
- *
- * @author twiki
+ * This class is responsible for holding the return information sent to the endpoint defined in {@link mjp.server.ServerMJP.Controller.Controller#logout}
+ * @author Joan Renau Valls
  */
 public class LogoutResponse {
     public String message;
@@ -14,6 +15,10 @@ public class LogoutResponse {
     public LogoutResponse(){
     }
     
+    /**
+     * 
+     * @param message Returns a log out message on success.
+     */
     public LogoutResponse(String message){
         this.message = message;
     }

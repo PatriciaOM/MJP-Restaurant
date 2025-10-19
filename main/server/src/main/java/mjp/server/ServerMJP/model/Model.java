@@ -20,8 +20,13 @@ import org.springframework.web.server.ResponseStatusException;
 import mjp.server.ServerMJP.database.UserRepository;
 
 /**
+ * This class is responsible for handling the the requests received by the {@link mjp.server.ServerMJP.Controller.Controller}.
+ * 
+ * The Controller is responsible for specifying the endpoints.
+ * Each method of this class responsible of an endpoint expects in an instance of a class of the package {@link mjp.server.queryData}
+ * Each method responsible of an endpoint returns an instance of a class of the package {@link mjp.server.responseData}
  *
- * @author twikituki
+ * @author Joan Renau Valls
  */
 @Component
 public class Model {
@@ -32,8 +37,15 @@ public class Model {
     public Model(UserRepository userRepository){
         this.userRepository = userRepository;
     };
-    
+       
+    /**
+     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#login} endpoint. See {@link Model}
+     * 
+     * @return 
+     */
     public LoginResponse login(LoginInfo info) {
+        if (info.getPassword() == null || info.getUsername() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         String username = info.getUsername();
         String password = info.getPassword();
         System.out.println(String.format("Loggin attempt with username: %s, password: %s.", username, password));        
@@ -46,17 +58,33 @@ public class Model {
         String sessionToken = this.sessionManager.addSession(user);
         return new LoginResponse(sessionToken, user.getRole());
     }
-    
+         
+    /**
+     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#logout} endpoint. See {@link Model}
+     * 
+     * @return 
+     */
     public LogoutResponse logout(LogoutInfo info) {
+        if (info.getSessionToken() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         boolean loggedOut = this.sessionManager.removeSession(info.getSessionToken());
         return new LogoutResponse("Logged out");
     }
-    
+     
+    /**
+     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#sessionStatus} endpoint. See {@link Model}
+     * 
+     * @return 
+     */
     public User getUserByToken(String token){
         return sessionManager.getUserByToken(token);
     }
     
-    
+    /**
+     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#allusers} endpoint. See {@link Model}
+     * 
+     * @return 
+     */
     public String allUsers() {
         ArrayList<User> users = new ArrayList();
         String result = "";
@@ -71,6 +99,10 @@ public class Model {
         
         return "users: " + result;
     }
+    
+    /**
+     * Creates mock data for debug and development purposes.
+     */
     public void mockData() {
         User user;
         
