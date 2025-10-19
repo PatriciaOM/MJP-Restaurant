@@ -15,8 +15,8 @@ public class User {
 
     /**
      * Constructor principal amb nom i contrasenya
-     * @param username
-     * @param password
+     * @param username nom de l'usuari
+     * @param password contrasenya de l'usuari
      */
     public User(String username, String password) {
         this.username = username;
@@ -33,7 +33,7 @@ public class User {
 
     /**
      * Inicialitza el nom de l'usuari
-     * @param username
+     * @param username nom de l'usuari
      */
     public void setUserame(String username) {
         this.username = username;
@@ -49,7 +49,7 @@ public class User {
 
     /**
      * Inicialitza la contrasenya
-     * @param password
+     * @param password contrasenya de l'usuari
      */
     public void setPassword(String password) {
         this.password = password;
