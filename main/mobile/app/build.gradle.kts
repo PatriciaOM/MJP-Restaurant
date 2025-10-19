@@ -27,21 +27,31 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+    }
+
+    // ✅ CONFIGURACIÓN CORREGIDA PARA TESTING
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
     }
 }
 
 dependencies {
-
-    // AndroidX y Compose
+    // ✅ ANDROIDX Y COMPOSE
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -52,22 +62,46 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation("androidx.navigation:navigation-compose:2.7.3")
 
-    // ViewModel + Coroutines
+    // ✅ VIEWMODEL + COROUTINES
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
-    // Retrofit + OkHttp (versiones compatibles)
+    // ✅ RETROFIT + OKHTTP
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    testImplementation(libs.junit)
+    // ✅✅✅ DEPENDENCIAS DE TESTING UNITARIO - SIMPLIFICADAS Y FUNCIONALES
+
+    // JUnit básico (ESENCIAL)
+    testImplementation("junit:junit:4.13.2")
+
+    // Kotlin test para JUnit
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
+
+    // Coroutines testing (IMPORTANTE)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+
+    // AndroidX Test para ViewModel/LiveData
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    // Truth para assertions
+    testImplementation("com.google.truth:truth:1.1.3")
+
+    // MockK (mejor que Mockito para Kotlin)
+    testImplementation("io.mockk:mockk:1.13.5")
+
+    // ✅✅✅ DEPENDENCIAS DE ANDROID TEST
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    // Android Test con corrutinas
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+
+    // ✅ DEBUG
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
 }
