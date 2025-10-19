@@ -10,6 +10,7 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.LogoutInfo;
 import com.mjprestaurant.view.*;
 
@@ -43,7 +44,11 @@ public class LogoutController {
         userWindow.getBtnLogout().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                logout(userWindow.getUsername());
+                try {
+                    logout(userWindow.getUsername());
+                } catch (ControllerException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
@@ -55,8 +60,9 @@ public class LogoutController {
      * diferent, esborra els textos que hi havien al TextField i el PasswordField i torna a mostrar 
      * la pantalla de login
      * @param token token de sessió
+     * @throws ControllerException 
      */
-    public void logout(String token) {
+    public void logout(String token) throws ControllerException {
         try {
             System.out.println(token);
             // Creem un objecte de tipus LogoutInfo que s'enviarà al server amb el token de sessió
@@ -79,8 +85,7 @@ public class LogoutController {
             if (conn.getResponseCode() == 200) {
                 JOptionPane.showMessageDialog(null, "Sessió tancada correctament");
             } else {
-
-                JOptionPane.showMessageDialog(null, "Error en tancar la sessió: " + conn.getResponseCode());
+                throw new ControllerException( "Error en tancar la sessió: ", null);
             }
 
             conn.disconnect();
@@ -94,7 +99,7 @@ public class LogoutController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error en desconnectar del servidor");
+            throw new ControllerException("Error en desconnectar del servidor", null);
         }
     }
 
