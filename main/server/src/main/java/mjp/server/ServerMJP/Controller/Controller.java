@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import mjp.server.ServerMJP.model.Model;
 import mjp.server.ServerMJP.database.UserRepository;
+import mjp.server.queryData.TableStatusInfo;
+import mjp.server.responseData.TableStatusResponse;
 
 
 
@@ -75,7 +77,7 @@ public class Controller {
     @PostMapping("login")
     public String login(@RequestBody LoginInfo loginInfo){ 
         LoginResponse response = this.model.login(loginInfo);
-        String responseJSON = this.gson.toJson(response);
+        String responseJSON = this.gson.toJson(response); // TODO Delete
         return this.gson.toJson(response);
     }   
   
@@ -89,6 +91,22 @@ public class Controller {
         LogoutResponse response = this.model.logout(logoutInfo);
         return this.gson.toJson(response);
     }
+            
+    /**
+     *  This endpoint returns a list of all users in the database. It is just for development purposes.
+     * @return returns a list with all the users.
+     */
+    @PostMapping("table-status")
+    public String tableStatus(@RequestBody TableStatusInfo info) { 
+        TableStatusResponse tableStatus = this.model.tableStatus(info);
+        return this.gson.toJson(tableStatus);
+    }
+    
+    
+    
+    
+    
+    
     
     /**
      * This endpoint receives a session token and returns the user associated with it. It is just for development purposes.
@@ -102,21 +120,12 @@ public class Controller {
             return "null";
         return this.gson.toJson(user);
     }
-            
-    /**
-     *  This endpoint returns a list of all users in the database. It is just for development purposes.
-     * @return returns a list with all the users.
-     */
-    @GetMapping("allusers")
-    public String allusers() { 
-        String users = this.model.allUsers();
-//        log.info(users);
-        return users;
-    }
-    
+
     @GetMapping("hello")
     public String hello() { 
         String result = "hello";
         return result;
     }
+    
+    
 }

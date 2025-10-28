@@ -18,6 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import mjp.server.ServerMJP.database.UserRepository;
+import mjp.server.queryData.TableStatusInfo;
+import mjp.server.responseData.TableStatusResponse;
+import mjp.server.responseData.TableStatusResponseElement;
 
 /**
  * This class is responsible for handling the the requests received by the {@link mjp.server.ServerMJP.Controller.Controller}.
@@ -98,6 +101,17 @@ public class Model {
         }
         
         return "users: " + result;
+    }
+    
+    public TableStatusResponse tableStatus(TableStatusInfo info) {
+        if (info.getTableId() != null)
+            throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
+        TableStatusResponse response = new TableStatusResponse();
+        response.addTable(new TableStatusResponseElement(1, 6, 4));
+        response.addTable(new TableStatusResponseElement(2, 4, 0));
+        response.addTable(new TableStatusResponseElement(3, 2, 4));
+        response.addTable(new TableStatusResponseElement(4, 6, 0));
+        return response;
     }
     
     /**
