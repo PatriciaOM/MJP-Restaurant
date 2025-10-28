@@ -12,7 +12,7 @@ public class LoginInfo {
     String username;
     String password;
     LoginInfo(){};
-    LoginInfo(String username, String password){
+    public LoginInfo(String username, String password){
         this.username = username;
         this.password = password;
     }

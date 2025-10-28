@@ -113,4 +113,10 @@ public class Controller {
 //        log.info(users);
         return users;
     }
+    
+    @GetMapping("hello")
+    public String hello() { 
+        String result = "hello";
+        return result;
+    }
 }

@@ -25,4 +25,8 @@ public class LoginResponse {
         this.token = token;
         this.role = role.getRole();
     }   
+    
+    public String toString(){
+        return (String.format("{token: %s, role: %s}", this.token, this.role));
+    }
 }
