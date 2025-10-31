@@ -3,6 +3,8 @@ package com.example.mjprestaurant.network
 import com.example.mjprestaurant.model.LoginRequest
 import com.example.mjprestaurant.model.LoginResponse
 import com.example.mjprestaurant.model.LogoutRequest
+import com.example.mjprestaurant.model.TableStatusRequest
+import com.example.mjprestaurant.model.TableStatusResponse
 import com.example.mjprestaurant.model.User
 import retrofit2.Response
 import retrofit2.http.*
@@ -43,5 +45,19 @@ interface  ApiService {
      */
     @POST("logout")
     suspend fun logout(@Body body: LogoutRequest): Response<Unit>
+
+    /**
+     * Endpoint per a obtenir l'estat de les taules del restaurant.
+     *
+     * @param body Objecte TableStatusRequest amb token de sessió
+     * @return Response amb TableStatusResponse que conté la llista de Taules
+     *
+     * @sample TableStatusRequest("session_token_123")
+     * @sample TableStatusResponse(taules =[TableStatus(1,6,4), TableStatus(2,4,0)])
+     *
+     * @throws IOException En cas de problema de xarxa
+     */
+    @POST("table-status")
+    suspend fun getTableStatus(@Body body: TableStatusRequest): Response<TableStatusResponse>
 
 }

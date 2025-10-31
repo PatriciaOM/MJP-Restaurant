@@ -4,7 +4,12 @@ import android.util.Log
 import com.example.mjprestaurant.model.LoginRequest
 import com.example.mjprestaurant.model.LoginResponse
 import com.example.mjprestaurant.model.LogoutRequest
+import com.example.mjprestaurant.model.TableStatusRequest
+import com.example.mjprestaurant.model.TableStatusResponse
+import com.google.gson.Gson
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
+
 
 /**
  * Repositori d'autenticació que actua com intermediari entre el ViewModel i l'API.
@@ -52,5 +57,20 @@ class AuthRepository {
     suspend fun logout(token: String): Response<Unit> {
         val request = LogoutRequest(sessionToken = token)
         return RetrofitInstance.api.logout(request)
+    }
+
+    /**
+     * Obté l'estat actual de totes les taules del restaurant.
+     *
+     * @param token Token de sessió de l'usuari autenticat
+     * @return Response amb la llista d'estats
+     *
+     * @throws Exception Si hi ha problemes de xarxa o el servidor no respon
+     *
+     * @sample getTableStatus("session_token_123")
+     */
+    suspend fun getTableStatus(token: String): Response<TableStatusResponse> {
+        val request = TableStatusRequest(sessionToken = token)
+        return RetrofitInstance.api.getTableStatus(request)
     }
 }

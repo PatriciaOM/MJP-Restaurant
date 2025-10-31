@@ -10,34 +10,38 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mjprestaurant.ui.navigation.Screen
 import com.example.mjprestaurant.ui.screens.LoginScreen
 import com.example.mjprestaurant.ui.screens.PlaceholderScreen
+import com.example.mjprestaurant.ui.screens.TablesScreen
 import com.example.mjprestaurant.ui.theme.MJPRestaurantTheme
 import com.example.mjprestaurant.viewmodel.LoginViewModel
 
 /**
- * Activitat principal de l'aplicació
+ * Activitat principal de l'aplicació MJPRestaurant.
  *
  * Aquesta activitat s'encarrega de:
- *  - Configurar el tema de l'aplicació.
- *  - Inicialitzar el sistema de navegació.
- *  - Gestionar el cicle de vida dels ViewModels.
- *  - Coordinar la navegació entre pantalles.
+ * - Configurar el tema de l'aplicació
+ * - Inicialitzar el sistema de navegació
+ * - Gestionar el cicle de vida dels ViewModels
+ * - Coordinar la navegació entre pantalles
  *
- *  @see LoginScreen
- *  @see PlaceholderScreen
- *  @see LoginViewModel
+ * @see LoginScreen
+ * @see TablesScreen
+ * @see PlaceholderScreen
+ * @see LoginViewModel
  *
- *  @author Martin Muñoz Pozuelo
+ * @author Martin Muñoz Pozuelo
+ * @since 1.0
  */
 class MainActivity : ComponentActivity() {
 
     /**
      * Mètode trucat quan l'activitat és creada.
      *
-     * @param savedInstancestate Estat previ de l'activitat si existeix.
+     * @param savedInstanceState Estat previ de l'activitat si existeix
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Configura el contingut composable de l'activitat.
+
+        // Configura el contingut composable de l'activitat
         setContent {
             MJPRestaurantTheme {
                 // Controlador de navegació
@@ -45,28 +49,48 @@ class MainActivity : ComponentActivity() {
                 // ViewModel compartit entre pantalles
                 val loginViewModel: LoginViewModel = viewModel()
 
-                // Configuració del graf de navegació.
+                // Configuració del graf de navegació
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.Login.route) {
-                    //Definició pantalla de login
+                    startDestination = Screen.Login.route
+                ) {
+                    // Definició de la pantalla de login
                     composable(Screen.Login.route) {
-                        LoginScreen(viewModel = loginViewModel, onLoginSuccess = {
-                            // Navega a pantalla principal i neteja backstack
-                            navController.navigate(Screen.Placeholder.route) {
-                                popUpTo(Screen.Login.route) { inclusive = true }
+                        LoginScreen(
+                            viewModel = loginViewModel,
+                            onLoginSuccess = {
+                                // Navega a pantalla de taules i neteja backstack
+                                navController.navigate(Screen.Tables.route) {
+                                    popUpTo(Screen.Login.route) { inclusive = true }
+                                }
                             }
-                        })
+                        )
                     }
 
-                    // Definició de la pantalla principal temporal.
-                    composable(Screen.Placeholder.route) {
-                        PlaceholderScreen(viewModel = loginViewModel, onLogout = {
-                            // Navega a pantalla de login i neteja backstack
-                            navController.navigate(Screen.Login.route) {
-                                popUpTo(Screen.Placeholder.route) { inclusive = true }
+                    // Definició de la pantalla de taules
+                    composable(Screen.Tables.route) {
+                        TablesScreen(
+                            loginViewModel = loginViewModel,
+                            onLogout = {
+                                loginViewModel.onLogoutClick()
+                                navController.navigate(Screen.Login.route) {
+                                    popUpTo(Screen.Tables.route) { inclusive = true }
+                                }
                             }
-                        })
+                        )
+                    }
+
+                    // Definició de la pantalla principal temporal
+                    composable(Screen.Placeholder.route) {
+                        PlaceholderScreen(
+                            viewModel = loginViewModel,
+                            onLogout = {
+                                // Navega a pantalla de login i neteja backstack
+                                navController.navigate(Screen.Login.route) {
+                                    popUpTo(Screen.Placeholder.route) { inclusive = true }
+                                }
+                            }
+                        )
                     }
                 }
             }

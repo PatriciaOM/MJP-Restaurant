@@ -29,6 +29,18 @@ sealed class Screen(val route: String) {
     object Login : Screen("login")
 
     /**
+     * Pantalla de  llistat de taules.
+     *
+     * Mostra totes les taules del restaurant amb el seu estat actual:
+     * - Taules lliures i ocupades
+     * - Capacitat i comensals actuals
+     * - Permet seleccionar taules per a gestionar-les
+     *
+     * @see TablesScreen
+     */
+    object Tables : Screen("tables")
+
+    /**
      * Pantalla principal temporal (placeholder).
      *
      * Pantalla de prova que:
