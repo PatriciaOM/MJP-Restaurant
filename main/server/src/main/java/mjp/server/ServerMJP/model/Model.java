@@ -33,12 +33,14 @@ import mjp.server.responseData.TableStatusResponseElement;
  */
 @Component
 public class Model {
-    private SessionManager sessionManager= new SessionManager();
+//    private SessionManager sessionManager = new SessionManager();
+    private SessionManager sessionManager;
     private UserRepository userRepository;
     Gson gson = new Gson();
     
-    public Model(UserRepository userRepository){
+    public Model(UserRepository userRepository, SessionManager sessionManager){
         this.userRepository = userRepository;
+        this.sessionManager = sessionManager;
     };
        
     /**
@@ -102,17 +104,7 @@ public class Model {
         
         return "users: " + result;
     }
-    
-    public TableStatusResponse tableStatus(TableStatusInfo info) {
-        if (info.getTableId() != null)
-            throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
-        TableStatusResponse response = new TableStatusResponse();
-        response.addTable(new TableStatusResponseElement(1, 6, 4));
-        response.addTable(new TableStatusResponseElement(2, 4, 0));
-        response.addTable(new TableStatusResponseElement(3, 2, 4));
-        response.addTable(new TableStatusResponseElement(4, 6, 0));
-        return response;
-    }
+
     
     /**
      * Creates mock data for debug and development purposes.

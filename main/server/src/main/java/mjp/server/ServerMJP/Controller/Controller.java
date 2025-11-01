@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import mjp.server.ServerMJP.model.Model;
 import mjp.server.ServerMJP.database.UserRepository;
+import mjp.server.ServerMJP.model.TableManager;
 import mjp.server.queryData.TableStatusInfo;
 import mjp.server.responseData.TableStatusResponse;
 
@@ -54,6 +55,9 @@ public class Controller {
      * This object is responsible for the logic of handling the the requests.
      */
     private Model model;
+    
+    final TableManager tableManager;
+    
     /**
      * Used for login purposes
      */
@@ -61,11 +65,13 @@ public class Controller {
     
     public Controller(
         Model model,
+        TableManager tableManager,
         UserRepository aplicationRepository
     ){
         this.gson = new Gson();
         this.model = model;
         this.model.mockData();
+        this.tableManager = tableManager;
     }
     
     /**
@@ -98,7 +104,7 @@ public class Controller {
      */
     @PostMapping("table-status")
     public String tableStatus(@RequestBody TableStatusInfo info) { 
-        TableStatusResponse tableStatus = this.model.tableStatus(info);
+        TableStatusResponse tableStatus = this.tableManager.tableStatus(info);
         return this.gson.toJson(tableStatus);
     }
     
@@ -115,6 +121,7 @@ public class Controller {
      */
     @GetMapping("sessionstatus")
     public String sessionStatus(@RequestParam String sessionToken) {
+        this.log.info("Access session status with sessionToken: " + sessionToken);
         User user = this.model.getUserByToken(sessionToken);
         if (user == null)
             return "null";
@@ -123,6 +130,7 @@ public class Controller {
 
     @GetMapping("hello")
     public String hello() { 
+        this.log.info("Someone says hello :)");
         String result = "hello";
         return result;
     }

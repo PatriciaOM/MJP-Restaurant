@@ -51,7 +51,7 @@ public class User {
         );
     }
     
-    public Long getid() {
+    public Long getId() {
         return id;
     }
     
