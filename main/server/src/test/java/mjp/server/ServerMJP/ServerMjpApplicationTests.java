@@ -183,7 +183,6 @@ class ServerMjpApplicationTests {
         return response;
         
     }
-    
        
     void printTestName(String name) {
         System.out.println(CYAN + "::: TEST ::: "+ name + RESET);

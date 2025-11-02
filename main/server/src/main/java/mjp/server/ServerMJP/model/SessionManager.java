@@ -4,6 +4,7 @@
  */
 package mjp.server.ServerMJP.model;
 
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import mjp.server.ServerMJP.database.User;
@@ -28,6 +29,9 @@ public class SessionManager {
    
     
     public SessionManager() {}
+    
+    
+
     
     /**
      * Creates a new session for the user provided. 
@@ -64,8 +68,13 @@ public class SessionManager {
     }
     
     public boolean validateUserToken(String sessionToken)  {
+        System.out.println(">>>Validating user for token: " + sessionToken + "<<<");
         User user = this.getUserByToken(sessionToken);
-        return user == null;
+        if (user == null)
+            System.out.println("User is null");
+        else 
+            System.out.println((new Gson()).toJson(user));
+        return user != null;
     }
     
     public boolean validateAdminToken(String sessionToken) {

@@ -4,6 +4,7 @@
  */
 package mjp.server.ServerMJP.database;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class User {
     /**
      * The user's username.
      */
+    @Column(unique = true, nullable = false)
     private String username;
     /**
      * The user's password.
@@ -55,7 +57,7 @@ public class User {
         return id;
     }
     
-    public String getFirstUsername() {
+    public String getUsername() {
         return username;
     }
     
