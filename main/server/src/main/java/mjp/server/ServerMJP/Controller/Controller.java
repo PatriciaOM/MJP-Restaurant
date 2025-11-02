@@ -37,10 +37,12 @@ import mjp.server.queryData.TableStatusInfo;
 import mjp.server.queryData.user.UserCreateInfo;
 import mjp.server.queryData.user.UserDeleteInfo;
 import mjp.server.queryData.user.UserGetInfo;
+import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.TableStatusResponse;
 import mjp.server.responseData.user.UserCreateResponse;
 import mjp.server.responseData.user.UserDeleteResponse;
 import mjp.server.responseData.user.UserGetResponse;
+import mjp.server.responseData.user.UserUpdateResponse;
 
 
 
@@ -130,6 +132,15 @@ public class Controller {
         System.out.println(String.format("POST user/delete (%s)", this.gson.toJson(info)));
         UserDeleteResponse response = this.userManager.delete(info);
         return this.gson.toJson(response);
+    }
+    
+    @PostMapping("user/update")
+    public String UserUpdate(@RequestBody UserUpdateInfo info){
+        System.out.println(String.format("POST user/update (%s)", this.gson.toJson(info)));
+        
+        UserUpdateResponse response = this.userManager.update(info);
+        return this.gson.toJson(response);
+        
     }
     
     

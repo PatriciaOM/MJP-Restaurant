@@ -10,33 +10,48 @@ import mjp.server.ServerMJP.database.User;
  *
  * @author twiki
  */
-public class UserCreateResponse {
+public class UserUpdateResponse {
     public String message="success";
     public User user;
     
-    public UserCreateResponse(){
+    public UserUpdateResponse(){
+    }
+    
+    
+    public UserUpdateResponse(String message, User user){
+        this.message = message;
+        this.user = user;
     }
     
     /**
      * 
      * @param message Returns a log out message on success.
      */
-    public UserCreateResponse(String message, User user){
+    public UserUpdateResponse(String message){
         this.message = message;
+    }
+    
+    public UserUpdateResponse(User user){
         this.user = user;
     }
     
-    public UserCreateResponse(User user){
-        this.user = user;
+    
+    public void setMessage(String value) {
+        this.message = value;
     }
     
-    public User getUser(){
+    public String getMessage() {
+        return this.message;
+    }
+    
+    public void setUser(User value) {
+        this.user = value;
+    }
+    
+    public User getUser() {
         return this.user;
     }
     
-    public void setUser(User value){
-        this.user = value;
-    }
     
     
 }

@@ -44,6 +44,13 @@ public class User {
         this.password = password;
         this.role = role;
     }
+        
+    public User(long id, String username, String password, UserRole role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
     
     @Override    
     public String toString() {

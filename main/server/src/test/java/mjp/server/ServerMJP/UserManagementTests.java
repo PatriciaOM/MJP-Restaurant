@@ -13,7 +13,9 @@ import mjp.server.queryData.LoginInfo;
 import mjp.server.queryData.user.UserCreateInfo;
 import mjp.server.queryData.user.UserDeleteInfo;
 import mjp.server.queryData.user.UserGetInfo;
+import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.LoginResponse;
+import mjp.server.responseData.user.UserCreateResponse;
 import mjp.server.responseData.user.UserDeleteResponse;
 import mjp.server.responseData.user.UserGetResponse;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,6 +51,9 @@ public class UserManagementTests extends TestDefaultClass {
     Gson gson = new Gson();
     private static String userSessionToken;
     private static String adminSessionToken;
+    private static String newUserUsername = "Koy";
+    private static String newUserPassword = "Yok";
+    private static long newUserId;
 
     @LocalServerPort
     private int port;
@@ -135,6 +140,10 @@ public class UserManagementTests extends TestDefaultClass {
         UserCreateInfo request = new UserCreateInfo(adminSessionToken, user);
         ResponseEntity<String> response = makePostRequest(url, request);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        UserCreateResponse responseObject = this.gson.fromJson(response.getBody(), UserCreateResponse.class);
+        assertNotNull(responseObject.getUser().getId());
+        newUserId = responseObject.getUser().getId();
+        assertThat(responseObject.getUser().getUsername()).isEqualTo("Yok");
         
         response = makePostRequest(url, request);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
@@ -213,6 +222,67 @@ public class UserManagementTests extends TestDefaultClass {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     
+    @Test
+    @Order(1000)
+    void UpdateUserWithoutSessionToken() {
+        printTestName("UpdateUserWithoutSessionToken");
+        String url = makeUrl("/user/update");
+        User user = new User("Fake", "Faker", UserRole.USER);
+        UserUpdateInfo request = new UserUpdateInfo(null, user);
+        ResponseEntity<String> response = makePostRequest(url, request);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    
+    @Test
+    @Order(1100)
+    void UpdateUserWithoutUserInfo() {
+        printTestName("UpdateUserWithoutUserInfo");
+        String url = makeUrl("/user/update");
+        User user = new User("Fake", "Faker", UserRole.USER);
+        UserUpdateInfo request = new UserUpdateInfo(adminSessionToken, null);
+        ResponseEntity<String> response = makePostRequest(url, request);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+        
+    @Test
+    @Order(1200)
+    void UpdateUserWithInvalidSessionToken() {
+        printTestName("UpdateUserWithInvalidSessionToken");
+        String url = makeUrl("/user/update");
+        User user = new User("Fake", "Faker", UserRole.USER);
+        UserUpdateInfo request = new UserUpdateInfo("invlid_session_token", user);
+        ResponseEntity<String> response = makePostRequest(url, request);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+       
+    @Test
+    @Order(1300)
+    void UpdateUserTest() {
+        printTestName("UpdateUserTest");
+        String url = makeUrl("/user/update");
+        User user = new User(newUserId, "YokUpdated", "KoyUpdated", UserRole.USER);
+        UserUpdateInfo request = new UserUpdateInfo(adminSessionToken, user);
+        ResponseEntity<String> response = makePostRequest(url, request);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        
+//        response = makePostRequest(url, request);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
+    }
+//           
+//    @Test
+//    @Order(5000)
+//    void CreateUserAsNormalUserTest() {
+//        printTestName("CreateUserAsNormalUserTest");
+//        String url = makeUrl("/user/create");
+//        User user = new User("Will", "Fail", UserRole.USER);
+//        UserUpdateInfo request = new UserUpdateInfo(userSessionToken, user);
+//        ResponseEntity<String> response = makePostRequest(url, request);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+//    }
+            
+            
+            
+            
     
     
     

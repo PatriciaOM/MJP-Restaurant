@@ -12,9 +12,11 @@ import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.user.UserCreateInfo;
 import mjp.server.queryData.user.UserDeleteInfo;
 import mjp.server.queryData.user.UserGetInfo;
+import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.user.UserCreateResponse;
 import mjp.server.responseData.user.UserDeleteResponse;
 import mjp.server.responseData.user.UserGetResponse;
+import mjp.server.responseData.user.UserUpdateResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,7 +51,7 @@ public class UserManager {
         if (!this.userRepository.findByUsername(info.getUser().getUsername()).isEmpty())
             throw new ResponseStatusException(HttpStatus.LOCKED);
         this.userRepository.save(info.getUser());
-        return new UserCreateResponse();
+        return new UserCreateResponse(info.getUser());
     }
     
     public UserGetResponse get(UserGetInfo info){
@@ -77,6 +79,21 @@ public class UserManager {
         this.userRepository.delete(users.get(0));
         return new UserDeleteResponse();
 //        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
+    }
+    
+    public UserUpdateResponse update(UserUpdateInfo info) {
+        System.out.println("Updating usere with credential sessionToken: " + info.getSessionToken());
+        System.out.println("The user is: " + info.getUser());
+        if (info.getSessionToken() == null || info.getUser() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST );
+        if (!this.sessionManager.validateAdminToken(info.getSessionToken()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED );
+        if (this.userRepository.findById(info.getUser().getId()).isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        this.userRepository.save(info.getUser());
+        return new UserUpdateResponse(info.getUser());
+//        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
+        
     }
     
       public List<User> allUsers() {
