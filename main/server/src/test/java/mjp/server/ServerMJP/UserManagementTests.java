@@ -136,14 +136,14 @@ public class UserManagementTests extends TestDefaultClass {
     void CreateUserTwiceTest() {
         printTestName("CreateUserTwiceTest");
         String url = makeUrl("/user/create");
-        User user = new User("Yok", "Koy", UserRole.USER);
+        User user = new User(newUserUsername, newUserPassword, UserRole.USER);
         UserCreateInfo request = new UserCreateInfo(adminSessionToken, user);
         ResponseEntity<String> response = makePostRequest(url, request);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         UserCreateResponse responseObject = this.gson.fromJson(response.getBody(), UserCreateResponse.class);
         assertNotNull(responseObject.getUser().getId());
         newUserId = responseObject.getUser().getId();
-        assertThat(responseObject.getUser().getUsername()).isEqualTo("Yok");
+        assertThat(responseObject.getUser().getUsername()).isEqualTo(newUserUsername);
         
         response = makePostRequest(url, request);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
@@ -191,7 +191,7 @@ public class UserManagementTests extends TestDefaultClass {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         UserGetResponse usersList = gson.fromJson(response.getBody(), UserGetResponse.class);
         assertThat(usersList.getUser().size()).isEqualTo(3);
-        ArrayList<String> CurrentUsers = new ArrayList(List.of("Twiki", "Ping", "Yok"));
+        ArrayList<String> CurrentUsers = new ArrayList(List.of("Twiki", "Ping", newUserUsername));
         for (User user : usersList.getUser()){
             assertThat(CurrentUsers.remove(user.getUsername())).isEqualTo(true);
         }
@@ -203,12 +203,12 @@ public class UserManagementTests extends TestDefaultClass {
         printTestName("getOneUser");
         
         String url = makeUrl("/user/get");
-        UserGetInfo requestInfo = new UserGetInfo(userSessionToken, "Yok");
+        UserGetInfo requestInfo = new UserGetInfo(userSessionToken, newUserUsername);
         ResponseEntity<String> response = makePostRequest(url, requestInfo);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         UserGetResponse usersList = this.gson.fromJson(response.getBody(), UserGetResponse.class);
         assertThat(usersList.getUser().size()).isEqualTo(1);
-        assertThat(usersList.getUser().get(0).getUsername()).isEqualTo("Yok");
+        assertThat(usersList.getUser().get(0).getUsername()).isEqualTo(newUserUsername);
     }
       
     @Test
@@ -260,39 +260,32 @@ public class UserManagementTests extends TestDefaultClass {
     void UpdateUserTest() {
         printTestName("UpdateUserTest");
         String url = makeUrl("/user/update");
-        User user = new User(newUserId, "YokUpdated", "KoyUpdated", UserRole.USER);
+        newUserUsername = "YokUpdated";
+        newUserPassword = "KoyUpdated";
+        User user = new User(newUserId, newUserUsername, newUserPassword, UserRole.USER);
         UserUpdateInfo request = new UserUpdateInfo(adminSessionToken, user);
         ResponseEntity<String> response = makePostRequest(url, request);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        
-//        response = makePostRequest(url, request);
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
     }
-//           
-//    @Test
-//    @Order(5000)
-//    void CreateUserAsNormalUserTest() {
-//        printTestName("CreateUserAsNormalUserTest");
-//        String url = makeUrl("/user/create");
-//        User user = new User("Will", "Fail", UserRole.USER);
-//        UserUpdateInfo request = new UserUpdateInfo(userSessionToken, user);
-//        ResponseEntity<String> response = makePostRequest(url, request);
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-//    }
-            
-            
-            
-            
-    
-    
-    
+           
+    @Test
+    @Order(1400)
+    void UpdateUserAsNormalUserTest() {
+        printTestName("UpdateUserAsNormalUserTest");
+        String url = makeUrl("/user/create");
+        User user = new User("Will", "Fail", UserRole.USER);
+        UserUpdateInfo request = new UserUpdateInfo(userSessionToken, user);
+        ResponseEntity<String> response = makePostRequest(url, request);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+             
     @Test
     @Order(1900)
     void deteteUserWitNoSessionToken(){
         printTestName("deteteUserWitNoSessionToken");
         
         String url = makeUrl("/user/delete");
-        UserGetInfo requestInfo = new UserGetInfo(null, "Yok");
+        UserGetInfo requestInfo = new UserGetInfo(null, newUserUsername);
         ResponseEntity<String> response = makePostRequest(url, requestInfo);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -303,7 +296,7 @@ public class UserManagementTests extends TestDefaultClass {
         printTestName("deleteUser");
         
         String url = makeUrl("/user/delete");
-        UserGetInfo requestInfo = new UserGetInfo(userSessionToken, "Yok");
+        UserGetInfo requestInfo = new UserGetInfo(userSessionToken, newUserUsername);
         ResponseEntity<String> response = makePostRequest(url, requestInfo);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
@@ -324,7 +317,7 @@ public class UserManagementTests extends TestDefaultClass {
     @Order(2200)
     void deleteExistingUser() {
         printTestName("GetNoExisitngUser");
-        String usernameToDelete = "Yok";
+        String usernameToDelete = newUserUsername;
         
         String url = makeUrl("/user/delete");
         UserDeleteInfo requestInfo = new UserDeleteInfo(adminSessionToken, usernameToDelete);
