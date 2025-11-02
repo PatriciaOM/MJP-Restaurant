@@ -19,4 +19,10 @@ public class ControllerException extends Exception {
         JOptionPane.showMessageDialog(frame, message);
         return;
     }
+
+    public ControllerException(String message) {
+        super(message);
+        System.out.println(message);
+        return;
+    }
 }
