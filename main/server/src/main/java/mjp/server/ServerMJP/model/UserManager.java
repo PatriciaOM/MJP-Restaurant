@@ -4,11 +4,14 @@
  */
 package mjp.server.ServerMJP.model;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.ServerMJP.database.UserRepository;
 import mjp.server.dataClasses.UserRole;
+import mjp.server.dataClasses.UserShift;
 import mjp.server.queryData.user.UserCreateInfo;
 import mjp.server.queryData.user.UserDeleteInfo;
 import mjp.server.queryData.user.UserGetInfo;
@@ -20,6 +23,8 @@ import mjp.server.responseData.user.UserUpdateResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import java.time.LocalDate;
+
 
 /**
  *
@@ -88,8 +93,12 @@ public class UserManager {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST );
         if (!this.sessionManager.validateAdminToken(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED );
-        if (this.userRepository.findById(info.getUser().getId()).isEmpty())
+        if (
+            info.getUser().getId() == null ||
+            this.userRepository.findById(info.getUser().getId()).isEmpty()
+        ) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
         this.userRepository.save(info.getUser());
         return new UserUpdateResponse(info.getUser());
 //        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
@@ -127,10 +136,11 @@ public class UserManager {
      */
     public void mockData() {
         User user;
-        user = new User("Twiki", "Tuki", UserRole.USER);
+        user = new User("Twiki", "Tuki", UserRole.USER, "Twiki", "Tuki", UserShift.MORNING, LocalDate.of(2017, Month.JANUARY, 9), LocalDate.of(2017, Month.MAY, 4), "46257891I");
         this.userRepository.save(user);
-        user = new User("Ping", "Pong", UserRole.ADMIN);
+        user = new User("Ping", "Pong", UserRole.ADMIN, "Bota", "Rebota", UserShift.AFTERNOON, LocalDate.of(2017, Month.JANUARY, 9), LocalDate.of(2017, Month.OCTOBER, 4),"86657911I");
         this.userRepository.save(user);
     }
+
     
 }

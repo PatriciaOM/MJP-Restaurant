@@ -70,10 +70,6 @@ public class SessionManager {
     public boolean validateUserToken(String sessionToken)  {
         System.out.println(">>>Validating user for token: " + sessionToken + "<<<");
         User user = this.getUserByToken(sessionToken);
-        if (user == null)
-            System.out.println("User is null");
-        else 
-            System.out.println((new Gson()).toJson(user));
         return user != null;
     }
     

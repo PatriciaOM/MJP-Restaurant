@@ -4,6 +4,7 @@
  */
 package mjp.server.queryData.user;
 
+import com.google.gson.Gson;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 

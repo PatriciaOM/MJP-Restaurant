@@ -8,6 +8,8 @@ package mjp.server.ServerMJP.Controller;
 import mjp.server.ServerMJP.model.SessionManager;
 import mjp.server.responseData.UserResponse;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import mjp.server.ServerMJP.ServerMjpApplication;
@@ -43,6 +45,7 @@ import mjp.server.responseData.user.UserCreateResponse;
 import mjp.server.responseData.user.UserDeleteResponse;
 import mjp.server.responseData.user.UserGetResponse;
 import mjp.server.responseData.user.UserUpdateResponse;
+import mjp.server.uitls.serializers.LocalDateAdapter;
 
 
 
@@ -59,7 +62,8 @@ public class Controller {
      * This instances is mainly used for storing into objects the jsons received on the requests.
      * And storing the response data into json objects ready to be sent.
      */
-    private Gson gson;
+//    private Gson gson;
+    private Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();
     /**
      * This object is responsible for the logic of handling the the requests.
      */
@@ -79,7 +83,7 @@ public class Controller {
         TableManager tableManager,
         UserManager userManager
     ){
-        this.gson = new Gson();
+//        this.gson = new Gson();
         this.model = model;
         this.tableManager = tableManager;
         this.userManager = userManager;

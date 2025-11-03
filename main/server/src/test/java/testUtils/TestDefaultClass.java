@@ -5,6 +5,9 @@
 package testUtils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDate;
+import mjp.server.uitls.serializers.LocalDateAdapter;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +23,7 @@ public abstract class TestDefaultClass {
     private static final String RESET = "\033[0m";
     private static final String CYAN = "\033[36m";
        
-    Gson gson = new Gson();
+    private Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();
     private static String sessionToken = "";
     
     String PROTOCOL = "http";
@@ -39,8 +42,9 @@ public abstract class TestDefaultClass {
     public ResponseEntity<String> makePostRequest(String url, String jsonBody){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        
+        System.out.println("Sennding: " + jsonBody);
         HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
+        System.out.println("The send body is: " + request.getBody());
         
         ResponseEntity<String> response = getRestTemplate().postForEntity(url, request, String.class);
         return response;
