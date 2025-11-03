@@ -217,11 +217,25 @@ public class UserManagementTests extends TestDefaultClass {
     
     @Test
     @Order(800)
-    void getOneUser() {
-        printTestName("getOneUser");
+    void getOneUserByUsername() {
+        printTestName("getOneUserByUsername");
         
         String url = makeUrl("/user/get");
         UserGetInfo requestInfo = new UserGetInfo(userSessionToken, newUserUsername);
+        ResponseEntity<String> response = makePostRequest(url, requestInfo);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        UserGetResponse usersList = this.gson.fromJson(response.getBody(), UserGetResponse.class);
+        assertThat(usersList.getUser().size()).isEqualTo(1);
+        assertThat(usersList.getUser().get(0).getUsername()).isEqualTo(newUserUsername);
+    }
+    
+    @Test
+    @Order(850)
+    void getOneUserById() {
+        printTestName("getOneUserByUsername");
+        
+        String url = makeUrl("/user/get");
+        UserGetInfo requestInfo = new UserGetInfo(userSessionToken, newUser.getId());
         ResponseEntity<String> response = makePostRequest(url, requestInfo);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         UserGetResponse usersList = this.gson.fromJson(response.getBody(), UserGetResponse.class);

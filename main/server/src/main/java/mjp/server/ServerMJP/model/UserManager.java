@@ -64,7 +64,7 @@ public class UserManager {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (!this.sessionManager.validateUserToken(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED );
-        if (info.getUserName() == null)
+        if ((info.getUserName() == null))
             return new UserGetResponse(this.allUsers());
         List<User> users = this.userRepository.findByUsername(info.getUserName());
         if (users.size() != 1)
@@ -112,7 +112,6 @@ public class UserManager {
         });
         return users;
       }
-    
 
     /**
      * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#allusers} endpoint. See {@link Model}

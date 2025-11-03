@@ -12,13 +12,31 @@ import mjp.server.ServerMJP.database.User;
  */
 public class UserGetInfo {
     
-    private String username;
-    private String sessionToken;
+    private static String SEARCH_ALL = "all";
+    private static String SEARCH_BY_ID = "byId";
+    private static String SEARCH_BY_USERNAME = "byUsername";
     
+    private long id = -1;
+    public String username = null; //TODO refactor getter and setter names and set to private
+    private String sessionToken = null;
+    private String searchType = SEARCH_ALL;
+    
+    public UserGetInfo(){}
+    
+    public UserGetInfo(String sessionToken){
+        this.searchType = SEARCH_ALL;
+    }
+     
+    public UserGetInfo(String sessionToken, long id) {
+        this.sessionToken = sessionToken;
+        this.id = id;
+        this.searchType = SEARCH_BY_ID;
+    }
     
     public UserGetInfo(String sessionToken, String username) {
         this.sessionToken = sessionToken;
         this.username = username;
+        this.searchType = SEARCH_BY_USERNAME;
     }
     
     void setUserName(String val) {
@@ -36,4 +54,22 @@ public class UserGetInfo {
     public String getSessionToken() {
         return this.sessionToken;
     }
+    
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setSearchType(String searchType) {
+        this.searchType = searchType;
+    }
+
+    public String getSearchType() {
+        return searchType;
+    }
+    
+    
 }
