@@ -64,9 +64,21 @@ public class UserManager {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (!this.sessionManager.validateUserToken(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED );
-        if ((info.getUserName() == null))
-            return new UserGetResponse(this.allUsers());
-        List<User> users = this.userRepository.findByUsername(info.getUserName());
+//        if ((info.getUserName() == null)) && UserName() == null)
+//        if (info.getSearchType() == UserGetInfo.SearchType.ALL)
+        List<User> users;
+        switch (info.getSearchType()){
+            case ALL :
+                return new UserGetResponse(this.allUsers());
+            case BY_USERNAME :
+                users = this.userRepository.findByUsername(info.getUserName());
+                break;
+            case BY_ID:
+                users = List.of(this.userRepository.findById(info.getId()));
+                break;
+            default:
+                throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
+        }
         if (users.size() != 1)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return new UserGetResponse(users);

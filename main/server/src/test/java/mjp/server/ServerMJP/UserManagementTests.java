@@ -204,7 +204,7 @@ public class UserManagementTests extends TestDefaultClass {
         printTestName("GetAllUsers");
         
         String url = makeUrl("/user/get");
-        UserGetInfo requestInfo = new UserGetInfo(userSessionToken, null);
+        UserGetInfo requestInfo = new UserGetInfo(userSessionToken);
         ResponseEntity<String> response = makePostRequest(url, requestInfo);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         UserGetResponse usersList = gson.fromJson(response.getBody(), UserGetResponse.class);

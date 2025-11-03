@@ -7,36 +7,62 @@ package mjp.server.queryData.user;
 import mjp.server.ServerMJP.database.User;
 
 /**
- *
- * @author twiki
+ *  This class is for getting User.
+ *  The fetch can be done by id username or search for all users.
+ *  Depending on the type of search searchType will be set appropriately.
+ *  Note that username and id are only needed depending on the search type. If not needed they are ignored.
+ *  There is a constructor each search type that take the appropriate parameters for the search.
+ * @author Joan Renau Valls
  */
 public class UserGetInfo {
+//    
+//    private static String SEARCH_ALL = "all";
+//    private static String SEARCH_BY_ID = "byId";
+//    private static String SEARCH_BY_USERNAME = "byUsername";
     
-    private static String SEARCH_ALL = "all";
-    private static String SEARCH_BY_ID = "byId";
-    private static String SEARCH_BY_USERNAME = "byUsername";
+    public enum SearchType{
+        ALL,
+        BY_ID,
+        BY_USERNAME
+    }
     
     private long id = -1;
     public String username = null; //TODO refactor getter and setter names and set to private
     private String sessionToken = null;
-    private String searchType = SEARCH_ALL;
+//    private String searchType = SEARCH_ALL;
+    private SearchType searchType = SearchType.ALL;
     
     public UserGetInfo(){}
     
+    /**
+     * Constructor for getting all User. Just takes the session token argument.
+     * @param sessionToken 
+     */
     public UserGetInfo(String sessionToken){
-        this.searchType = SEARCH_ALL;
+        this.searchType = SearchType.ALL;
+        this.sessionToken = sessionToken;
     }
      
+    /**
+     * Constructor for getting a User by Id. I takes two parameters the session token and the Id.
+     * @param sessionToken
+     * @param id 
+     */
     public UserGetInfo(String sessionToken, long id) {
         this.sessionToken = sessionToken;
         this.id = id;
-        this.searchType = SEARCH_BY_ID;
+        this.searchType = SearchType.BY_ID;
     }
     
+    /**
+     * Constructor for getting a User by username. I takes two parameters the session token and the username.
+     * @param sessionToken
+     * @param username 
+     */
     public UserGetInfo(String sessionToken, String username) {
         this.sessionToken = sessionToken;
         this.username = username;
-        this.searchType = SEARCH_BY_USERNAME;
+        this.searchType = SearchType.BY_USERNAME;
     }
     
     void setUserName(String val) {
@@ -63,11 +89,11 @@ public class UserGetInfo {
         this.id = id;
     }
 
-    public void setSearchType(String searchType) {
+    public void setSearchType(SearchType searchType) {
         this.searchType = searchType;
     }
 
-    public String getSearchType() {
+    public SearchType getSearchType() {
         return searchType;
     }
     
