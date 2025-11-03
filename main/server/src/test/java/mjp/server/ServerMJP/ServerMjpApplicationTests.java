@@ -2,11 +2,14 @@ package mjp.server.ServerMJP;
 
 //import java.net.http.HttpHeaders;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDate;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.LoginInfo;
 import mjp.server.queryData.LogoutInfo;
 import mjp.server.responseData.LoginResponse;
+import mjp.server.uitls.serializers.LocalDateAdapter;
 import org.springframework.http.HttpHeaders;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterEach;
@@ -45,7 +48,7 @@ class ServerMjpApplicationTests {
     
     private CapturedOutput capturedOutput;
     
-    Gson gson = new Gson();
+    Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
     private static String sessionToken = "";
 
     @LocalServerPort
