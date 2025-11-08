@@ -43,6 +43,7 @@ public class SessionManager {
         String sessionToken = "" + this.nextSession;
         this.nextSession++;
         this.sessions.put("" + sessionToken, user);
+      
         return sessionToken;
     }
     
@@ -68,12 +69,13 @@ public class SessionManager {
     }
     
     public boolean validateUserToken(String sessionToken)  {
-        System.out.println(">>>Validating user for token: " + sessionToken + "<<<");
+        System.out.println("Validating user for token: " + sessionToken + "<<<");
         User user = this.getUserByToken(sessionToken);
         return user != null;
     }
     
     public boolean validateAdminToken(String sessionToken) {
+        System.out.println("Validating admin token " + sessionToken);
         User user = this.getUserByToken(sessionToken);
         if (user == null)
             return false;

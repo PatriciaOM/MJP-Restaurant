@@ -127,9 +127,7 @@ class ServerMjpApplicationTests {
     @Order(500)
     void sessionStatusWhenLogged() throws Exception {
         printTestName("sessionStatusWhenLogged");
-        System.out.println("this.sessionToken = " + this.sessionToken);
         String url = makeUrl("/sessionstatus?sessionToken=" + this.sessionToken);
-        System.out.println("Making a request to " + url);
         
         String response = this.restTemplate.getForObject(url, String.class);
         System.out.println("::::::::: ::::::::: Sessionstatus check returned: " + response);

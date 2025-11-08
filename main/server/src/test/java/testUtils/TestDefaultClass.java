@@ -7,10 +7,16 @@ package testUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
+import mjp.server.ServerMJP.database.User;
+import mjp.server.queryData.LoginInfo;
+import mjp.server.responseData.LoginResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -44,7 +50,6 @@ public abstract class TestDefaultClass {
         headers.setContentType(MediaType.APPLICATION_JSON);
         System.out.println("Sennding: " + jsonBody);
         HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
-        System.out.println("The send body is: " + request.getBody());
         
         ResponseEntity<String> response = getRestTemplate().postForEntity(url, request, String.class);
         return response;
@@ -61,4 +66,23 @@ public abstract class TestDefaultClass {
         System.out.println(CYAN + "::: TEST ::: "+ name + RESET);
     }
     
+    public String login(String username, String password) {
+        String url = makeUrl("login");
+        ResponseEntity<String> response = makePostRequest(url, new LoginInfo(username, password));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        LoginResponse resObj = gson.fromJson(response.getBody(), LoginResponse.class);
+        assertNotNull(resObj);
+        return resObj.token;
+    }
+    
+    
+    public User getUserBySessionToken(String sessionToken) {
+        String url = makeUrl("/sessionstatus?sessionToken=" + sessionToken);
+        
+        String  response2 = this.getRestTemplate().getForObject(url, String.class);
+        
+        User user = gson.fromJson(response2, User.class);
+        assertNotNull(user.getId()); 
+        return user;
+    }
 }
