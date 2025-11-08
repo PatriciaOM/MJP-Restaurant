@@ -79,7 +79,7 @@ public class LoginController {
                     admin.setLocationRelativeTo(null);
                     admin.setVisible(true);
 
-                    new AdminController(admin, login);
+                    new AdminController(admin, login, this);
 
                 } else if (responseUser.role.equals(UserRole.USER.getRole())) {
                     waiter = new WaiterFrame(username);

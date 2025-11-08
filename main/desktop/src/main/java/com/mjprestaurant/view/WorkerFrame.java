@@ -21,7 +21,7 @@ import javax.swing.table.TableCellRenderer;
 
 import com.mjprestaurant.controller.WorkerController;
 import com.mjprestaurant.model.CustomComponents;
-import com.mjprestaurant.model.Worker;
+import com.mjprestaurant.model.User;
 
 public class WorkerFrame extends AbstractFrame {
     JButton buttonAdd, buttonChange, buttonDelete, btnBack;
@@ -29,9 +29,9 @@ public class WorkerFrame extends AbstractFrame {
     private JTable workerTable;
     private DefaultTableModel tableModel;
 
-    public WorkerFrame(String title, List<Worker> workers) {
+    public WorkerFrame(String title, List<User> users) {
         super(title);
-        loadWorkers(workers); //carregar llista
+        loadWorkers(users); //carregar llista
     }
 
     @Override
@@ -105,16 +105,16 @@ public class WorkerFrame extends AbstractFrame {
 
     /**
      * Carregar treballadors
-     * @param workers
+     * @param users treballadors
      */
-    public void loadWorkers(List<Worker> workers) {
+    public void loadWorkers(List<User> users) {
         if (tableModel == null) return;
         tableModel.setRowCount(0);
 
         int idCounter = 1;
-        for (Worker w : workers) {
-            String fullName = w.getName() + " " + w.getSurname();
-            tableModel.addRow(new Object[]{idCounter++, w.getDni(), fullName, w.getShift(), "Editar"});
+        for (User u : users) {
+            String fullName = u.getName() + " " + u.getSurname();
+            tableModel.addRow(new Object[]{idCounter++, u.getDni(), fullName, u.getShift(), "Editar"});
         }
 
         workerTable.getColumn("Accions").setCellRenderer(new ButtonRenderer());
@@ -134,6 +134,20 @@ public class WorkerFrame extends AbstractFrame {
                 }
             }
         });
+    }
+
+    public void reloadUsersTable(String token) {
+        try {
+            // Obtener lista actualizada de trabajadores
+            List<User> users = WorkerController.getAllWorkers(token);
+            // Cargar la tabla con la lista
+            loadWorkers(users);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "No s'han pogut carregar els treballadors.",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**

@@ -26,6 +26,7 @@ public class CustomComponents {
     private static JTextField customTextField;
     private static JPasswordField customPwdField;
     private static Map<String, JTextField> textFields;
+    private static JFrame currentFrame;
 
     //BOTONS
     /**
@@ -167,6 +168,7 @@ public class CustomComponents {
      */
     public static void createForm(String frameTitle, String[] fields, ActionListener onAccept, ActionListener onCancel) {
         JFrame frame = new JFrame(frameTitle);
+        currentFrame = frame; 
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel mainPanel = new JPanel();
@@ -242,6 +244,13 @@ public class CustomComponents {
         if (textFields != null && textFields.containsKey(fieldName)) {
             textFields.get(fieldName).setText("");
             textFields.get(fieldName).requestFocus();
+        }
+    }
+
+    public static void closeCurrentForm() {
+        if (currentFrame != null) {
+            currentFrame.dispose();
+            currentFrame = null;
         }
     }
 
