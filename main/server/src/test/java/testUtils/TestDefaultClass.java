@@ -8,7 +8,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import mjp.server.ServerMJP.database.User;
+import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.LoginInfo;
+import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.LoginResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +65,7 @@ public abstract class TestDefaultClass {
     }
            
     public static void printTestName(String name) {
+        System.out.println();
         System.out.println(CYAN + "::: TEST ::: "+ name + RESET);
     }
     
@@ -84,5 +87,45 @@ public abstract class TestDefaultClass {
         User user = gson.fromJson(response2, User.class);
         assertNotNull(user.getId()); 
         return user;
+    }
+    
+    public <MessageDataType> void basicRequestTests(
+            String testName,
+            String endPoint,
+            AuthorizedQueryInfo messageObject,
+            MessageDataType messageData,
+            String sesionToken
+    ) {
+        String url;
+        ResponseEntity<String> response;
+        
+        printTestName(testName);
+        
+        messageObject.setSessionToken(sessionToken);
+        
+        printTestName(testName + " Whithout sessionToken");
+        url = makeUrl(endPoint);
+        messageObject.setSessionToken(null);
+        messageObject.setMessageData(messageData);
+        response = makePostRequest(url, messageObject);
+        
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        
+        printTestName(testName + " Whith invalid sessionToken");
+        messageObject.setSessionToken("Invalid session token");
+        messageObject.setMessageData(messageData);
+        url = makeUrl(endPoint);
+        response = makePostRequest(url, messageObject);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        
+        if (messageData != null) {
+            printTestName(testName + " Whithout info");
+            messageObject.setSessionToken(sessionToken);
+            messageObject.setMessageData(null);
+            url = makeUrl(endPoint);
+            response = makePostRequest(url, messageObject);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        }
+        
     }
 }

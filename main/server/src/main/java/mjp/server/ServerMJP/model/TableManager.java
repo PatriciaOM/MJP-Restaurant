@@ -99,7 +99,12 @@ public class TableManager {
      
     
     public TableUpdateResponse update(TableUpdateInfo info){
-        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
+        if (info.getSessionToken() == null || info.getTable() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (!this.sessionManager.validateAdminToken(info.getSessionToken()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        TableRestaurant table = this.tableRepository.save(info.getTable());
+        return new TableUpdateResponse(table);
     } 
         
     public TableStatusResponse status(TableStatusInfo info) {
