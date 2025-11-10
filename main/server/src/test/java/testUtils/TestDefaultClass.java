@@ -89,6 +89,16 @@ public abstract class TestDefaultClass {
         return user;
     }
     
+    /**
+     * 
+     * @param <MessageDataType>
+     * @param testName The name of the test
+     * @param endPoint  The endpoint to send the request
+     * @param messageObject The wrapper with all the information to be sent, contains sessionToken and messageData
+     * @param messageData   The object to be sent
+     * @param sesionToken A valid session token
+     */
+    
     public <MessageDataType> void basicRequestTests(
             String testName,
             String endPoint,

@@ -49,10 +49,11 @@ import testUtils.TestDefaultClass;
 public class TableManagementTest extends TestDefaultClass {
     private static String userSessionToken;
     private static String adminSessionToken;
-    private static TableRestaurant initialTable = new TableRestaurant(10, 4);
-    private static TableRestaurant updatedTable = new TableRestaurant(10, 2);
-    private static TableRestaurant mockTable1 = new TableRestaurant(5, 2);
-    private static TableRestaurant mockTable2 = new TableRestaurant(4, 6);
+    private static final TableRestaurant initialTable = new TableRestaurant(10, 4);
+    private static final TableRestaurant updatedTable = new TableRestaurant(10, 2);
+    private static final TableRestaurant mockTable1 = new TableRestaurant(5, 2);
+    private static final TableRestaurant mockTable2 = new TableRestaurant(4, 6);
+    private static final long noExistingId = 50000;
     Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
     
     
@@ -194,6 +195,18 @@ public class TableManagementTest extends TestDefaultClass {
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
+    
+    @Test
+    @Order(750)
+    void getTableWithNoExistingId(){
+        printTestName("getTableById");
+        String url = makeUrl("/table/get");
+        assertNotNull(initialTable.getId());
+        
+        TableGetInfo info = new TableGetInfo(userSessionToken, noExistingId);
+        ResponseEntity<String> response = makePostRequest(url, info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
      
     @Test
     @Order(800)
@@ -295,14 +308,53 @@ public class TableManagementTest extends TestDefaultClass {
         table = tableList.get(0);
         assertThat(gson.toJson(table)).isEqualTo(gson.toJson(updatedTable));        
     }
+   
+    @Test
+    @Order(1500)
+    void deleteTableBasicTests(){
+        this.basicRequestTests(
+            "deleteTableBasicTests",
+            "/table/delete",
+            new TableDeleteInfo(),
+            null,
+            adminSessionToken
+        );
+    }
      
     @Test
-    @Order(2000)
-    void deleteTable(){
+    @Order(1600)
+    void deleteTableWithNoExisitingID(){
         String url = makeUrl("/table/delete");
-        TableDeleteInfo info = new TableDeleteInfo(userSessionToken, 5000L);
+        TableDeleteInfo info = new TableDeleteInfo(adminSessionToken, 5000L);
         
         ResponseEntity<String> response = makePostRequest(url, info);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.I_AM_A_TEAPOT);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+    
+         
+    @Test
+    @Order(1700)
+    void deleteTable(){
+        String url;
+        TableGetInfo getInfo;
+        TableDeleteInfo info;
+        
+        printTestName("deleteTable");
+        
+        url = makeUrl("/table/get");
+        assertNotNull(updatedTable.getId());
+        getInfo = new TableGetInfo(userSessionToken, initialTable.getId());
+        ResponseEntity<String> getResponse = makePostRequest(url, getInfo);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        
+        url = makeUrl("/table/delete");
+        info = new TableDeleteInfo(adminSessionToken, updatedTable.getId());
+        ResponseEntity<String> response = makePostRequest(url, info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        
+        url = makeUrl("/table/get");
+        assertNotNull(getInfo.getId());
+        getResponse = makePostRequest(url, getInfo);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

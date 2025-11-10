@@ -9,7 +9,7 @@ package mjp.server.queryData;
  * @author twiki
  */
 public interface AuthorizedQueryInfo<RequestItem> {
-    AuthorizedQueryInfo createInsance(String sessionToken, RequestItem requestItem);
+//    AuthorizedQueryInfo createInsance(String sessionToken, RequestItem requestItem);
     public void setSessionToken(String sessionToken);
     public String getSessionToken();
     public void setMessageData(RequestItem requestItem);

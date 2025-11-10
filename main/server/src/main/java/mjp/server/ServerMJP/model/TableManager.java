@@ -6,6 +6,7 @@ package mjp.server.ServerMJP.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.TableRestaurantRepository;
 import mjp.server.ServerMJP.database.UserRepository;
@@ -71,11 +72,15 @@ public class TableManager {
                 tables = this.allTables();
                 break;
             case BY_ID:
-                tables = List.of(tableRepository.findById(info.getId()));
+                TableRestaurant table = tableRepository.findById(info.getId());
+                if (table == null)
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                tables = List.of(table);
                 break;
             case BY_NUMBER:
                 tables = tableRepository.findByNum(info.getNumber());
-                assert tables.size() == 1;
+                if (tables.size() != 1)
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND);
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -83,9 +88,8 @@ public class TableManager {
         TableGetResponse response = new TableGetResponse(tables);
         return response;
     }
-    
         
-      public List<TableRestaurant> allTables() {
+    public List<TableRestaurant> allTables() {
         ArrayList<TableRestaurant> tables = new ArrayList();
         this.tableRepository.findAll().forEach(user -> {
             tables.add(user);
@@ -94,9 +98,19 @@ public class TableManager {
       }
     
     public TableDeleteResponse delete(TableDeleteInfo info){
-        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
+        if (info.getSessionToken() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (!this.sessionManager.validateAdminToken(info.getSessionToken()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        
+        Optional<TableRestaurant> table = this.tableRepository.findById(info.getId());
+        if (table.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        this.tableRepository.deleteById(info.getId());
+        return new TableDeleteResponse("success");
+            
+//        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
     } 
-     
     
     public TableUpdateResponse update(TableUpdateInfo info){
         if (info.getSessionToken() == null || info.getTable() == null)

@@ -8,7 +8,7 @@ package mjp.server.queryData;
  *
  * @author twiki
  */
-public class TableStatusInfo {
+public class TableStatusInfo implements AuthorizedQueryInfo{
     private String sessionToken;
     private String tableId;
     
@@ -31,6 +31,17 @@ public class TableStatusInfo {
     
     public String getTableId() {
         return this.tableId;
+    }
+
+
+    @Override
+    public void setMessageData(Object requestItem) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Object getMessageData() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }

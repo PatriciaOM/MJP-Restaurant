@@ -28,10 +28,10 @@ public class TableUpdateInfo implements AuthorizedQueryInfo<TableRestaurant> {
     
     
 
-    @Override
-    public AuthorizedQueryInfo createInsance(String sessionToken, TableRestaurant requestItem) {
-        return new TableUpdateInfo(sessionToken, requestItem);
-    }
+//    @Override
+//    public AuthorizedQueryInfo createInsance(String sessionToken, TableRestaurant requestItem) {
+//        return new TableUpdateInfo(sessionToken, requestItem);
+//    }
     
     @Override
     public void setSessionToken(String val) {
