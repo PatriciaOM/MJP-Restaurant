@@ -35,7 +35,7 @@ public class TableGetInfo {
     public TableGetInfo(){}
     
     /**
-     * Constructor for getting all User. Just takes the session token argument.
+     * Constructor for getting all Tables. Just takes the session token argument.
      * @param sessionToken 
      */
     public TableGetInfo(String sessionToken){
@@ -44,7 +44,7 @@ public class TableGetInfo {
     }
      
     /**
-     * Constructor for getting a User by Id. I takes two parameters the session token and the Id.
+     * Constructor for getting a Table by Id. I takes two parameters the session token and the Id.
      * @param sessionToken
      * @param id 
      */
@@ -55,7 +55,7 @@ public class TableGetInfo {
     }
     
     /**
-     * Constructor for getting a User by username. I takes two parameters the session token and the username.
+     * Constructor for getting a User by number. I takes two parameters the session token and the number.
      * @param sessionToken
      * @param username 
      */

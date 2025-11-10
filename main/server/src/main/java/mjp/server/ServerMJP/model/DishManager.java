@@ -7,6 +7,7 @@ package mjp.server.ServerMJP.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mjp.server.ServerMJP.database.DishRepository;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.TableRestaurantRepository;
 import mjp.server.ServerMJP.database.UserRepository;
@@ -32,13 +33,13 @@ import org.springframework.web.server.ResponseStatusException;
  * @author twiki
  */
 @Component
-public class DishManager extends Manager{
+public class DishManager extends Manager<DishRepository>{
 
     protected SessionManager sessionManager;
-    protected TableRestaurantRepository respository;
+    protected DishRepository respository;
     
     public DishManager(
-        TableRestaurantRepository respository,
+        DishRepository respository,
         SessionManager sessionManager
     ){
         this.respository = respository;
@@ -51,7 +52,7 @@ public class DishManager extends Manager{
     }
 
     @Override
-    protected TableRestaurantRepository getRepository() {
+    protected DishRepository getRepository() {
         return this.respository;
     }
     

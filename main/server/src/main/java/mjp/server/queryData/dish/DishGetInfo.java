@@ -1,0 +1,163 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package mjp.server.queryData.dish;
+
+import mjp.server.queryData.table.*;
+import mjp.server.queryData.user.*;
+import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import mjp.server.ServerMJP.database.Dish;
+import mjp.server.ServerMJP.database.DishRepository;
+import mjp.server.ServerMJP.database.TableRestaurant;
+import mjp.server.ServerMJP.database.User;
+import mjp.server.dataClasses.UserRole;
+import mjp.server.queryData.AuthorizedQueryInfo;
+import mjp.server.queryData.InfoData;
+import mjp.server.queryData.crud.GetInfo;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+/**
+ *
+ * @author twiki
+ */
+public class DishGetInfo extends InfoData implements GetInfo<Dish, DishRepository>, AuthorizedQueryInfo<Dish> {    
+
+
+
+    public enum SearchType{
+        ALL,
+        BY_ID,
+        BY_NAME
+    }
+    private String sessionToken;
+    private Dish dish;
+    private SearchType searchType;
+    private Long id;
+    private String name;
+     
+
+   public DishGetInfo(){System.out.println("Calling default consturctor");}
+   
+     /**
+     * Constructor for getting a Dish by Id. I takes two parameters the session token and the Id.
+     * @param sessionToken
+     * @param id 
+     */
+    public DishGetInfo(String sessionToken) {
+        this.sessionToken = sessionToken;
+        this.searchType = SearchType.ALL;
+    }
+   
+   
+     /**
+     * Constructor for getting a Dish by Id. I takes two parameters the session token and the Id.
+     * @param sessionToken
+     * @param id 
+     */
+    public DishGetInfo(String sessionToken, long id) {
+        System.out.println("Calling session id constructor");
+        this.sessionToken = sessionToken;
+        this.id = id;
+        this.searchType = SearchType.BY_ID;
+    }
+    
+    /**
+     * Constructor for getting a Dish by name. I takes two parameters the session token and the name.
+     * @param sessionToken
+     * @param name 
+     */
+    public DishGetInfo(String sessionToken, String name) {
+        this.sessionToken = sessionToken;
+        this.name = name;
+        this.searchType = SearchType.BY_NAME;
+    }
+      
+    public DishGetInfo(String sessionToken, Dish dish, SearchType searchType, Long id, String name) {
+        this.sessionToken = sessionToken;
+        this.dish = dish;
+        this.searchType = searchType;
+        this.id = id;
+        this.name = name;
+    }  
+        
+    public DishGetInfo(DishGetInfo orig) {
+        this.sessionToken = orig.sessionToken;
+        this.dish = orig.getDish();
+        this.searchType = orig.searchType;
+        this.id = orig.id;
+        this.name = orig.name;
+    }
+           
+    @Override
+    public void setSessionToken(String val) {
+        this.sessionToken = val;
+    }
+    
+    @Override
+    public String getSessionToken() {
+        return this.sessionToken;
+    }
+
+    public Dish getDish() {
+        return dish;
+    }
+
+    public void setDish(Dish dish) {
+        this.dish = dish;
+    }
+
+    @Override
+    public void setMessageData(Dish requestItem) {
+        setDish(requestItem);
+    }
+
+    public SearchType getSearchType() {
+        return searchType;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    
+    
+    
+    @Override
+    public Dish getMessageData() {
+        return this.getDish();
+    }
+
+    @Override
+    public List<Dish> findAllItems(DishRepository repository) {
+        List<Dish> ret = new ArrayList();
+        Optional<Dish> dishResult;
+        switch (this.searchType) {
+            case ALL:
+                return this.convertIterableToList(repository.findAll());
+            case BY_ID:
+                dishResult = repository.findById(this.id);
+                if (dishResult.isEmpty())
+                    return new ArrayList<>();
+                ret = List.of(dishResult.get());
+                break;
+            case BY_NAME:
+                ret = repository.findAllByName(this.name);
+                break;
+            default:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (ret.size() != 1)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return ret;
+    }    
+}

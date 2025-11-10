@@ -19,6 +19,7 @@ import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.TableStatusInfo;
 import mjp.server.queryData.dish.DishCreateInfo;
 import mjp.server.queryData.InfoData;
+import mjp.server.queryData.crud.GetInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
 import mjp.server.queryData.table.TableGetInfo;
@@ -43,10 +44,10 @@ import org.springframework.web.server.ResponseStatusException;
  * @author twiki
  */
 @Component
-public abstract class Manager {
+public abstract class Manager<RepositoryType extends CrudRepository> {
     
     protected abstract SessionManager getSessionManager();
-    protected abstract CrudRepository getRepository();
+    protected abstract RepositoryType getRepository();
         
     
 //    public Manager(
@@ -78,34 +79,23 @@ public abstract class Manager {
         return response;
     } 
     
+     
+    public <
+        MessageDataType ,
+        Info extends InfoData & GetInfo & AuthorizedQueryInfo<MessageDataType>,
+        ReturnType extends ResponseData & CrudResponse
+    > ReturnType get(Info info, ReturnType response){
+        if (info.getSessionToken() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (!getSessionManager().validateUserToken(info.getSessionToken()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        List<Dish> dishes = info.findAllItems(this.getRepository());
+        response.setMessageStatus("Success");
+        response.setMessageData(dishes);
+        return response;
+    }
     
-//    public TableGetResponse get(TableGetInfo info){
-//        if (info.getSessionToken() == null)
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//        if (!this.sessionManager.validateUserToken(info.getSessionToken()))
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        List<TableRestaurant> tables;
-//        switch (info.getSearchType()){
-//            case ALL:
-//                tables = this.allTables();
-//                break;
-//            case BY_ID:
-//                TableRestaurant table = tableRepository.findById(info.getId());
-//                if (table == null)
-//                    throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//                tables = List.of(table);
-//                break;
-//            case BY_NUMBER:
-//                tables = tableRepository.findByNum(info.getNumber());
-//                if (tables.size() != 1)
-//                    throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//                break;
-//            default:
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//        }    
-//        TableGetResponse response = new TableGetResponse(tables);
-//        return response;
-//    }
+    
 //        
 //    public List<TableRestaurant> allTables() {
 //        ArrayList<TableRestaurant> tables = new ArrayList();

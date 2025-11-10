@@ -39,6 +39,7 @@ import mjp.server.ServerMJP.model.TableManager;
 import mjp.server.ServerMJP.model.UserManager;
 import mjp.server.queryData.TableStatusInfo;
 import mjp.server.queryData.dish.DishCreateInfo;
+import mjp.server.queryData.dish.DishGetInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
 import mjp.server.queryData.table.TableGetInfo;
@@ -50,6 +51,7 @@ import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.ResponseData;
 import mjp.server.responseData.TableStatusResponse;
 import mjp.server.responseData.dish.DishCreateResponse;
+import mjp.server.responseData.dish.DishGetResponse;
 import mjp.server.responseData.dish.DishResponse;
 import mjp.server.responseData.table.TableCreateResponse;
 import mjp.server.responseData.table.TableDeleteResponse;
@@ -194,9 +196,18 @@ public class Controller {
     
       
     @PostMapping("dish/create")
-    public String tableCreate(@RequestBody DishCreateInfo info){
+    public String dishCreate(@RequestBody DishCreateInfo info){
         System.out.println(String.format("POST dish/create(%s)", this.gson.toJson(info)));
         DishCreateResponse response = this.dishManager.create(info, UserRole.ADMIN, new DishCreateResponse());
+        return this.gson.toJson(response);
+    }
+    
+    
+      
+    @PostMapping("dish/get")
+    public String dishGet(@RequestBody DishGetInfo info){
+        System.out.println(String.format("POST dish/get(%s)", this.gson.toJson(info)));
+        DishGetResponse response = this.dishManager.get(info, new DishGetResponse());
         return this.gson.toJson(response);
     }
     

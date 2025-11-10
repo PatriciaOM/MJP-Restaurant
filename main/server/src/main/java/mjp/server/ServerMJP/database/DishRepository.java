@@ -12,5 +12,7 @@ import org.springframework.data.repository.CrudRepository;
  * @author twiki
  */
 public interface DishRepository extends CrudRepository<Dish, Long>{
-    TableRestaurant findById(long id);
+    Dish findById(long id);
+    Dish findByname(String name);
+    List<Dish> findAllByName(String name);
 }
