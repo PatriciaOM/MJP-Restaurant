@@ -13,7 +13,7 @@ public class LogoutInfo {
     
     LogoutInfo(){};
     
-    LogoutInfo(String sessionToken){
+    public LogoutInfo(String sessionToken){
         this.sessionToken = sessionToken;
     }
     

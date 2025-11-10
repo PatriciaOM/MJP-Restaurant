@@ -32,17 +32,19 @@ import mjp.server.responseData.TableStatusResponseElement;
  * @author Joan Renau Valls
  */
 @Component
-public class Model {
-    private SessionManager sessionManager= new SessionManager();
+public class AuthenticationManager {
+//    private SessionManager sessionManager = new SessionManager();
+    private SessionManager sessionManager;
     private UserRepository userRepository;
     Gson gson = new Gson();
     
-    public Model(UserRepository userRepository){
+    public AuthenticationManager(UserRepository userRepository, SessionManager sessionManager){
         this.userRepository = userRepository;
+        this.sessionManager = sessionManager;
     };
        
     /**
-     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#login} endpoint. See {@link Model}
+     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#login} endpoint. See {@link AuthenticationManager}
      * 
      * @return 
      */
@@ -63,7 +65,7 @@ public class Model {
     }
          
     /**
-     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#logout} endpoint. See {@link Model}
+     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#logout} endpoint. See {@link AuthenticationManager}
      * 
      * @return 
      */
@@ -73,57 +75,17 @@ public class Model {
         boolean loggedOut = this.sessionManager.removeSession(info.getSessionToken());
         return new LogoutResponse("Logged out");
     }
+    
+          
+    /**
+     * Returns the user associated with a session token.
+     * @param sessionToken Te session token to be checked.
+     * @return The {@link mjp.server.ServerMJP.database.User} associated with the provided sessionToken.
+     */
+    public User getUserByToken(String sessionToken) {
+        
+        return this.sessionManager.getUserByToken(sessionToken);
+    }
      
-    /**
-     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#sessionStatus} endpoint. See {@link Model}
-     * 
-     * @return 
-     */
-    public User getUserByToken(String token){
-        return sessionManager.getUserByToken(token);
-    }
-    
-    /**
-     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#allusers} endpoint. See {@link Model}
-     * 
-     * @return 
-     */
-    public String allUsers() {
-        ArrayList<User> users = new ArrayList();
-        String result = "";
-        
-        userRepository.findAll().forEach( user -> {
-            users.add(user);
-        });
-        
-        for (User user: users) {
-            result += user.toString() + '\n';
-        }
-        
-        return "users: " + result;
-    }
-    
-    public TableStatusResponse tableStatus(TableStatusInfo info) {
-        if (info.getTableId() != null)
-            throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
-        TableStatusResponse response = new TableStatusResponse();
-        response.addTable(new TableStatusResponseElement(1, 6, 4));
-        response.addTable(new TableStatusResponseElement(2, 4, 0));
-        response.addTable(new TableStatusResponseElement(3, 2, 4));
-        response.addTable(new TableStatusResponseElement(4, 6, 0));
-        return response;
-    }
-    
-    /**
-     * Creates mock data for debug and development purposes.
-     */
-    public void mockData() {
-        User user;
-        
-        user = new User("Twiki", "Tuki", UserRole.USER);
-        this.userRepository.save(user) ;
-        user = new User("Ping", "Pong", UserRole.ADMIN);
-        this.userRepository.save(user) ;
-    }
     
 }
