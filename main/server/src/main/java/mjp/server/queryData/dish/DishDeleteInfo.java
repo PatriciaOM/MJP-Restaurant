@@ -18,7 +18,7 @@ import mjp.server.queryData.InfoData;
  *
  * @author twiki
  */
-public class DishDeleteInfo extends InfoData implements AuthorizedQueryInfo<Dish> {    
+public class DishDeleteInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
     private String sessionToken;
     private Long id;
     
@@ -53,12 +53,12 @@ public class DishDeleteInfo extends InfoData implements AuthorizedQueryInfo<Dish
     }
 
     @Override
-    public void setMessageData(Dish requestItem) {
-//        setDish(requestItem);
+    public void setMessageData(Long requestItem) {
+        this.setId(requestItem);
     }
 
     @Override
-    public Dish getMessageData() {
-        return new Dish();
+    public Long getMessageData() {
+        return this.getId();
     }
 }

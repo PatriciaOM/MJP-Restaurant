@@ -74,8 +74,9 @@ public class DishManager extends Manager<Dish, DishRepository, DishGetInfo>{
             case BY_ID:
                 dishResult = repository.findById(infoData.getId());
                 if (dishResult.isEmpty())
-                    return new ArrayList<>();
-                ret = List.of(dishResult.get());
+                    ret = new ArrayList<>();
+                else
+                    ret = List.of(dishResult.get());
                 break;
             case BY_NAME:
                 ret = repository.findAllByName(infoData.getName());

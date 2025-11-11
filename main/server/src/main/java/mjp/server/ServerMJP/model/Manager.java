@@ -125,14 +125,22 @@ public abstract class Manager<
     }
      
     public <
-        Info extends InfoData & AuthorizedQueryInfo<ItemsType>,
+        Info extends InfoData & AuthorizedQueryInfo<Long>,
         ReturnType extends ResponseData & CrudResponse
     >  ReturnType delete(Info info, UserRole role, ReturnType response) {
         if (info.getSessionToken() == null || info.getMessageData() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (!getSessionManager().validateAdminToken(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
+        if (!this.getRepository().existsById(info.getMessageData()))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        this.getRepository().deleteById(info.getMessageData());
+        if (this.getRepository().existsById(info.getMessageData()))
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
+        response.setMessageData(List.of(info));
+        return response;
+//        
+//        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
     }
     
 

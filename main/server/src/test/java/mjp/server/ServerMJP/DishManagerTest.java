@@ -18,6 +18,7 @@ import mjp.server.queryData.dish.DishGetInfo;
 import mjp.server.queryData.dish.DishUpdateInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.responseData.dish.DishCreateResponse;
+import mjp.server.responseData.dish.DishDeleteResponse;
 import mjp.server.responseData.dish.DishGetResponse;
 import mjp.server.responseData.dish.DishResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
@@ -183,6 +184,21 @@ public class DishManagerTest extends TestDefaultClass {
         assertThat(gson.toJson(dishes.get(0))).isEqualTo(gson.toJson(initialDish));
     }
     
+    
+      
+    @Test
+    @Order(500)
+    void getNoExistingDishById(){
+        printTestName("getDish");
+        String url = makeUrl("/dish/get");
+        DishGetInfo info = new DishGetInfo(userSessionToken, 5000L);
+        assertNotNull(initialDish.getId());
+        assertNotNull(info.getId());
+        
+        ResponseEntity<String> response = makePostRequest(url, info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+    
     @Test
     @Order(600)
     void updateDishBasicTests(){
@@ -230,24 +246,66 @@ public class DishManagerTest extends TestDefaultClass {
             "deleteDishBasicTests",
             "/dish/delete",
             info,
-            updatedDish,
+            initialDish.getId(),
             adminSessionToken
         );
     }
-    
+     @Test
+    @Order(850)
+    void getToDeletUser(){
+        printTestName("getDish");
+        String url = makeUrl("/dish/get");
+        DishGetInfo info = new DishGetInfo(userSessionToken, updatedDish.getId());
+        assertNotNull(info.getId());
+        assertNotNull(info.getId());
+        
+        ResponseEntity<String> response = makePostRequest(url, info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
     @Test
     @Order(900)
     void deleteDish(){
-//        printTestName("deleteDish");
-//        String url = makeUrl("/dish/delete");
-//        DishUpdateInfo info = new DishUpdateInfo(adminSessionToken, updatedDish);
-//        ResponseEntity<String> response = makePostRequest(url, info);
-//        
-//        DishDeleteResponse
-//        
-//                
-//        DishGetInfo getInfo = new DishGetInfo(userSessionToken, updatedDish.getId());
-//        ResponseEntity<String> getResponse = makePostRequest("/dish/get", getInfo);
-//        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        printTestName("deleteDish");
+        String url = makeUrl("/dish/delete");
+        DishDeleteInfo info = new DishDeleteInfo(adminSessionToken, updatedDish.getId());
+        ResponseEntity<String> delResp = makePostRequest(url, info);
+        DishDeleteResponse delRespObject = gson.fromJson("", DishDeleteResponse.class);
+        assertThat(delResp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        
+        String getUrl = makeUrl("/dish/get");
+        DishGetInfo getInfo = new DishGetInfo(userSessionToken, updatedDish.getId());
+        ResponseEntity<String> getResponse = makePostRequest(getUrl, getInfo);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        
+        delResp = makePostRequest(url, info);
+        delRespObject = gson.fromJson("", DishDeleteResponse.class);
+        assertThat(delResp.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+    
+    @Test
+    @Order(950)
+    void getSdafDeletedUser(){
+        printTestName("getDish");
+        String sdafurl = makeUrl("/dish/get");
+        DishGetInfo sdafinfo = new DishGetInfo(userSessionToken, updatedDish.getId());
+        assertNotNull(sdafinfo.getId());
+        assertNotNull(sdafinfo.getId());
+        
+        ResponseEntity<String> response = makePostRequest(sdafurl, sdafinfo);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+    
+          
+    @Test
+    @Order(1000)
+    void getDeletedUser(){
+        printTestName("getDish");
+        String url = makeUrl("/dish/get");
+        DishGetInfo info = new DishGetInfo(userSessionToken, updatedDish.getId());
+        assertNotNull(info.getId());
+        assertNotNull(info.getId());
+        
+        ResponseEntity<String> response = makePostRequest(url, info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }
