@@ -59,6 +59,22 @@ public abstract class Manager<
 //    public abstract <InfoDataType extends InfoData> List<ItemsType> findAllItems(RepositoryType respoistory, InfoDataType infoData);
     public abstract List<ItemsType> findAllItems(RepositoryType respoistory, GetInfoType infoData);
     
+    protected boolean checkCreatePermisions(String sessionToken) {
+        return this.getSessionManager().validateAdminToken(sessionToken);
+    }
+    
+    protected boolean checkGetPermisions(String sessionToken) {
+        return this.getSessionManager().validateUserToken(sessionToken);
+    }
+    
+    protected boolean checkUpdatePermisions(String sessionToken) {
+        return this.getSessionManager().validateAdminToken(sessionToken);
+    }
+    
+    protected boolean checkDeletePermisions(String sessionToken) {
+        return this.getSessionManager().validateAdminToken(sessionToken);
+    }
+    
     public <
         Info extends InfoData & AuthorizedQueryInfo<ItemsType>,
         ReturnType extends ResponseData & CrudResponse
@@ -67,7 +83,7 @@ public abstract class Manager<
         if (info.getSessionToken() == null || info.getMessageData() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             
-        if (!getSessionManager().validateAdminToken(info.getSessionToken()))
+        if (!checkCreatePermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         ItemsType data = info.getMessageData();
 //        List<MessageDataType> existingEntries = getRepository().findById(data.getId());
@@ -84,7 +100,7 @@ public abstract class Manager<
     ReturnType get(GetInfoType info, ReturnType response){
         if (info.getSessionToken() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        if (!getSessionManager().validateUserToken(info.getSessionToken()))
+        if (!checkGetPermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 //        List<Dish> dishes = info.findAllItems(this.getRepository());
         List<ItemsType> dishes = this.findAllItems(this.getRepository(), info);
@@ -110,7 +126,7 @@ public abstract class Manager<
     >  ReturnType update(Info info, UserRole role, ReturnType response) {
         if (info.getSessionToken() == null || info.getMessageData() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        if (!getSessionManager().validateAdminToken(info.getSessionToken()))
+        if (!checkUpdatePermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         ItemsType dataEntry = info.getMessageData();
         if(dataEntry.getId() == null)
@@ -130,7 +146,7 @@ public abstract class Manager<
     >  ReturnType delete(Info info, UserRole role, ReturnType response) {
         if (info.getSessionToken() == null || info.getMessageData() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        if (!getSessionManager().validateAdminToken(info.getSessionToken()))
+        if (!checkDeletePermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         if (!this.getRepository().existsById(info.getMessageData()))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
