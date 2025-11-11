@@ -20,20 +20,20 @@ import mjp.server.queryData.InfoData;
  */
 public class DishDeleteInfo extends InfoData implements AuthorizedQueryInfo<Dish> {    
     private String sessionToken;
-    private Dish dish;
+    private Long id;
     
      
 
    public DishDeleteInfo(){};
    
-    public DishDeleteInfo(String sessionToken, Dish dish) {
+    public DishDeleteInfo(String sessionToken, Long id) {
         this.sessionToken = sessionToken;
-        this.dish = dish;
+        this.id = id;
     }  
         
     public DishDeleteInfo(DishDeleteInfo orig) {
         this.sessionToken = orig.sessionToken;
-        this.dish = orig.getDish();
+//        this.id = orig.getDish();
     }
            
     public void setSessionToken(String val) {
@@ -44,21 +44,21 @@ public class DishDeleteInfo extends InfoData implements AuthorizedQueryInfo<Dish
         return this.sessionToken;
     }
 
-    public Dish getDish() {
-        return dish;
+    public Long getId() {
+        return id;
     }
 
-    public void setDish(Dish dish) {
-        this.dish = dish;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
     public void setMessageData(Dish requestItem) {
-        setDish(requestItem);
+//        setDish(requestItem);
     }
 
     @Override
     public Dish getMessageData() {
-        return this.getDish();
+        return new Dish();
     }
 }

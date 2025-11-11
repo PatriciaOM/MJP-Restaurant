@@ -32,7 +32,6 @@ public abstract class TestDefaultClass {
     private static final String CYAN = "\033[36m";
        
     private Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();
-    private static String sessionToken = "";
     
     String PROTOCOL = "http";
     String HOST = "localhost";
@@ -104,7 +103,7 @@ public abstract class TestDefaultClass {
             String endPoint,
             AuthorizedQueryInfo messageObject,
             MessageDataType messageData,
-            String sesionToken
+            String sessionToken
     ) {
         String url;
         ResponseEntity<String> response;

@@ -13,7 +13,9 @@ import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.dish.DishCreateInfo;
+import mjp.server.queryData.dish.DishDeleteInfo;
 import mjp.server.queryData.dish.DishGetInfo;
+import mjp.server.queryData.dish.DishUpdateInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.responseData.dish.DishCreateResponse;
 import mjp.server.responseData.dish.DishGetResponse;
@@ -60,6 +62,15 @@ public class DishManagerTest extends TestDefaultClass {
         "Prova les nostres braves",
         true,
         Dish.DishCategory.APPETIZER
+    );
+    
+    static Dish updatedDish = new Dish(
+        "Braves extra picant",
+        4.40f,
+        "Nomes per valents",
+        true,
+        Dish.DishCategory.APPETIZER
+            
     );
      
     static Dish mockDish1 = new Dish(
@@ -170,5 +181,73 @@ public class DishManagerTest extends TestDefaultClass {
         List<Dish> dishes = responseMessage.getDishes();
         assertThat(dishes.size()).isEqualTo(1);
         assertThat(gson.toJson(dishes.get(0))).isEqualTo(gson.toJson(initialDish));
+    }
+    
+    @Test
+    @Order(600)
+    void updateDishBasicTests(){
+        DishUpdateInfo info =  new DishUpdateInfo();
+        this.basicRequestTests(
+            "updateDishBasicTests",
+            "/dish/update",
+            info,
+            updatedDish,
+            adminSessionToken
+        );
+    }
+    
+    
+    @Test
+    @Order(700)
+    void updateDish(){
+        printTestName("updateDish");
+        String url = makeUrl("/dish/update");
+        updatedDish.setId(initialDish.getId());
+        DishUpdateInfo info = new DishUpdateInfo(adminSessionToken, updatedDish);
+        ResponseEntity<String> response = makePostRequest(url, info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        
+        DishGetInfo getInfo = new DishGetInfo(userSessionToken, updatedDish.getId());
+        ResponseEntity<String> getResponse = makePostRequest("/dish/get", getInfo);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        DishGetResponse getResponseObject = gson.fromJson(getResponse.getBody(), DishGetResponse.class);
+        System.out.println(gson.toJson(getResponseObject));
+        List<Dish> returnedDishesList = getResponseObject.getDishes();
+        assertThat(returnedDishesList.size()).isEqualTo(1);
+        Dish returnedDish = returnedDishesList.get(0);
+  
+        assertNotNull(updatedDish.getId());
+        assertNotNull(returnedDish);
+        assertNotNull(updatedDish);
+        assertThat(gson.toJson(returnedDish)).isEqualTo(gson.toJson(updatedDish));        
+    }
+    
+    @Test
+    @Order(800)
+    void deleteDishBasicTests(){
+        DishDeleteInfo info =  new DishDeleteInfo();
+        this.basicRequestTests(
+            "deleteDishBasicTests",
+            "/dish/delete",
+            info,
+            updatedDish,
+            adminSessionToken
+        );
+    }
+    
+    @Test
+    @Order(900)
+    void deleteDish(){
+//        printTestName("deleteDish");
+//        String url = makeUrl("/dish/delete");
+//        DishUpdateInfo info = new DishUpdateInfo(adminSessionToken, updatedDish);
+//        ResponseEntity<String> response = makePostRequest(url, info);
+//        
+//        DishDeleteResponse
+//        
+//                
+//        DishGetInfo getInfo = new DishGetInfo(userSessionToken, updatedDish.getId());
+//        ResponseEntity<String> getResponse = makePostRequest("/dish/get", getInfo);
+//        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

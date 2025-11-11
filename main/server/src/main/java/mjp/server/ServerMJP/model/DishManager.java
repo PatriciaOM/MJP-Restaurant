@@ -7,11 +7,18 @@ package mjp.server.ServerMJP.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mjp.server.ServerMJP.database.Dish;
 import mjp.server.ServerMJP.database.DishRepository;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.TableRestaurantRepository;
 import mjp.server.ServerMJP.database.UserRepository;
+import mjp.server.queryData.InfoData;
 import mjp.server.queryData.TableStatusInfo;
+import mjp.server.queryData.dish.DishCreateInfo;
+import mjp.server.queryData.dish.DishGetInfo;
+import static mjp.server.queryData.dish.DishGetInfo.SearchType.ALL;
+import static mjp.server.queryData.dish.DishGetInfo.SearchType.BY_ID;
+import static mjp.server.queryData.dish.DishGetInfo.SearchType.BY_NAME;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
 import mjp.server.queryData.table.TableGetInfo;
@@ -33,7 +40,7 @@ import org.springframework.web.server.ResponseStatusException;
  * @author twiki
  */
 @Component
-public class DishManager extends Manager<DishRepository>{
+public class DishManager extends Manager<Dish, DishRepository, DishGetInfo>{
 
     protected SessionManager sessionManager;
     protected DishRepository respository;
@@ -55,5 +62,32 @@ public class DishManager extends Manager<DishRepository>{
     protected DishRepository getRepository() {
         return this.respository;
     }
+    
+    @Override
+    public List<Dish> findAllItems(DishRepository repository, DishGetInfo infoData) {
+        
+        List<Dish> ret = new ArrayList();
+        Optional<Dish> dishResult;
+        switch (infoData.getSearchType()) {
+            case ALL:
+                return this.convertIterableToList(repository.findAll());
+            case BY_ID:
+                dishResult = repository.findById(infoData.getId());
+                if (dishResult.isEmpty())
+                    return new ArrayList<>();
+                ret = List.of(dishResult.get());
+                break;
+            case BY_NAME:
+                ret = repository.findAllByName(infoData.getName());
+                break;
+            default:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (ret.size() != 1)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return ret;
+        
+    }
+
     
 }

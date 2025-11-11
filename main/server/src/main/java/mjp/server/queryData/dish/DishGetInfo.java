@@ -17,7 +17,6 @@ import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
-import mjp.server.queryData.crud.GetInfo;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,7 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
  *
  * @author twiki
  */
-public class DishGetInfo extends InfoData implements GetInfo<Dish, DishRepository>, AuthorizedQueryInfo<Dish> {    
+public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Dish> {    
 
 
 
@@ -42,7 +41,7 @@ public class DishGetInfo extends InfoData implements GetInfo<Dish, DishRepositor
     private String name;
      
 
-   public DishGetInfo(){System.out.println("Calling default consturctor");}
+   public DishGetInfo(){}
    
      /**
      * Constructor for getting a Dish by Id. I takes two parameters the session token and the Id.
@@ -128,36 +127,9 @@ public class DishGetInfo extends InfoData implements GetInfo<Dish, DishRepositor
     public String getName() {
         return name;
     }
-
-    
-    
     
     @Override
     public Dish getMessageData() {
         return this.getDish();
     }
-
-    @Override
-    public List<Dish> findAllItems(DishRepository repository) {
-        List<Dish> ret = new ArrayList();
-        Optional<Dish> dishResult;
-        switch (this.searchType) {
-            case ALL:
-                return this.convertIterableToList(repository.findAll());
-            case BY_ID:
-                dishResult = repository.findById(this.id);
-                if (dishResult.isEmpty())
-                    return new ArrayList<>();
-                ret = List.of(dishResult.get());
-                break;
-            case BY_NAME:
-                ret = repository.findAllByName(this.name);
-                break;
-            default:
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        if (ret.size() != 1)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        return ret;
-    }    
 }

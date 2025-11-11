@@ -19,7 +19,6 @@ import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.TableStatusInfo;
 import mjp.server.queryData.dish.DishCreateInfo;
 import mjp.server.queryData.InfoData;
-import mjp.server.queryData.crud.GetInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
 import mjp.server.queryData.table.TableGetInfo;
@@ -42,25 +41,26 @@ import org.springframework.web.server.ResponseStatusException;
 /**
  * 
  * @author twiki
+ * @param <ItemsType>
+ * @param <GetInfoType>
  */
 @Component
-public abstract class Manager<RepositoryType extends CrudRepository> {
+//public abstract class Manager<ItemsType, RepositoryType extends CrudRepository, GetInfoType > {
+public abstract class Manager<
+            ItemsType extends DatabaseEntry,
+            RepositoryType extends CrudRepository<ItemsType, Long>,
+            GetInfoType extends InfoData & AuthorizedQueryInfo<ItemsType>
+        > {
     
     protected abstract SessionManager getSessionManager();
     protected abstract RepositoryType getRepository();
         
     
-//    public Manager(
-//        TableRestaurantRepository tableRepository,
-//        SessionManager sessionManager
-//    ){
-//        this.tableRepository = tableRepository;
-//        this.sessionManager = sessionManager;
-//    }
+//    public abstract <InfoDataType extends InfoData> List<ItemsType> findAllItems(RepositoryType respoistory, InfoDataType infoData);
+    public abstract List<ItemsType> findAllItems(RepositoryType respoistory, GetInfoType infoData);
     
     public <
-        MessageDataType extends DatabaseEntry,
-        Info extends InfoData & AuthorizedQueryInfo<MessageDataType>,
+        Info extends InfoData & AuthorizedQueryInfo<ItemsType>,
         ReturnType extends ResponseData & CrudResponse
     >
     ReturnType create(Info info, UserRole role, ReturnType response){
@@ -69,7 +69,7 @@ public abstract class Manager<RepositoryType extends CrudRepository> {
             
         if (!getSessionManager().validateAdminToken(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        MessageDataType data = info.getMessageData();
+        ItemsType data = info.getMessageData();
 //        List<MessageDataType> existingEntries = getRepository().findById(data.getId());
 //        if(tables.size() != 0)
 //            throw new ResponseStatusException(HttpStatus.LOCKED);
@@ -80,30 +80,62 @@ public abstract class Manager<RepositoryType extends CrudRepository> {
     } 
     
      
-    public <
-        MessageDataType ,
-        Info extends InfoData & GetInfo & AuthorizedQueryInfo<MessageDataType>,
-        ReturnType extends ResponseData & CrudResponse
-    > ReturnType get(Info info, ReturnType response){
+    public <ReturnType extends ResponseData & CrudResponse>
+    ReturnType get(GetInfoType info, ReturnType response){
         if (info.getSessionToken() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (!getSessionManager().validateUserToken(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        List<Dish> dishes = info.findAllItems(this.getRepository());
+//        List<Dish> dishes = info.findAllItems(this.getRepository());
+        List<ItemsType> dishes = this.findAllItems(this.getRepository(), info);
+
         response.setMessageStatus("Success");
         response.setMessageData(dishes);
         return response;
     }
     
     
-//        
-//    public List<TableRestaurant> allTables() {
-//        ArrayList<TableRestaurant> tables = new ArrayList();
-//        this.tableRepository.findAll().forEach(user -> {
-//            tables.add(user);
-//        });
-//        return tables;
-//      }
+    
+    List<ItemsType> convertIterableToList(Iterable<ItemsType> iterable) {
+        List<ItemsType> ret = new ArrayList();
+        for (ItemsType item : iterable){
+            ret.add(item);
+        }
+        return ret;
+    }
+    
+    public <
+        Info extends InfoData & AuthorizedQueryInfo<ItemsType>,
+        ReturnType extends ResponseData & CrudResponse
+    >  ReturnType update(Info info, UserRole role, ReturnType response) {
+        if (info.getSessionToken() == null || info.getMessageData() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (!getSessionManager().validateAdminToken(info.getSessionToken()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        ItemsType dataEntry = info.getMessageData();
+        if(dataEntry.getId() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        dataEntry = this.getRepository().save(dataEntry);
+        response.setMessageData(List.of(dataEntry));
+        return response;
+            
+            
+            
+//        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
+    }
+     
+    public <
+        Info extends InfoData & AuthorizedQueryInfo<ItemsType>,
+        ReturnType extends ResponseData & CrudResponse
+    >  ReturnType delete(Info info, UserRole role, ReturnType response) {
+        if (info.getSessionToken() == null || info.getMessageData() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (!getSessionManager().validateAdminToken(info.getSessionToken()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
+    }
+    
+
 //    
 //    public TableDeleteResponse delete(TableDeleteInfo info){
 //        if (info.getSessionToken() == null)
