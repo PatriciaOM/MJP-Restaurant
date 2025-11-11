@@ -95,7 +95,6 @@ public abstract class Manager<
         return response;
     } 
     
-     
     public <ReturnType extends ResponseData & CrudResponse>
     ReturnType get(GetInfoType info, ReturnType response){
         if (info.getSessionToken() == null)
@@ -109,8 +108,6 @@ public abstract class Manager<
         response.setMessageData(dishes);
         return response;
     }
-    
-    
     
     List<ItemsType> convertIterableToList(Iterable<ItemsType> iterable) {
         List<ItemsType> ret = new ArrayList();
@@ -134,10 +131,6 @@ public abstract class Manager<
         dataEntry = this.getRepository().save(dataEntry);
         response.setMessageData(List.of(dataEntry));
         return response;
-            
-            
-            
-//        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
     }
      
     public <
@@ -157,43 +150,5 @@ public abstract class Manager<
         return response;
 //        
 //        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
-    }
-    
-
-//    
-//    public TableDeleteResponse delete(TableDeleteInfo info){
-//        if (info.getSessionToken() == null)
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//        if (!this.sessionManager.validateAdminToken(info.getSessionToken()))
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        
-//        Optional<TableRestaurant> table = this.tableRepository.findById(info.getId());
-//        if (table.isEmpty())
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//        this.tableRepository.deleteById(info.getId());
-//        return new TableDeleteResponse("success");
-//            
-////        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
-//    } 
-//    
-//    public TableUpdateResponse update(TableUpdateInfo info){
-//        if (info.getSessionToken() == null || info.getTable() == null)
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//        if (!this.sessionManager.validateAdminToken(info.getSessionToken()))
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        TableRestaurant table = this.tableRepository.save(info.getTable());
-//        return new TableUpdateResponse(table);
-//    } 
-//        
-//    public TableStatusResponse status(TableStatusInfo info) {
-//        if (info.getTableId() != null)
-//            throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
-//        TableStatusResponse response = new TableStatusResponse();
-//        response.addTable(new TableStatusResponseElement(1, 6, 4));
-//        response.addTable(new TableStatusResponseElement(2, 4, 0));
-//        response.addTable(new TableStatusResponseElement(3, 2, 4));
-//        response.addTable(new TableStatusResponseElement(4, 6, 0));
-//        return response;
-//    }
-    
+    }   
 }
