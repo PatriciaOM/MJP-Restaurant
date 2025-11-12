@@ -38,6 +38,7 @@ import mjp.server.ServerMJP.model.DishManager;
 import mjp.server.ServerMJP.model.TableManager;
 import mjp.server.ServerMJP.model.UserManager;
 import mjp.server.queryData.TableStatusInfo;
+import mjp.server.queryData.defaults.CreateInfo;
 import mjp.server.queryData.dish.DishCreateInfo;
 import mjp.server.queryData.dish.DishDeleteInfo;
 import mjp.server.queryData.dish.DishGetInfo;

@@ -13,17 +13,13 @@ import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
+import mjp.server.queryData.defaults.DeleteInfo;
 
 /**
  *
  * @author twiki
  */
-public class DishDeleteInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
-    private String sessionToken;
-    private Long id;
-    
-     
-
+public class DishDeleteInfo extends DeleteInfo<Long> {    
    public DishDeleteInfo(){};
    
     public DishDeleteInfo(String sessionToken, Long id) {
@@ -33,32 +29,5 @@ public class DishDeleteInfo extends InfoData implements AuthorizedQueryInfo<Long
         
     public DishDeleteInfo(DishDeleteInfo orig) {
         this.sessionToken = orig.sessionToken;
-//        this.id = orig.getDish();
-    }
-           
-    public void setSessionToken(String val) {
-        this.sessionToken = val;
-    }
-    
-    public String getSessionToken() {
-        return this.sessionToken;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public void setMessageData(Long requestItem) {
-        this.setId(requestItem);
-    }
-
-    @Override
-    public Long getMessageData() {
-        return this.getId();
     }
 }

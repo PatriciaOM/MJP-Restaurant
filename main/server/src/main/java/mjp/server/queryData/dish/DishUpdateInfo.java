@@ -13,52 +13,23 @@ import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
+import mjp.server.queryData.defaults.UpdateInfo;
 
 /**
  *
  * @author twiki
  */
-public class DishUpdateInfo extends InfoData implements AuthorizedQueryInfo<Dish> {    
-    private String sessionToken;
-    private Dish dish;
+public class DishUpdateInfo extends UpdateInfo<Dish>  {    
     
-     
-
-   public DishUpdateInfo(){};
+    public DishUpdateInfo(){};
    
     public DishUpdateInfo(String sessionToken, Dish dish) {
         this.sessionToken = sessionToken;
-        this.dish = dish;
+        this.item = dish;
     }  
         
     public DishUpdateInfo(DishUpdateInfo orig) {
         this.sessionToken = orig.sessionToken;
-        this.dish = orig.getDish();
-    }
-           
-    public void setSessionToken(String val) {
-        this.sessionToken = val;
-    }
-    
-    public String getSessionToken() {
-        return this.sessionToken;
-    }
-
-    public Dish getDish() {
-        return dish;
-    }
-
-    public void setDish(Dish dish) {
-        this.dish = dish;
-    }
-
-    @Override
-    public void setMessageData(Dish requestItem) {
-        setDish(requestItem);
-    }
-
-    @Override
-    public Dish getMessageData() {
-        return this.getDish();
+        this.item = orig.getItem();
     }
 }

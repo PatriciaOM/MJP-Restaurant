@@ -60,7 +60,6 @@ public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Dish> {
      * @param id 
      */
     public DishGetInfo(String sessionToken, long id) {
-        System.out.println("Calling session id constructor");
         this.sessionToken = sessionToken;
         this.id = id;
         this.searchType = SearchType.BY_ID;
