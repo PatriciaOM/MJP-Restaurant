@@ -20,6 +20,7 @@ import com.mjprestaurant.model.table.TableDeleteInfo;
 import com.mjprestaurant.model.table.TableGetInfo;
 import com.mjprestaurant.model.table.TableGetResponse;
 import com.mjprestaurant.model.table.TableRestaurant;
+import com.mjprestaurant.model.table.TableUpdateInfo;
 import com.mjprestaurant.view.LoginFrame;
 import com.mjprestaurant.view.TableFrame;
 
@@ -269,34 +270,67 @@ public class TableController implements ActionListener {
     }
 
     /**
-     * Edita una taula (exemple genèric)
+     * Edita una taula del restaurant
      */
-    public static void editTable(int tableId) {
-        String[] editFields = {"Camp a modificar", "Nou valor"};
+    public void editTable(TableRestaurant table) {
+        String[] editFields = {"Número de taula", "Màxim de comensals"};
+        
+        // Rellenar valores iniciales
+        Map<String, String> initialValues = Map.of(
+            "Número de taula", String.valueOf(table.getNum()),
+            "Màxim de comensals", String.valueOf(table.getMaxGuests())
+        );
 
-        CustomComponents.createForm("Editar taula", editFields, e -> {
+        CustomComponents.createForm("Editar taula", editFields, initialValues, e -> {
             @SuppressWarnings("unchecked")
             Map<String, String> data = (Map<String, String>) e.getSource();
 
-            String field = data.get("Camp a modificar");
-            String newValue = data.get("Nou valor");
+            String numStr = data.get("Número de taula");
+            String guestsStr = data.get("Màxim de comensals");
 
-            if (field == null || field.trim().isEmpty() ||
-                newValue == null || newValue.trim().isEmpty()) {
+            // Validaciones
+            if (numStr == null || numStr.trim().isEmpty() || guestsStr == null || guestsStr.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null,
                         "Tots els camps són obligatoris.",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            int num, maxGuests;
             try {
-                URL url = new URL("http://localhost:8080/table/" + tableId);
+                num = Integer.parseInt(numStr);
+                maxGuests = Integer.parseInt(guestsStr);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null,
+                        "Els valors han de ser numèrics.",
+                        "Error de validació", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (num <= 0 || maxGuests <= 0) {
+                JOptionPane.showMessageDialog(null,
+                        "Els valors han de ser positius.",
+                        "Error de validació", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Actualizar objeto con nuevos datos
+            table.setNum(num);
+            table.setMaxGuests(maxGuests);
+
+            // Crear objeto de envío
+            TableUpdateInfo updateInfo = new TableUpdateInfo(token, table);
+
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+                String json = mapper.writeValueAsString(updateInfo);
+
+                URL url = new URL("http://localhost:8080/table/update");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("PUT");
+                conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setDoOutput(true);
-
-                String json = "{\"" + field + "\": \"" + newValue + "\"}";
 
                 try (OutputStream os = conn.getOutputStream()) {
                     os.write(json.getBytes(StandardCharsets.UTF_8));
@@ -309,6 +343,8 @@ public class TableController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "Taula actualitzada correctament.",
                             "Èxit", JOptionPane.INFORMATION_MESSAGE);
+                    CustomComponents.closeCurrentForm();
+                    tableFrame.reloadTables(token);
                 } else if (responseCode == 404) {
                     JOptionPane.showMessageDialog(null,
                             "No s’ha trobat cap taula amb aquest ID.",
@@ -329,6 +365,34 @@ public class TableController implements ActionListener {
             }
 
         }, e -> System.out.println("Edició cancel·lada"));
+    }
+
+    public static String[] getTablefields() {
+        return tableFields;
+    }
+
+    public TableFrame getTableFrame() {
+        return tableFrame;
+    }
+
+    public void setTableFrame(TableFrame tableFrame) {
+        this.tableFrame = tableFrame;
+    }
+
+    public LoginFrame getLogin() {
+        return login;
+    }
+
+    public void setLogin(LoginFrame login) {
+        this.login = login;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
 }

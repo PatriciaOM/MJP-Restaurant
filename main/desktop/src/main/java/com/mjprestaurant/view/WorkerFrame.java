@@ -28,6 +28,7 @@ public class WorkerFrame extends AbstractFrame {
 
     private JTable workerTable;
     private DefaultTableModel tableModel;
+    private WorkerController controller;
 
     public WorkerFrame(String title, List<User> users) {
         super(title);
@@ -119,23 +120,25 @@ public class WorkerFrame extends AbstractFrame {
 
         workerTable.getColumn("Accions").setCellRenderer(new ButtonRenderer());
 
-        // Detectar clics en el botó "Editar"
         workerTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int row = workerTable.rowAtPoint(e.getPoint());
                 int column = workerTable.columnAtPoint(e.getPoint());
 
-                // Verificar si s'ha fet clic a la columna "Accions"
                 if (column == workerTable.getColumn("Accions").getModelIndex()) {
                     int workerId = Integer.parseInt(workerTable.getValueAt(row, 0).toString());
                     System.out.println("Editar trabajador con ID: " + workerId);
-                    WorkerController.editWorker(workerId);
+                    if (controller != null) {
+                        controller.editWorker(workerId);
+                    } else {
+                        System.err.println("WorkerController no asignado en WorkerFrame.");
+                    }
                 }
             }
         });
     }
-
+    
     public void reloadUsersTable(String token) {
         try {
             // Obtener lista actualizada de trabajadores
@@ -203,5 +206,47 @@ public class WorkerFrame extends AbstractFrame {
     public JTable getWorkerTable() {
         return workerTable; 
     }
+
+    public void setButtonAdd(JButton buttonAdd) {
+        this.buttonAdd = buttonAdd;
+    }
+
+    public JButton getButtonChange() {
+        return buttonChange;
+    }
+
+    public void setButtonChange(JButton buttonChange) {
+        this.buttonChange = buttonChange;
+    }
+
+    public void setButtonDelete(JButton buttonDelete) {
+        this.buttonDelete = buttonDelete;
+    }
+
+    public void setBtnBack(JButton btnBack) {
+        this.btnBack = btnBack;
+    }
+
+    public void setWorkerTable(JTable workerTable) {
+        this.workerTable = workerTable;
+    }
+
+    public DefaultTableModel getTableModel() {
+        return tableModel;
+    }
+
+    public void setTableModel(DefaultTableModel tableModel) {
+        this.tableModel = tableModel;
+    }
+
+    public WorkerController getController() {
+        return controller;
+    }
+
+    public void setController(WorkerController controller) {
+        this.controller = controller;
+    }
+
+    
 
 }

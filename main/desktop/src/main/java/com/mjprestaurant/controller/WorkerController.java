@@ -404,7 +404,7 @@ public class WorkerController implements ActionListener {
             }
 
             try {
-                URL url = new URL("http://localhost:8080/workers/" + workerId);
+                URL url = new URL("http://localhost:8080/user/update" + workerId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT"); // PUT para actualizar
                 conn.setRequestProperty("Content-Type", "application/json");

@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import com.mjprestaurant.controller.TableController;
+import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.CustomComponents;
 import com.mjprestaurant.model.table.TableRestaurant;
 
@@ -28,9 +29,12 @@ public class TableFrame extends AbstractFrame {
     private JButton buttonAdd, buttonDelete, btnBack;
     private JTable tableRestaurant;
     private DefaultTableModel tableModel;
+    private TableController controller;
+    private String token;
 
-    public TableFrame(String title, List<TableRestaurant> tables) {
+    public TableFrame(String title, List<TableRestaurant> tables, TableController controller) {
         super(title);
+        this.controller = controller;
         loadTables(tables); // carregar la llista
     }
 
@@ -126,8 +130,19 @@ public class TableFrame extends AbstractFrame {
 
                 if (column == tableRestaurant.getColumn("Accions").getModelIndex()) {
                     int tableId = Integer.parseInt(tableRestaurant.getValueAt(row, 0).toString());
-                    System.out.println("Editar taula amb ID: " + tableId);
-                    TableController.editTable(tableId);
+                    TableRestaurant selectedTable;
+                    try {
+                        selectedTable = TableController.getAllTables(controller.getToken())
+                                                                .stream()
+                                                                .filter(t -> t.getId() == tableId)
+                                                                .findFirst()
+                                                                .orElse(null);
+                        if (selectedTable != null) {
+                        controller.editTable(selectedTable);
+                    }
+                    } catch (ControllerException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
@@ -187,5 +202,47 @@ public class TableFrame extends AbstractFrame {
     public JTable getTableRestaurant() {
         return tableRestaurant;
     }
+
+    public void setButtonAdd(JButton buttonAdd) {
+        this.buttonAdd = buttonAdd;
+    }
+
+    public void setButtonDelete(JButton buttonDelete) {
+        this.buttonDelete = buttonDelete;
+    }
+
+    public void setBtnBack(JButton btnBack) {
+        this.btnBack = btnBack;
+    }
+
+    public void setTableRestaurant(JTable tableRestaurant) {
+        this.tableRestaurant = tableRestaurant;
+    }
+
+    public DefaultTableModel getTableModel() {
+        return tableModel;
+    }
+
+    public void setTableModel(DefaultTableModel tableModel) {
+        this.tableModel = tableModel;
+    }
+
+    public TableController getController() {
+        return controller;
+    }
+
+    public void setController(TableController controller) {
+        this.controller = controller;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    
 
 }

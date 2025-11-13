@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.table.TableRestaurant;
+import com.mjprestaurant.model.user.User;
 import com.mjprestaurant.view.AdminFrame;
 import com.mjprestaurant.view.LoginFrame;
 import com.mjprestaurant.view.TableFrame;
@@ -46,9 +47,9 @@ public class AdminController implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         String token = loginController.getResponseUser().getToken();
+
         if (source == adminFrame.getButtonTables()) {
             System.out.println("Botón 'Taules' pulsado");
-            TableFrame tables;
             List<TableRestaurant> tableList = java.util.Collections.emptyList();
 
             try {
@@ -62,23 +63,22 @@ public class AdminController implements ActionListener {
                 }
 
             } catch (ControllerException e1) {
-                // Si falla la connexió, simplement mostrem un missatge i obrim la finestra igualment
                 e1.printStackTrace();
                 javax.swing.JOptionPane.showMessageDialog(adminFrame,
                         "No s'han pogut carregar les taules.\nPots crear-ne de noves amb el botó 'Afegir'.",
                         "Advertència", javax.swing.JOptionPane.WARNING_MESSAGE);
             }
 
-            // Crear e inicializar siempre la ventana, aunque no haya mesas
-            tables = new TableFrame("Taules del restaurant", tableList);
+            // Crear el controlador primero
+            TableFrame tables = new TableFrame("Taules del restaurant", tableList, null); // temporal
+            TableController tableController = new TableController(tables, login, token);
+            tables.setController(tableController); // inyectar el controlador en el frame
+
             tables.initLogout(login);
             adminFrame.addChildFrame(tables);
             tables.setLocationRelativeTo(null);
             tables.setVisible(true);
             adminFrame.setVisible(false);
-
-            // Crear el controlador correspondiente
-            new TableController(tables, login, token);
 
             // Acció per tornar enrere
             tables.getBtnBack().addActionListener(ev -> {
@@ -92,23 +92,40 @@ public class AdminController implements ActionListener {
                         "Encara no hi ha cap taula registrada.\nFes clic a 'Afegir' per crear-ne una.",
                         "Informació", javax.swing.JOptionPane.INFORMATION_MESSAGE);
             }
+
         } else if (source == adminFrame.getButtonWorkers()) {
-            WorkerFrame workers;
             try {
-                workers = new WorkerFrame("Treballadors", WorkerController.getAllWorkers(token));
+                List<User> workerList = WorkerController.getAllWorkers(token);
+
+                // Crear ventana y controlador
+                WorkerFrame workers = new WorkerFrame("Treballadors", workerList);
+                WorkerController workerController = new WorkerController(workers, login, token);
+                workers.setController(workerController);
+
                 workers.initLogout(login);
                 adminFrame.addChildFrame(workers);
                 workers.setLocationRelativeTo(null);
                 workers.setVisible(true);
                 adminFrame.setVisible(false);
-                new WorkerController(workers, login, token);
 
+                // Acción para volver atrás
                 workers.getBtnBack().addActionListener(ev -> {
-                    workers.dispose(); // Cierra la ventana actual
-                    adminFrame.setVisible(true); // Muestra la anterior
+                    workers.dispose();
+                    adminFrame.setVisible(true);
                 });
+
+                // Información si la lista está vacía
+                if (workerList.isEmpty()) {
+                    javax.swing.JOptionPane.showMessageDialog(workers,
+                            "Encara no hi ha cap treballador registrat.\nFes clic a 'Afegir' per crear-ne un.",
+                            "Informació", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                }
+
             } catch (ControllerException e1) {
                 e1.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(adminFrame,
+                        "No s'han pogut carregar els treballadors.",
+                        "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
     }
