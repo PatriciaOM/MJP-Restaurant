@@ -21,7 +21,7 @@ import javax.swing.table.TableCellRenderer;
 
 import com.mjprestaurant.controller.WorkerController;
 import com.mjprestaurant.model.CustomComponents;
-import com.mjprestaurant.model.User;
+import com.mjprestaurant.model.user.User;
 
 public class WorkerFrame extends AbstractFrame {
     JButton buttonAdd, buttonChange, buttonDelete, btnBack;

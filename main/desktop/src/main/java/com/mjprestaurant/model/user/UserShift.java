@@ -1,4 +1,4 @@
-package com.mjprestaurant.model;
+package com.mjprestaurant.model.user;
 
 /**
  * Enumeració dels possibles torns de treball d'un usuari.

@@ -214,7 +214,7 @@ public class CustomComponents {
 
         frame.add(mainPanel);
         frame.pack();
-        frame.setMinimumSize(new Dimension(500, 250)); //alçada mínima del formulari
+        frame.setMinimumSize(new Dimension(800, 250)); //alçada mínima del formulari
         frame.setSize(500, 180 + fields.length * 45);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);

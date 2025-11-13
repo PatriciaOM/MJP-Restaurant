@@ -16,12 +16,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.CustomComponents;
-import com.mjprestaurant.model.User;
-import com.mjprestaurant.model.UserCreateInfo;
-import com.mjprestaurant.model.UserCreateResponse;
-import com.mjprestaurant.model.UserDeleteInfo;
-import com.mjprestaurant.model.UserGetInfo;
-import com.mjprestaurant.model.UserGetResponse;
+import com.mjprestaurant.model.user.User;
+import com.mjprestaurant.model.user.UserCreateInfo;
+import com.mjprestaurant.model.user.UserCreateResponse;
+import com.mjprestaurant.model.user.UserDeleteInfo;
+import com.mjprestaurant.model.user.UserGetInfo;
+import com.mjprestaurant.model.user.UserGetResponse;
 import com.mjprestaurant.view.LoginFrame;
 import com.mjprestaurant.view.WorkerFrame;
 
@@ -179,9 +179,9 @@ public class WorkerController implements ActionListener {
 
             // Validar torn amb l'enum UserShift
             String shiftStr = workerData.get("Torn (matí | tarda | indiferent)");
-            com.mjprestaurant.model.UserShift userShift;
+            com.mjprestaurant.model.user.UserShift userShift;
             try {
-                userShift = com.mjprestaurant.model.UserShift.fromString(shiftStr);
+                userShift = com.mjprestaurant.model.user.UserShift.fromString(shiftStr);
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(null,
                         "El torn ha de ser 'matí', 'tarda' o 'indiferent'.",
@@ -238,16 +238,15 @@ public class WorkerController implements ActionListener {
                 }
 
                 if (conn.getResponseCode() == 200) {
-                    int option = JOptionPane.showConfirmDialog(null, 
-                    "Treballador creat correctament!", "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                    if (option == JOptionPane.OK_OPTION) {
-                        // Cerrar el formulario
-                        CustomComponents.closeCurrentForm(); // necesitas implementar este método
-                        // Actualizar tabla de usuarios
-                        workerFrame.reloadUsersTable(token);
-                    }
+                    JOptionPane.showMessageDialog(null,
+                            "Treballador creat correctament",
+                            "Èxit", JOptionPane.INFORMATION_MESSAGE);
+                    CustomComponents.closeCurrentForm();
+                    workerFrame.reloadUsersTable(token);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Error del servidor: " + conn.getResponseCode(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,
+                            "Error del servidor: " + conn.getResponseCode(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
                 conn.disconnect();
@@ -303,17 +302,15 @@ public class WorkerController implements ActionListener {
                 }
 
                 if (conn.getResponseCode() == 200) {
-                    int option = JOptionPane.showConfirmDialog(null, 
-            "Treballador eliminat correctament.", "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                    if (option == JOptionPane.OK_OPTION) {
-                        CustomComponents.closeCurrentForm();
-                        workerFrame.reloadUsersTable(token);
-                    }
+                    JOptionPane.showMessageDialog(null,
+                            "Treballador eliminat correctament.",
+                            "Èxit", JOptionPane.INFORMATION_MESSAGE);
+                    CustomComponents.closeCurrentForm();
+                    workerFrame.reloadUsersTable(token);
                 } else if (conn.getResponseCode() == 404) {
                     JOptionPane.showMessageDialog(null,
-                            "No s'ha trobat cap treballador amb aquest Login.",
+                            "No s’ha trobat cap treballador coincident",
                             "Error", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField("Login del treballador");
                 } else {
                     JOptionPane.showMessageDialog(null,
                             "Error del servidor: " + conn.getResponseCode(),

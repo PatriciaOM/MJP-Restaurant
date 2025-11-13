@@ -1,4 +1,4 @@
-package com.mjprestaurant.model;
+package com.mjprestaurant.model.user;
 
 public class UserCreateInfo {
     private User user;

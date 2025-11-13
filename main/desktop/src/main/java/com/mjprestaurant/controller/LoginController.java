@@ -10,6 +10,8 @@ import com.mjprestaurant.view.LoginFrame;
 import com.mjprestaurant.view.WaiterFrame;
 import com.mjprestaurant.view.AdminFrame;
 import com.mjprestaurant.model.*;
+import com.mjprestaurant.model.user.User;
+import com.mjprestaurant.model.user.UserRole;
 
 /**
  * Controlador del Login de l'aplicació desktop

@@ -2,10 +2,13 @@ package com.mjprestaurant.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import com.mjprestaurant.model.ControllerException;
+import com.mjprestaurant.model.table.TableRestaurant;
 import com.mjprestaurant.view.AdminFrame;
 import com.mjprestaurant.view.LoginFrame;
+import com.mjprestaurant.view.TableFrame;
 import com.mjprestaurant.view.WorkerFrame;
 
 /**
@@ -45,6 +48,50 @@ public class AdminController implements ActionListener {
         String token = loginController.getResponseUser().getToken();
         if (source == adminFrame.getButtonTables()) {
             System.out.println("Botón 'Taules' pulsado");
+            TableFrame tables;
+            List<TableRestaurant> tableList = java.util.Collections.emptyList();
+
+            try {
+                // Intentar obtener las mesas del servidor
+                List<TableRestaurant> loadedTables = TableController.getAllTables(token);
+
+                if (loadedTables != null) {
+                    tableList = loadedTables;
+                } else {
+                    System.out.println("No s'han trobat taules registrades (resposta buida del servidor).");
+                }
+
+            } catch (ControllerException e1) {
+                // Si falla la connexió, simplement mostrem un missatge i obrim la finestra igualment
+                e1.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(adminFrame,
+                        "No s'han pogut carregar les taules.\nPots crear-ne de noves amb el botó 'Afegir'.",
+                        "Advertència", javax.swing.JOptionPane.WARNING_MESSAGE);
+            }
+
+            // Crear e inicializar siempre la ventana, aunque no haya mesas
+            tables = new TableFrame("Taules del restaurant", tableList);
+            tables.initLogout(login);
+            adminFrame.addChildFrame(tables);
+            tables.setLocationRelativeTo(null);
+            tables.setVisible(true);
+            adminFrame.setVisible(false);
+
+            // Crear el controlador correspondiente
+            new TableController(tables, login, token);
+
+            // Acció per tornar enrere
+            tables.getBtnBack().addActionListener(ev -> {
+                tables.dispose();
+                adminFrame.setVisible(true);
+            });
+
+            // Si la llista està buida, mostrar informació (opcional)
+            if (tableList.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(tables,
+                        "Encara no hi ha cap taula registrada.\nFes clic a 'Afegir' per crear-ne una.",
+                        "Informació", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }
         } else if (source == adminFrame.getButtonWorkers()) {
             WorkerFrame workers;
             try {
