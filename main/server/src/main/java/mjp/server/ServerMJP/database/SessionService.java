@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "SessionService")
-public class SessionService implements DatabaseEntry {
+public class SessionService  {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id; 

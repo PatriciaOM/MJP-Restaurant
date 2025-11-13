@@ -17,7 +17,7 @@ import mjp.server.responseData.ResponseData;
  *
  * @author twiki
  */
-public class DishResponse extends ResponseData implements CrudResponse {
+public class DishResponse extends ResponseData implements CrudResponse<Dish> {
     String messageStatus;
     List<Dish> dishes;
     

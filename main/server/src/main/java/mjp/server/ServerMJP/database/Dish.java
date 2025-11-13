@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Dish")
-public class Dish implements DatabaseEntry {
+public class Dish implements DatabaseEntry<Long> {
     public enum DishCategory {
         APPETIZER,
         MAIN,

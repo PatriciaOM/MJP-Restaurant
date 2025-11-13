@@ -8,15 +8,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.util.List;
+import mjp.server.ServerMJP.database.DatabaseEntry;
 import mjp.server.ServerMJP.database.Dish;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
+import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.dish.DishCreateInfo;
 import mjp.server.queryData.dish.DishDeleteInfo;
 import mjp.server.queryData.dish.DishGetInfo;
 import mjp.server.queryData.dish.DishUpdateInfo;
 import mjp.server.queryData.table.TableCreateInfo;
+import mjp.server.responseData.CrudResponse;
 import mjp.server.responseData.dish.DishCreateResponse;
 import mjp.server.responseData.dish.DishDeleteResponse;
 import mjp.server.responseData.dish.DishGetResponse;
@@ -36,14 +39,20 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import testUtils.Credentials;
+import testUtils.DataEntry;
+import testUtils.DefaultCrudTest;
 import testUtils.TestDefaultClass;
 
 
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DishManagerTest extends TestDefaultClass {
+public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
 
+    
+    static Credentials user = new Credentials("Twiki", "Tuki", null);
+    static Credentials admin = new Credentials("Ping", "Pong", null);
     
     private static String userSessionToken;
     private static String adminSessionToken;
@@ -100,21 +109,36 @@ public class DishManagerTest extends TestDefaultClass {
     
     List<Dish> allDishes = List.of(initialDish, mockDish1, mockDish2, mockDish3);
     
+    @Override
+    protected Credentials getUserCredentials() {
+        return this.user;
+    }
+
+    @Override
+    protected Credentials getAdminCredentials() {
+        return this.admin;
+    }
+    
        
     @Test
     @Order(001)
     void setup(){
-        printTestName("setup");
-        userSessionToken = this.login("Twiki", "Tuki");
-        adminSessionToken = this.login("Ping", "Pong");
-        System.out.println("usersSessionToken=" + userSessionToken);
-        System.out.println("adminSessionToken=" + adminSessionToken);
-        User user = this.getUserBySessionToken(userSessionToken);
-        User admin = this.getUserBySessionToken(adminSessionToken);
-        System.out.println("User user to json: " + gson.toJson(user));
-        System.out.println("Admin user to json: " + gson.toJson(admin));
-        assertThat(user.getRole()).isEqualTo(UserRole.USER);
-        assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
+        basicSetup("setup");
+        assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
+        assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
+        userSessionToken = this.getUserCredentials().getSessionToken(); // TODO delete
+        adminSessionToken = this.getAdminCredentials().getSessionToken(); // TODO delete
+//        printTestName("setup");
+//        userSessionToken = this.login("Twiki", "Tuki");
+//        adminSessionToken = this.login("Ping", "Pong");
+//        System.out.println("usersSessionToken=" + userSessionToken);
+//        System.out.println("adminSessionToken=" + adminSessionToken);
+//        User user = this.getUserBySessionToken(userSessionToken);
+//        User admin = this.getUserBySessionToken(adminSessionToken);
+//        System.out.println("User user to json: " + gson.toJson(user));
+//        System.out.println("Admin user to json: " + gson.toJson(admin));
+//        assertThat(user.getRole()).isEqualTo(UserRole.USER);
+//        assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
     }
     
     @Test
@@ -133,25 +157,28 @@ public class DishManagerTest extends TestDefaultClass {
     @Test
     @Order(300)
     void createAllDishes(){
-        printTestName("createAllDishes");
-        String url = makeUrl("/dish/create");//
-//        Dish dish = initialDish;
-        DishCreateInfo info;
-        
-        for (Dish dish : allDishes){
-            info = new DishCreateInfo(adminSessionToken, dish);
-            ResponseEntity<String> response = makePostRequest(url, info);
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            DishCreateResponse createReponse = gson.fromJson(response.getBody(), DishCreateResponse.class);
-            assertThat(createReponse.getMessageStatus()).isEqualTo("Success");
-            assertThat(createReponse.getDishes().size()).isEqualTo(1);
-            Dish dishResponse = createReponse.getDishes().get(0);
-            assertNotNull(dishResponse.getId());
-            dish.setId(dishResponse.getId());
-            assertThat(gson.toJson(dishResponse)).isEqualTo(gson.toJson(dish));
-        }
-        assertNotNull(allDishes.get(0).getId());
-        assertNotNull(initialDish.getId());
+        assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
+        assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
+        this.createAllItems("Create all dishes", DishCreateResponse.class);
+//        printTestName("createAllDishes");
+//        String url = makeUrl("/dish/create");//
+////        Dish dish = initialDish;
+//        DishCreateInfo info;
+//        
+//        for (Dish dish : allDishes){
+//            info = new DishCreateInfo(adminSessionToken, dish);
+//            ResponseEntity<String> response = makePostRequest(url, info);
+//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//            DishCreateResponse createReponse = gson.fromJson(response.getBody(), DishCreateResponse.class);
+//            assertThat(createReponse.getMessageStatus()).isEqualTo("Success");
+//            assertThat(createReponse.getDishes().size()).isEqualTo(1);
+//            Dish dishResponse = createReponse.getDishes().get(0);
+//            assertNotNull(dishResponse.getId());
+//            dish.setId(dishResponse.getId());
+//            assertThat(gson.toJson(dishResponse)).isEqualTo(gson.toJson(dish));
+//        }
+//        assertNotNull(allDishes.get(0).getId());
+//        assertNotNull(initialDish.getId());
     }
     
     @Test
@@ -216,6 +243,7 @@ public class DishManagerTest extends TestDefaultClass {
     @Test
     @Order(700)
     void updateDish(){
+//        this.updateAllItems("updateDish", DishCreateResponse.class);
         printTestName("updateDish");
         String url = makeUrl("/dish/update");
         updatedDish.setId(initialDish.getId());
@@ -308,4 +336,34 @@ public class DishManagerTest extends TestDefaultClass {
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+
+    @Override
+    protected Dish getInitalItem() {
+        return initialDish;
+    }
+
+    @Override
+    protected Dish getUpdatedItem() {
+        return updatedDish;
+    }
+
+    @Override
+    protected List<Dish> getAllTestItems() {
+        return this.allDishes;
+    }
+
+//
+//    @Override
+//    public CrudResponse createResponse(String Message, List entries) {
+//        return new DishCreateInfo(Message, entries);
+//    }
+
+    @Override
+    public AuthorizedQueryInfo<Dish> createRequest(String sessionToken, Dish entry) {
+        return new DishCreateInfo(sessionToken, entry);
+    }
+
+
+
+
 }

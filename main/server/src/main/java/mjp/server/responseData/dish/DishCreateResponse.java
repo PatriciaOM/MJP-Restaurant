@@ -12,7 +12,7 @@ import mjp.server.responseData.CrudResponse;
  *
  * @author twiki
  */
-public class DishCreateResponse extends DishResponse implements CrudResponse{
+public class DishCreateResponse extends DishResponse {
     
     public DishCreateResponse(){}
     

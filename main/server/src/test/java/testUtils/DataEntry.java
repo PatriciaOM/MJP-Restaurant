@@ -1,14 +1,14 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mjp.server.ServerMJP.database;
+package testUtils;
 
 /**
  *
  * @author twiki
  */
-public interface DatabaseEntry<IdType> {
+public abstract class  DataEntry<IdType> {
     abstract IdType getId();
     abstract void setId(IdType id);
 }

@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import mjp.server.ServerMJP.database.User;
+import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.LoginInfo;
 import mjp.server.queryData.user.UserUpdateInfo;
@@ -15,6 +16,8 @@ import mjp.server.responseData.LoginResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +30,31 @@ import org.springframework.http.ResponseEntity;
  * @author twiki
  */
 public abstract class TestDefaultClass {
+//    protected class Credentials {
+//        String username;
+//        String password;
+//        String sessionToken;
+//
+//        public Credentials(String username, String password, String sessionToken) {
+//            this.username = username;
+//            this.password = password;
+//            this.sessionToken = sessionToken;
+//        }
+//
+//        public String getUsername() {return username;}
+//
+//        public String getPassword() {return password;}
+//
+//        public String getSessionToken() {return sessionToken;}
+//
+//        public void setUsername(String username) {this.username = username;}
+//
+//        public void setPassword(String password) {this.password = password;}
+//
+//        public void setSessionToken(String sessionToken) {this.sessionToken = sessionToken;}
+//        
+//        
+//    }
     
     private static final String RESET = "\033[0m";
     private static final String CYAN = "\033[36m";
@@ -135,6 +163,27 @@ public abstract class TestDefaultClass {
             response = makePostRequest(url, messageObject);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }
-        
     }
+    
+//    protected abstract Credentials getUserCredentials();
+//    protected abstract Credentials getAdminCredentials();
+//    
+//    
+//    
+//    protected void basicSetup(String testname){
+//        printTestName(testname);
+//        Credentials userCred = getUserCredentials();
+//        Credentials adminCred = getAdminCredentials();
+//
+//        getUserCredentials().setSessionToken(this.login(userCred.getUsername(), userCred.getPassword()));
+//        getAdminCredentials().setSessionToken(this.login(adminCred.getUsername(), adminCred.getPassword()));
+//        System.out.println("usersSessionToken=" + userCred.getSessionToken());
+//        System.out.println("adminSessionToken=" + adminCred.getSessionToken());
+//        User user = this.getUserBySessionToken(userCred.getSessionToken());
+//        User admin = this.getUserBySessionToken(adminCred.getSessionToken());
+//        System.out.println("User user to json: " + gson.toJson(user));
+//        System.out.println("Admin user to json: " + gson.toJson(admin));
+//        assertThat(user.getRole()).isEqualTo(UserRole.USER);
+//        assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
+//    }
 }
