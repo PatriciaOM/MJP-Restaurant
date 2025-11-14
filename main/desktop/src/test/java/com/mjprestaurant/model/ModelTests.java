@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import com.mjprestaurant.model.user.UserResponse;
+import com.mjprestaurant.model.user.UserRole;
+
 /**
  * Classe de test pel model
  * @author Patricia Oliva

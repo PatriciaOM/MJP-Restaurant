@@ -1,11 +1,20 @@
 package com.mjprestaurant.model;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -16,6 +25,8 @@ public class CustomComponents {
     private static JButton customButton;
     private static JTextField customTextField;
     private static JPasswordField customPwdField;
+    private static Map<String, JTextField> textFields;
+    private static JFrame currentFrame;
 
     //BOTONS
     /**
@@ -65,7 +76,6 @@ public class CustomComponents {
         return customButton;
     }
 
-    //JTEXTFIELD
     /**
      * Mètode per setejar els TextField amb un estil estandaritzat
      */
@@ -149,6 +159,185 @@ public class CustomComponents {
         component.setPreferredSize(new Dimension(200, 30));
         component.setForeground(Color.DARK_GRAY);
         component.setCaretColor(Color.DARK_GRAY);
+    }
+
+    /**
+     * Mètode per crear formularis per introduïr dades de diferents classes
+     * @param frameTitle títol pel formulari
+     * @param fields camps del formulari necessaris
+     */
+    public static void createForm(String frameTitle, String[] fields, ActionListener onAccept, ActionListener onCancel) {
+        JFrame frame = new JFrame(frameTitle);
+        currentFrame = frame; 
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+
+        JLabel titleLabel = new JLabel(frameTitle);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(titleLabel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 50)));
+
+        JPanel formPanel = new JPanel(new GridLayout(fields.length, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+
+        textFields = new HashMap<>();
+
+        for (String field : fields) {
+            JLabel label = new JLabel(field + ":");
+            label.setFont(new Font("Arial", Font.PLAIN, 13));
+            label.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            CustomComponents.setCustomTextField();
+            JTextField textField = CustomComponents.getCustomTextField();
+            textField.setPreferredSize(new Dimension(180, 25));
+            textFields.put(field, textField);
+
+            formPanel.add(label);
+            formPanel.add(textField);
+        }
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        new CustomComponents().setCustomButton("Acceptar");
+        JButton btnAccept = CustomComponents.getCustomButton();
+        new CustomComponents().setCustomButton("Cancelar");
+        JButton btnCancel = CustomComponents.getCustomButton();
+        buttonPanel.add(btnAccept);
+        buttonPanel.add(btnCancel);
+
+        mainPanel.add(formPanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        mainPanel.add(buttonPanel);
+
+        frame.add(mainPanel);
+        frame.pack();
+        frame.setMinimumSize(new Dimension(800, 250)); //alçada mínima del formulari
+        frame.setSize(500, 180 + fields.length * 45);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+
+        Map<String, String> data = new HashMap<>();
+
+        btnAccept.addActionListener(e -> {
+            for (String field : fields) {
+                data.put(field, textFields.get(field).getText().trim());
+            }
+            e.setSource(data);
+            onAccept.actionPerformed(e);
+        });
+
+        btnCancel.addActionListener(e -> {
+            if (onCancel != null) onCancel.actionPerformed(e);
+            frame.dispose();
+        });
+    }
+
+    /**
+     * Mètode per crear formularis per introduïr dades de diferents classes
+     * @param frameTitle títol pel formulari
+     * @param fields camps del formulari necessaris
+     * @param initialValues valors inicials dels camps (nom del camp -> valor)
+     * @param onAccept ActionListener per al botó Acceptar
+     * @param onCancel ActionListener per al botó Cancel·lar
+     */
+    public static void createForm(String frameTitle, String[] fields, Map<String, String> initialValues,
+                                ActionListener onAccept, ActionListener onCancel) {
+        JFrame frame = new JFrame(frameTitle);
+        currentFrame = frame;
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+
+        JLabel titleLabel = new JLabel(frameTitle);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(titleLabel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 50)));
+
+        JPanel formPanel = new JPanel(new GridLayout(fields.length, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+
+        textFields = new HashMap<>();
+
+        for (String field : fields) {
+            JLabel label = new JLabel(field + ":");
+            label.setFont(new Font("Arial", Font.PLAIN, 13));
+            label.setHorizontalAlignment(SwingConstants.RIGHT);
+
+            CustomComponents.setCustomTextField();
+            JTextField textField = CustomComponents.getCustomTextField();
+            textField.setPreferredSize(new Dimension(180, 25));
+
+            // Rellenar con valor inicial si existe
+            if (initialValues != null && initialValues.containsKey(field)) {
+                textField.setText(initialValues.get(field));
+            }
+
+            textFields.put(field, textField);
+
+            formPanel.add(label);
+            formPanel.add(textField);
+        }
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        new CustomComponents().setCustomButton("Acceptar");
+        JButton btnAccept = CustomComponents.getCustomButton();
+        new CustomComponents().setCustomButton("Cancelar");
+        JButton btnCancel = CustomComponents.getCustomButton();
+        buttonPanel.add(btnAccept);
+        buttonPanel.add(btnCancel);
+
+        mainPanel.add(formPanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        mainPanel.add(buttonPanel);
+
+        frame.add(mainPanel);
+        frame.pack();
+        frame.setMinimumSize(new Dimension(800, 250)); //alçada mínima del formulari
+        frame.setSize(500, 180 + fields.length * 45);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+
+        Map<String, String> data = new HashMap<>();
+
+        btnAccept.addActionListener(e -> {
+            for (String field : fields) {
+                data.put(field, textFields.get(field).getText().trim());
+            }
+            e.setSource(data);
+            if (onAccept != null) onAccept.actionPerformed(e);
+        });
+
+        btnCancel.addActionListener(e -> {
+            if (onCancel != null) onCancel.actionPerformed(e);
+            frame.dispose();
+        });
+    }
+
+
+    /**
+     * Mètode que buida el TextField incorrecte
+     * @param fieldName nom del camp a esborrar
+     */
+    public static void clearField(String fieldName) {
+        if (textFields != null && textFields.containsKey(fieldName)) {
+            textFields.get(fieldName).setText("");
+            textFields.get(fieldName).requestFocus();
+        }
+    }
+
+    public static void closeCurrentForm() {
+        if (currentFrame != null) {
+            currentFrame.dispose();
+            currentFrame = null;
+        }
     }
 
 }

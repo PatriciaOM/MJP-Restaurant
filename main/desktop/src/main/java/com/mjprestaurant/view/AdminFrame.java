@@ -14,8 +14,8 @@ import com.mjprestaurant.model.CustomComponents;
  * Pantalla d'administradors
  * @author Patricia Oliva
  */
-public class AdminFrame  extends AbstractFrame {
-
+public class AdminFrame extends AbstractFrame {
+    JButton buttonTables, buttonWorkers;
     /**
      * Constructor principal que seteja com a títol de la pantalla el nom de l'usuari loguejat
      * @param username nom de l'usuari
@@ -34,9 +34,9 @@ public class AdminFrame  extends AbstractFrame {
         title.setFont(new Font("Arial", Font.PLAIN, 24));
         
         new CustomComponents().setCustomButton("Taules");
-        JButton buttonTables = CustomComponents.getCustomButton();
+        buttonTables = CustomComponents.getCustomButton();
         new CustomComponents().setCustomButton("Treballadors");
-        JButton buttonWorkers = CustomComponents.getCustomButton();
+        buttonWorkers = CustomComponents.getCustomButton();
         
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setBorder(BorderFactory.createEmptyBorder(100,0,20,0));
@@ -52,6 +52,22 @@ public class AdminFrame  extends AbstractFrame {
         add(titlePanel, BorderLayout.NORTH);
         add(adminPanel, BorderLayout.CENTER);
 
+    }
+
+    /**
+     * Mètode que retorna el botó de taules
+     * @return botó taules
+     */
+    public JButton getButtonTables() {
+        return buttonTables;
+    }
+
+    /**
+     * Mètode que retorna el botó de treballadors
+     * @return botó treballadors
+     */
+    public JButton getButtonWorkers() {
+        return buttonWorkers;
     }
     
 }
