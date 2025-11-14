@@ -38,7 +38,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-class ServerMjpApplicationTests {
+class ServerMjpApplicationTest {
     private final String RESET = "\033[0m";
     private final String CYAN = "\033[36m";
     

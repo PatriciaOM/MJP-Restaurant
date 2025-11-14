@@ -8,20 +8,39 @@ import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.queryData.user.*;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
+import mjp.server.queryData.AuthorizedQueryInfo;
 
 /**
  *
  * @author twiki
  */
-public class TableUpdateInfo {
+public class TableUpdateInfo implements AuthorizedQueryInfo<TableRestaurant> {
     
     private String sessionToken;
     private TableRestaurant table;
     
+    public TableUpdateInfo(){};
     
     public TableUpdateInfo(String sessionToken, TableRestaurant table) {
         this.sessionToken = sessionToken;
         this.table = table;
+    }
+    
+    
+
+//    @Override
+//    public AuthorizedQueryInfo createInsance(String sessionToken, TableRestaurant requestItem) {
+//        return new TableUpdateInfo(sessionToken, requestItem);
+//    }
+    
+    @Override
+    public void setSessionToken(String val) {
+        this.sessionToken = val;
+    }
+    
+    @Override
+    public String getSessionToken() {
+        return this.sessionToken;
     }
     
     void setTable(TableRestaurant val) {
@@ -31,14 +50,14 @@ public class TableUpdateInfo {
     public TableRestaurant getTable() {
         return this.table;
     }
-    
-    void setSessionToken(String val) {
-        this.sessionToken = val;
+
+    @Override
+    public void setMessageData(TableRestaurant requestItem) {
+        this.setTable(requestItem);
     }
-    
-    public String getSessionToken() {
-        return this.sessionToken;
+
+    @Override
+    public TableRestaurant getMessageData() {
+        return this.getTable();
     }
-    
-    
 }

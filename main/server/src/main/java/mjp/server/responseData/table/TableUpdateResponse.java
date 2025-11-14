@@ -4,6 +4,7 @@
  */
 package mjp.server.responseData.table;
 
+import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.responseData.user.*;
 import mjp.server.ServerMJP.database.User;
 
@@ -13,15 +14,15 @@ import mjp.server.ServerMJP.database.User;
  */
 public class TableUpdateResponse {
     public String message="success";
-    public User user;
+    public TableRestaurant table;
     
     public TableUpdateResponse(){
     }
     
     
-    public TableUpdateResponse(String message, User user){
+    public TableUpdateResponse(String message, TableRestaurant table){
         this.message = message;
-        this.user = user;
+        this.table = table;
     }
     
     /**
@@ -32,8 +33,8 @@ public class TableUpdateResponse {
         this.message = message;
     }
     
-    public TableUpdateResponse(User user){
-        this.user = user;
+    public TableUpdateResponse(TableRestaurant table){
+        this.table = table;
     }
     
     
@@ -44,13 +45,13 @@ public class TableUpdateResponse {
     public String getMessage() {
         return this.message;
     }
-    
-    public void setUser(User value) {
-        this.user = value;
+
+    public void setTable(TableRestaurant table) {
+        this.table = table;
     }
     
-    public User getUser() {
-        return this.user;
+    public TableRestaurant getTable() {
+        return this.table;
     }
     
     

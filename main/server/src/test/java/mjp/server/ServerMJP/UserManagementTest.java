@@ -52,7 +52,7 @@ import testUtils.TestUtils;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserManagementTests extends TestDefaultClass {
+public class UserManagementTest extends TestDefaultClass {
     
     Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
     private static String userSessionToken;
