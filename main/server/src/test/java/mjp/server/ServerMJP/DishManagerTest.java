@@ -41,14 +41,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import testUtils.Credentials;
 import testUtils.DataEntry;
-import testUtils.DefaultCrudTest;
-import testUtils.TestDefaultClass;
+import testUtils.TestDefaultCrud;
+import testUtils.TestDefault;
 
 
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
+public class DishManagerTest extends TestDefaultCrud<Long, Dish, DishCreateResponse> {
 
     
     static Credentials user = new Credentials("Twiki", "Tuki", null);
@@ -106,6 +106,17 @@ public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
         false,
         Dish.DishCategory.DRINK
     );
+    
+    
+    static Dish noExsitingDish = new Dish(
+        -1000L,
+        "Amanita muscria",
+        0.00f,
+        "Good luck eating this",
+        false,
+        Dish.DishCategory.APPETIZER
+    );
+    
     
     List<Dish> allDishes = List.of(initialDish, mockDish1, mockDish2, mockDish3);
     
@@ -197,18 +208,19 @@ public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
     @Test
     @Order(500)
     void getDishById(){
-        printTestName("getDish");
-        String url = makeUrl("/dish/get");
-        DishGetInfo info = new DishGetInfo(userSessionToken, initialDish.getId());
-        assertNotNull(initialDish.getId());
-        assertNotNull(info.getId());
-        
-        ResponseEntity<String> response = makePostRequest(url, info);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        DishGetResponse responseMessage = gson.fromJson(response.getBody(), DishGetResponse.class);
-        List<Dish> dishes = responseMessage.getDishes();
-        assertThat(dishes.size()).isEqualTo(1);
-        assertThat(gson.toJson(dishes.get(0))).isEqualTo(gson.toJson(initialDish));
+        getItemById("getDishById", DishGetResponse.class);
+//        printTestName("getDish");
+//        String url = makeUrl("/dish/get");
+//        DishGetInfo info = new DishGetInfo(userSessionToken, initialDish.getId());
+//        assertNotNull(initialDish.getId());
+//        assertNotNull(info.getId());
+//        
+//        ResponseEntity<String> response = makePostRequest(url, info);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        DishGetResponse responseMessage = gson.fromJson(response.getBody(), DishGetResponse.class);
+//        List<Dish> dishes = responseMessage.getDishes();
+//        assertThat(dishes.size()).isEqualTo(1);
+//        assertThat(gson.toJson(dishes.get(0))).isEqualTo(gson.toJson(initialDish));
     }
     
     
@@ -216,14 +228,15 @@ public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
     @Test
     @Order(500)
     void getNoExistingDishById(){
-        printTestName("getDish");
-        String url = makeUrl("/dish/get");
-        DishGetInfo info = new DishGetInfo(userSessionToken, 5000L);
-        assertNotNull(initialDish.getId());
-        assertNotNull(info.getId());
-        
-        ResponseEntity<String> response = makePostRequest(url, info);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        getNoExistingItemById("getNoExistingDishById", DishGetResponse.class);
+//        printTestName("getNoExistingDishById");
+//        String url = makeUrl("/dish/get");
+//        DishGetInfo info = new DishGetInfo(userSessionToken, 5000L);
+//        assertNotNull(initialDish.getId());
+//        assertNotNull(info.getId());
+//        
+//        ResponseEntity<String> response = makePostRequest(url, info);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     
     @Test
@@ -239,31 +252,30 @@ public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
         );
     }
     
-    
     @Test
     @Order(700)
     void updateDish(){
-//        this.updateAllItems("updateDish", DishCreateResponse.class);
-        printTestName("updateDish");
-        String url = makeUrl("/dish/update");
-        updatedDish.setId(initialDish.getId());
-        DishUpdateInfo info = new DishUpdateInfo(adminSessionToken, updatedDish);
-        ResponseEntity<String> response = makePostRequest(url, info);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        
-        DishGetInfo getInfo = new DishGetInfo(userSessionToken, updatedDish.getId());
-        ResponseEntity<String> getResponse = makePostRequest("/dish/get", getInfo);
-        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        DishGetResponse getResponseObject = gson.fromJson(getResponse.getBody(), DishGetResponse.class);
-        System.out.println(gson.toJson(getResponseObject));
-        List<Dish> returnedDishesList = getResponseObject.getDishes();
-        assertThat(returnedDishesList.size()).isEqualTo(1);
-        Dish returnedDish = returnedDishesList.get(0);
-  
-        assertNotNull(updatedDish.getId());
-        assertNotNull(returnedDish);
-        assertNotNull(updatedDish);
-        assertThat(gson.toJson(returnedDish)).isEqualTo(gson.toJson(updatedDish));        
+        this.updateItem("updateDish", DishCreateResponse.class);
+//        printTestName("updateDish");
+//        String url = makeUrl("/dish/update");
+//        updatedDish.setId(initialDish.getId());
+//        DishUpdateInfo info = new DishUpdateInfo(adminSessionToken, updatedDish);
+//        ResponseEntity<String> response = makePostRequest(url, info);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        
+//        DishGetInfo getInfo = new DishGetInfo(userSessionToken, updatedDish.getId());
+//        ResponseEntity<String> getResponse = makePostRequest("/dish/get", getInfo);
+//        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        DishGetResponse getResponseObject = gson.fromJson(getResponse.getBody(), DishGetResponse.class);
+//        System.out.println(gson.toJson(getResponseObject));
+//        List<Dish> returnedDishesList = getResponseObject.getDishes();
+//        assertThat(returnedDishesList.size()).isEqualTo(1);
+//        Dish returnedDish = returnedDishesList.get(0);
+//  
+//        assertNotNull(updatedDish.getId());
+//        assertNotNull(returnedDish);
+//        assertNotNull(updatedDish);
+//        assertThat(gson.toJson(returnedDish)).isEqualTo(gson.toJson(updatedDish));        
     }
     
     @Test
@@ -338,7 +350,7 @@ public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
     }
 
     @Override
-    protected Dish getInitalItem() {
+    protected Dish getInitialItem() {
         return initialDish;
     }
 
@@ -351,6 +363,11 @@ public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
     protected List<Dish> getAllTestItems() {
         return this.allDishes;
     }
+    
+    @Override
+    protected Dish getNoExistingItem() {
+        return noExsitingDish;
+    }
 
 //
 //    @Override
@@ -359,9 +376,21 @@ public class DishManagerTest extends DefaultCrudTest<Dish, DishCreateResponse> {
 //    }
 
     @Override
-    public AuthorizedQueryInfo<Dish> createRequest(String sessionToken, Dish entry) {
+    public AuthorizedQueryInfo<Dish> generateCreateRequest(String sessionToken, Dish entry) {
         return new DishCreateInfo(sessionToken, entry);
     }
+
+    @Override
+    public AuthorizedQueryInfo<Long> generateGetRequest(String sessionToken, Long entryId) {
+        return new DishGetInfo(sessionToken, entryId);
+    }
+    
+    @Override
+    public AuthorizedQueryInfo<Dish> generateUpdateRequest(String sessionToken, Dish entry) {
+        return new DishUpdateInfo(sessionToken, entry);
+    }
+
+   
 
 
 

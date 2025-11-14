@@ -64,7 +64,7 @@ public class DishManager extends Manager<Dish, DishRepository, DishGetInfo>{
     }
     
     @Override
-    public List<Dish> findAllItems(DishRepository repository, DishGetInfo infoData) {
+    public List<Dish> findItems(DishRepository repository, DishGetInfo infoData) {
         
         List<Dish> ret = new ArrayList();
         Optional<Dish> dishResult;

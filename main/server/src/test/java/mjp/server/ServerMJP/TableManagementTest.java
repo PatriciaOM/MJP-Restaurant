@@ -35,7 +35,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import testUtils.TestDefaultClass;
+import testUtils.TestDefault;
 
 /**
  *
@@ -46,7 +46,7 @@ import testUtils.TestDefaultClass;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class TableManagementTest extends TestDefaultClass {
+public class TableManagementTest extends TestDefault {
     private static String userSessionToken;
     private static String adminSessionToken;
     private static final TableRestaurant initialTable = new TableRestaurant(10, 4);

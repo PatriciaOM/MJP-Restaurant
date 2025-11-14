@@ -49,7 +49,7 @@ import org.springframework.web.server.ResponseStatusException;
 public abstract class Manager<
             ItemsType extends DatabaseEntry,
             RepositoryType extends CrudRepository<ItemsType, Long>,
-            GetInfoType extends InfoData & AuthorizedQueryInfo<ItemsType>
+            GetInfoType extends InfoData & AuthorizedQueryInfo
         > {
     
     protected abstract SessionManager getSessionManager();
@@ -57,7 +57,7 @@ public abstract class Manager<
         
     
 //    public abstract <InfoDataType extends InfoData> List<ItemsType> findAllItems(RepositoryType respoistory, InfoDataType infoData);
-    public abstract List<ItemsType> findAllItems(RepositoryType respoistory, GetInfoType infoData);
+    public abstract List<ItemsType> findItems(RepositoryType respoistory, GetInfoType infoData);
     
     protected boolean checkCreatePermisions(String sessionToken) {
         return this.getSessionManager().validateAdminToken(sessionToken);
@@ -102,7 +102,7 @@ public abstract class Manager<
         if (!checkGetPermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 //        List<Dish> dishes = info.findAllItems(this.getRepository());
-        List<ItemsType> dishes = this.findAllItems(this.getRepository(), info);
+        List<ItemsType> dishes = this.findItems(this.getRepository(), info);
 
         response.setMessageStatus("Success");
         response.setMessageData(dishes);
