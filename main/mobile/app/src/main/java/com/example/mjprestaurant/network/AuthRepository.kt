@@ -1,14 +1,19 @@
 package com.example.mjprestaurant.network
 
-import android.util.Log
-import com.example.mjprestaurant.model.LoginRequest
-import com.example.mjprestaurant.model.LoginResponse
-import com.example.mjprestaurant.model.LogoutRequest
-import com.example.mjprestaurant.model.TableStatusRequest
-import com.example.mjprestaurant.model.TableStatusResponse
-import com.google.gson.Gson
-import okhttp3.ResponseBody.Companion.toResponseBody
+import com.example.mjprestaurant.model.auth.LoginRequest
+import com.example.mjprestaurant.model.auth.LoginResponse
+import com.example.mjprestaurant.model.auth.LogoutRequest
+import com.example.mjprestaurant.model.table.TableStatusRequest
+import com.example.mjprestaurant.model.table.TableStatusResponse
+import com.example.mjprestaurant.model.dish.DishCategory
+import com.example.mjprestaurant.model.dish.Dish
+import com.example.mjprestaurant.model.dish.request.DishCreateInfo
+import com.example.mjprestaurant.model.dish.request.DishDeleteInfo
+import com.example.mjprestaurant.model.dish.request.DishGetInfo
+import com.example.mjprestaurant.model.dish.request.DishUpdateInfo
+import com.example.mjprestaurant.model.dish.DishResponse
 import retrofit2.Response
+import kotlinx.coroutines.delay
 
 
 /**
@@ -22,6 +27,9 @@ import retrofit2.Response
  * @see LoginViewModel
  * @see ApiService
  * @see RetrofitInstance
+ * @see Dish
+ * @see DishViewModel
+ *
  *
  * @author Martin Muñoz Pozuelo
  */
@@ -73,4 +81,53 @@ class AuthRepository {
         val request = TableStatusRequest(sessionToken = token)
         return RetrofitInstance.api.getTableStatus(request)
     }
+
+    /**
+     * Obté tots els plats del menú des del servidor.
+     *
+     * @param token Token de sessió  de l'usuari autenticat
+     * @return Response amb la llista de tots els plats
+     *
+     */
+    suspend fun getDishes(token: String): Response<DishResponse> {
+        val request = DishGetInfo(sessionToken = token)
+        return RetrofitInstance.api.getDishes(request)
+    }
+
+    /**
+     * Crea un nou plat al menú.
+     *
+     * @param token Token de sessió de l'usuari autenticat
+     * @param dish Plat a crear
+     * @return Response amb el plat creat
+     */
+    suspend fun createDish(token: String, dish: Dish): Response<DishResponse> {
+        val request = DishCreateInfo(sessionToken = token, newEntry = dish)
+        return RetrofitInstance.api.createDish(request)
+    }
+
+    /**
+     * Actualitza un plat existent.
+     *
+     * @param token Token de sessió de l'usuari autenticat
+     * @param dish Plat actualitzat
+     * @return Response amb el plat actualitzat
+     */
+    suspend fun updateDish(token: String, dish: Dish): Response<DishResponse> {
+        val request = DishUpdateInfo(sessionToken = token, newEntry = dish)
+        return RetrofitInstance.api.updateDish(request)
+    }
+
+    /**
+     * Elimina un plat del menú.
+     *
+     * @param token Token de sessió de l'usuari autenticat
+     * @param dishId ID del plat a eliminar
+     * @return Response indicant l'èxit de l'operació
+     */
+    suspend fun deleteDish(token: String, dishId: Long): Response<DishResponse> {
+        val request = DishDeleteInfo(sessionToken = token, id = dishId)
+        return RetrofitInstance.api.deleteDish(request)
+    }
+
 }

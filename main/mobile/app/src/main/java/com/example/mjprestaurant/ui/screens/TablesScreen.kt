@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mjprestaurant.model.TableStatus
+import com.example.mjprestaurant.model.table.TableStatus
 import com.example.mjprestaurant.viewmodel.LoginViewModel
 import com.example.mjprestaurant.viewmodel.TablesViewModel
 
@@ -26,10 +27,12 @@ import com.example.mjprestaurant.viewmodel.TablesViewModel
  * - Veure la capacitat i comensals actuals de cada taula
  * - Seleccionar taules lliures per a obrir-ne sessió
  * - Actualitzar manualment l'estat de les taules
+ * - Accedir a la gestió de plats (només administradors)
  *
  * @param tablesViewModel ViewModel que gestiona l'estat de les taules
- * @param loginViewModel ViewModel d'autenticació per a obtenir el token
+ * @param loginViewModel ViewModel d'autenticació per a obtenir el token i rol
  * @param onLogout Callback executat quan l'usuari tanca sessió
+ * @param onGestioPlats Callback executat quan es vol accedir a la gestió de plats
  *
  * @see TablesViewModel
  * @see LoginViewModel
@@ -39,14 +42,16 @@ import com.example.mjprestaurant.viewmodel.TablesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TablesScreen(
-    tablesViewModel: TablesViewModel = viewModel(),
+    tablesViewModel: TablesViewModel,
     loginViewModel: LoginViewModel,
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    onGestioPlats: () -> Unit = {}
 ) {
     val taules by tablesViewModel.taules
     val isLoading by tablesViewModel.isLoading
     val errorMessage by tablesViewModel.errorMessage
     val token by loginViewModel.token
+    val esAdmin by remember { derivedStateOf { loginViewModel.role.value == "admin" } }
 
     // Carregar taules al obrir la pantalla
     LaunchedEffect(Unit) {
@@ -58,6 +63,16 @@ fun TablesScreen(
             TopAppBar(
                 title = { Text("Taules") },
                 actions = {
+                    // Botó per a gestió de plats (només administradors)
+                    if (esAdmin) {
+                        IconButton(
+                            onClick = onGestioPlats,
+                            enabled = !isLoading
+                        ) {
+                            Icon(Icons.Default.Settings, "Gestió de Plats")
+                        }
+                    }
+
                     // Botó per a actualitzar les taules
                     IconButton(
                         onClick = { token?.let { tablesViewModel.refreshTables(it) } },
@@ -161,32 +176,4 @@ fun TaulaItemSimple(taula: TableStatus) {
             )
         }
     }
-}
-
-/**
- * Previsualització de la pantalla de taules en Android Studio.
- */
-@Preview(showBackground = true)
-@Composable
-fun TablesScreenPreview() {
-    // Per a la previsualització, crear un LoginViewModel amb dades de prova
-    val fakeLoginViewModel = LoginViewModel().apply {
-        token.value = "fake_token_for_preview"
-    }
-
-    TablesScreen(
-        loginViewModel = fakeLoginViewModel,
-        onLogout = {}
-    )
-}
-
-/**
- * Previsualització d'una targeta de taula.
- */
-@Preview(showBackground = true)
-@Composable
-fun TaulaItemSimplePreview() {
-    TaulaItemSimple(
-        taula = TableStatus(id = 1, maxClients = 6, clientsAmount = 4)
-    )
 }

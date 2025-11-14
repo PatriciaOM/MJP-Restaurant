@@ -1,4 +1,4 @@
-package com.example.mjprestaurant.model
+package com.example.mjprestaurant.model.table
 
 /**
  * Estat actual de la taula del restaurant.
@@ -10,7 +10,7 @@ package com.example.mjprestaurant.model
  * @see TableStatusResponse
  */
 data class TableStatus(
-    val id: Int,
+    val id: Long,
     val maxClients: Int,
     val clientsAmount: Int
 ) {

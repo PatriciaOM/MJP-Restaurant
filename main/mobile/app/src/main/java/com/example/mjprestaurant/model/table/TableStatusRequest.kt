@@ -1,4 +1,4 @@
-package com.example.mjprestaurant.model
+package com.example.mjprestaurant.model.table
 
 /**
  * Petició per obtenir l'estat de les taules.

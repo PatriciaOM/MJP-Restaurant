@@ -1,5 +1,6 @@
 package com.example.mjprestaurant.model
 
+import com.example.mjprestaurant.model.auth.LoginResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -8,7 +9,7 @@ import org.junit.Test
  *
  * Verificar la correcta creació de la resposta del Login.
  *
- * @see LoginResponse
+ * @see com.example.mjprestaurant.model.auth.LoginResponse
  */
 class LoginResponseTest {
 

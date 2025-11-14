@@ -1,11 +1,17 @@
 package com.example.mjprestaurant.network
 
-import com.example.mjprestaurant.model.LoginRequest
-import com.example.mjprestaurant.model.LoginResponse
-import com.example.mjprestaurant.model.LogoutRequest
-import com.example.mjprestaurant.model.TableStatusRequest
-import com.example.mjprestaurant.model.TableStatusResponse
-import com.example.mjprestaurant.model.User
+import com.example.mjprestaurant.model.auth.LoginRequest
+import com.example.mjprestaurant.model.auth.LoginResponse
+import com.example.mjprestaurant.model.auth.LogoutRequest
+import com.example.mjprestaurant.model.table.TableStatusRequest
+import com.example.mjprestaurant.model.table.TableStatusResponse
+import com.example.mjprestaurant.model.dish.Dish
+import com.example.mjprestaurant.model.dish.DishRequest
+import com.example.mjprestaurant.model.dish.request.DishGetInfo
+import com.example.mjprestaurant.model.dish.request.DishDeleteInfo
+import com.example.mjprestaurant.model.dish.request.DishUpdateInfo
+import com.example.mjprestaurant.model.dish.request.DishCreateInfo
+import com.example.mjprestaurant.model.dish.DishResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -16,6 +22,10 @@ import retrofit2.http.*
  *
  * @see AuthRepository
  * @see RetrofitInstance
+ * @see Dish
+ * @see DishRequest
+ *
+ * @author Martin Muñoz Pozuelo
  */
 interface  ApiService {
 
@@ -28,7 +38,7 @@ interface  ApiService {
      * @sample LoginRequest("user", "password", "user")
      * @sample LoginResponse("session_token_123", "user")
      *
-     * @throws IoException En cas de problemes de xarxa
+     * @throws IOException En cas de problemes de xarxa
      */
     @POST("login")
     suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
@@ -41,7 +51,7 @@ interface  ApiService {
      *
      * @sample LogoutRequest("session_token_123")
      *
-     * @throws IoException en cas de problemes de xarxa.
+     * @throws IOException en cas de problemes de xarxa.
      */
     @POST("logout")
     suspend fun logout(@Body body: LogoutRequest): Response<Unit>
@@ -59,5 +69,61 @@ interface  ApiService {
      */
     @POST("table-status")
     suspend fun getTableStatus(@Body body: TableStatusRequest): Response<TableStatusResponse>
+
+    /**
+     * Endpoit per crear un nou plat al menú
+     *
+     * @param body Objecte DishCreateInfo amb les dades del nou plat
+     * @return Response amb DishCreateResponse que conté el plat creat
+     *
+     * @sample DishCreateInfo(sessionToken, Dish(...))
+     * @sample DishCreateResponse("success", listOf(Dish...)))
+     *
+     * @throws IOException En cas de problemes de xarxa
+     */
+    @POST("dish/create")
+    suspend fun createDish(@Body body: DishCreateInfo): Response <DishResponse>
+
+    /**
+     * Endpoint per obtenir tots els plats del menú
+     *
+     * @param body Objecte DishGetInfo amb el token de sessió
+     * @return Response amb DishGetResponse que conté la llista de plats
+     *
+     * @sample DishGetInfo("session_token_123")
+     * @sample DishGetResponse("success", listOf(Dish(...), Dish(...)))
+     *
+     * @throws IOException En cas de problemes de xarxa
+     */
+    @POST("dish/get")
+    suspend fun getDishes(@Body body: DishGetInfo): Response<DishResponse>
+
+    /**
+     * Endpoint per actualitzar un plat existent.
+     *
+     * @param body Objecte DishUpdateInfo amb les dades actualitzades
+     * @return Response amb DishUpdateResponse que conté el plat actualitzat
+     *
+     * @sample DishUpdateInfo("session_token_123", Dish(...))
+     * @sample DishUpdateResponse("success", lisOf(Dish(...))
+     *
+     * @throws IOException En cas de problemees de xarxa
+     */
+    @POST("dish/update")
+    suspend fun updateDish(@Body body: DishUpdateInfo): Response<DishResponse>
+
+    /**
+     * Endpoint per esborrar un plat del menú
+     *
+     * @param body Objecte DishDeleteInfo amb l'ID del plat a eliminar
+     * @return Response amb DishDeleteResponse indicant l'èxit.
+     *
+     * @sample DishDeleteInfo("session_token_123", 1L)
+     * @sample DishDeleteResponse("success", emptyList())
+     *
+     * @throws IOEXception En cas de problemes de xarxa
+     */
+    @POST("dish/delete")
+    suspend fun deleteDish(@Body body: DishDeleteInfo): Response<DishResponse>
 
 }

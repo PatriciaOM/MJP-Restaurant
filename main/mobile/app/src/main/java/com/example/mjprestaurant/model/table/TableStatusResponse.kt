@@ -1,4 +1,4 @@
-package com.example.mjprestaurant.model
+package com.example.mjprestaurant.model.table
 
 /**
  * Resposta al endrpoint table-status amb la llista de taules.

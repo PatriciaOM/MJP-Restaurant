@@ -3,7 +3,7 @@ package com.example.mjprestaurant.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mjprestaurant.model.TableStatus
+import com.example.mjprestaurant.model.table.TableStatus
 import com.example.mjprestaurant.network.AuthRepository
 import kotlinx.coroutines.launch
 
