@@ -24,6 +24,7 @@ import mjp.server.responseData.dish.DishCreateResponse;
 import mjp.server.responseData.dish.DishDeleteResponse;
 import mjp.server.responseData.dish.DishGetResponse;
 import mjp.server.responseData.dish.DishResponse;
+import mjp.server.responseData.dish.DishUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,7 +49,14 @@ import testUtils.TestDefault;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DishManagerTest extends TestDefaultCrud<Long, Dish, DishCreateResponse> {
+public class DishManagerTest extends TestDefaultCrud<
+        Long,
+        Dish,
+        DishCreateResponse,
+        DishGetResponse,
+        DishUpdateResponse,
+        DishDeleteResponse
+    > {
     private static String resourceUri = "/dish";
     static Credentials user = new Credentials("Twiki", "Tuki", null);
     static Credentials admin = new Credentials("Ping", "Pong", null);
@@ -110,14 +118,13 @@ public class DishManagerTest extends TestDefaultCrud<Long, Dish, DishCreateRespo
     
     
     static Dish noExsitingDish = new Dish(
-        -1000L,
+        1000L,
         "Amanita muscria",
         0.00f,
         "Good luck eating this",
         false,
         Dish.DishCategory.APPETIZER
     );
-    
     
     List<Dish> allDishes = List.of(initialDish, mockDish1, mockDish2, mockDish3);
     
@@ -130,6 +137,27 @@ public class DishManagerTest extends TestDefaultCrud<Long, Dish, DishCreateRespo
     protected Credentials getAdminCredentials() {
         return this.admin;
     }
+ 
+
+    @Override
+    protected Dish getInitialItem() {
+        return initialDish;
+    }
+
+    @Override
+    protected Dish getUpdatedItem() {
+        return updatedDish;
+    }
+
+    @Override
+    protected List<Dish> getAllTestItems() {
+        return this.allDishes;
+    }
+    
+    @Override
+    protected Dish getNoExistingItem() {
+        return noExsitingDish;
+    }  
     
     @Override
     public AuthorizedQueryInfo<Dish> generateCreateRequest(String sessionToken, Dish entry) {
@@ -150,6 +178,26 @@ public class DishManagerTest extends TestDefaultCrud<Long, Dish, DishCreateRespo
     public AuthorizedQueryInfo<Long> generateDeleteRequest(String sessionToken, Long entryId) {
         return new DishDeleteInfo(sessionToken, entryId);
     }
+    
+    @Override
+    public Class<DishCreateResponse> getCreateResponseClass() {
+        return DishCreateResponse.class;
+    }
+
+    @Override
+    public Class<DishGetResponse> getGetResponseClass() {
+        return DishGetResponse.class;
+    }
+
+    @Override
+    public Class<DishUpdateResponse> getUpdateResponseClass() {
+        return DishUpdateResponse.class;
+    }
+
+    @Override
+    public Class<DishDeleteResponse> getDeleteResponseClass() {
+        return DishDeleteResponse.class;
+    }
        
     @Test
     @Order(001)
@@ -164,14 +212,7 @@ public class DishManagerTest extends TestDefaultCrud<Long, Dish, DishCreateRespo
     @Test
     @Order(200)
     void createDishBasicTests(){
-        DishCreateInfo createInfo =  new DishCreateInfo();
-        this.basicRequestTests(
-            "createDish",
-            "/dish/create",
-            createInfo,
-            initialDish,
-            adminSessionToken
-        );
+        createItemBasicTests("createDishBasicTests");
     }
     
     @Test
@@ -179,100 +220,60 @@ public class DishManagerTest extends TestDefaultCrud<Long, Dish, DishCreateRespo
     void createAllDishes(){
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
         assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
-        this.createAllItems("Create all dishes", DishCreateResponse.class);
+        this.createAllItems("Create all dishes");
     }
     
     @Test
     @Order(400)
     void getDishBasicTests(){
-        DishGetInfo getInfo =  new DishGetInfo();
-        this.basicRequestTests(
-            "getDishBasicTests",
-            "/dish/get",
-            getInfo,
-            null,
-            userSessionToken
-        );
+        getItemBasicTests("createDishBasicTests");
     }
   
     @Test
     @Order(500)
     void getDishById(){
-        getItemById("getDishById", DishGetResponse.class);
+        getItemById("getDishById");
     }
       
     @Test
-    @Order(500)
+    @Order(550)
     void getNoExistingDishById(){
-        getNoExistingItemById("getNoExistingDishById", DishGetResponse.class);
+        getNoExistingItemById("getNoExistingDishById");
     }
     
     @Test
     @Order(600)
     void updateDishBasicTests(){
-        DishUpdateInfo info =  new DishUpdateInfo();
-        this.basicRequestTests(
-            "updateDishBasicTests",
-            "/dish/update",
-            info,
-            updatedDish,
-            adminSessionToken
-        );
+        updateItemBasicTests("createDishBasicTests");
     }
     
     @Test
     @Order(700)
     void updateDish(){
-        this.updateItem("updateDish", DishCreateResponse.class);       
+        this.updateItem("updateDish");       
     }
     
     @Test
     @Order(800)
     void deleteDishBasicTests(){
-        DishDeleteInfo info =  new DishDeleteInfo();
-        this.basicRequestTests(
-            "deleteDishBasicTests",
-            "/dish/delete",
-            info,
-            initialDish.getId(),
-            adminSessionToken
-        );
+        deleteItemBasicTests("deleteDishBasicTests");
     }
      @Test
     @Order(850)
     void getToDeletDish(){
-        getItemToDelete("getToDeletDish", DishGetResponse.class);
+        getItemToDelete("getToDeletDish");
     }
-    
+           
     @Test
     @Order(900)
     void deleteDish(){
-        deleteItem("deleteDish", DishDeleteResponse.class);
+        deleteItem("deleteDish");
     }
           
     @Test
     @Order(1000)
     void getDeletedDish(){
-        getDeletedItem("getDeletedDish", DishGetResponse.class);
+        getDeletedItem("getDeletedDish");
     }
-
-    @Override
-    protected Dish getInitialItem() {
-        return initialDish;
-    }
-
-    @Override
-    protected Dish getUpdatedItem() {
-        return updatedDish;
-    }
-
-    @Override
-    protected List<Dish> getAllTestItems() {
-        return this.allDishes;
-    }
-    
-    @Override
-    protected Dish getNoExistingItem() {
-        return noExsitingDish;
-    }
+     
 }

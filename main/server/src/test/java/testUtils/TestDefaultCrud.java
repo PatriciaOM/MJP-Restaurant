@@ -13,6 +13,10 @@ import mjp.server.ServerMJP.database.Dish;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
+import mjp.server.queryData.dish.DishCreateInfo;
+import mjp.server.queryData.dish.DishDeleteInfo;
+import mjp.server.queryData.dish.DishGetInfo;
+import mjp.server.queryData.dish.DishUpdateInfo;
 import mjp.server.responseData.CrudResponse;
 import mjp.server.responseData.dish.DishGetResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
@@ -29,7 +33,10 @@ import static testUtils.TestDefault.printTestName;
 public abstract class TestDefaultCrud<
         DatabaseIdType,
         ItemType extends DatabaseEntry<DatabaseIdType>,
-        CreateResponseType extends CrudResponse<ItemType>
+        CreateResponseType extends CrudResponse<ItemType>,
+        GetResponseType extends CrudResponse<ItemType>,
+        UpdateResponseType extends CrudResponse<ItemType>,
+        DeleteResponseType extends CrudResponse<ItemType>
     > extends TestDefault {
     Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
 
@@ -39,15 +46,66 @@ public abstract class TestDefaultCrud<
     protected abstract ItemType getUpdatedItem();
     protected abstract List<ItemType> getAllTestItems();
     protected abstract ItemType getNoExistingItem();  // This item is not  returned in getAllTestItems();
+    
     public abstract AuthorizedQueryInfo<ItemType> generateCreateRequest(String sessionToken, ItemType entry);
     public abstract AuthorizedQueryInfo<DatabaseIdType> generateGetRequest(String sessionToken, DatabaseIdType entryId);
     public abstract AuthorizedQueryInfo<ItemType> generateUpdateRequest(String sessionToken, ItemType entry);
     public abstract AuthorizedQueryInfo<DatabaseIdType> generateDeleteRequest(String sessionToken, DatabaseIdType entryId);
     
+    public abstract Class<CreateResponseType> getCreateResponseClass();
+    public abstract Class<GetResponseType> getGetResponseClass();
+    public abstract Class<UpdateResponseType> getUpdateResponseClass();
+    public abstract Class<DeleteResponseType> getDeleteResponseClass();
+    
     public abstract String getResourceUri();
        
     public String makeResourceUrl(String crudAction) {
         return super.makeUrl(getResourceUri()) + crudAction;
+    }
+    
+    protected void createItemBasicTests(String testname) {
+        AuthorizedQueryInfo createInfo =  generateCreateRequest(getAdminCredentials().getSessionToken(), getInitialItem());
+        this.basicRequestTests(
+            "createDish",
+            "/dish/create",
+            createInfo,
+            getInitialItem(),
+            getAdminCredentials().getSessionToken()
+        );
+    }
+    
+    protected void getItemBasicTests(String testname) {
+        AuthorizedQueryInfo getInfo =  generateCreateRequest(getUserCredentials().getSessionToken(), getInitialItem());
+        this.basicRequestTests(
+            "getDishBasicTests",
+            "/dish/get",
+            getInfo,
+            null,
+            getUserCredentials().getSessionToken()
+        );
+    }
+    
+    
+    protected void updateItemBasicTests(String testname) {
+        AuthorizedQueryInfo info =  new DishUpdateInfo();
+            this.basicRequestTests(
+                "updateDishBasicTests",
+                "/dish/update",
+                info,
+                getUpdatedItem(),
+                getAdminCredentials().getSessionToken()
+            );
+    }
+    
+    protected void deleteItemBasicTests(String testname){
+        AuthorizedQueryInfo info =  generateDeleteRequest(getAdminCredentials().getSessionToken(), getInitialItem().getId());
+        this.basicRequestTests(
+            "deleteDishBasicTests",
+            "/dish/delete",
+            info,
+            getInitialItem().getId(),
+            getAdminCredentials().getSessionToken()
+        );
     }
     
     protected void basicSetup(String testname){
@@ -67,7 +125,7 @@ public abstract class TestDefaultCrud<
         assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
     }
     
-    protected void createAllItems(String testName, Class<CreateResponseType> responseClazz){
+    protected void createAllItems(String testName){
         List<ItemType> allItems = getAllTestItems();
         printTestName(testName);
         String url = makeResourceUrl("/create");
@@ -78,7 +136,7 @@ public abstract class TestDefaultCrud<
             info = generateCreateRequest(getAdminCredentials().getSessionToken(), item);
             ResponseEntity<String> response = makePostRequest(url, info);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            CreateResponseType createReponse = gson.fromJson(response.getBody(), responseClazz);
+            CreateResponseType createReponse = gson.fromJson(response.getBody(), getCreateResponseClass());
             assertThat(createReponse.getMessageStatus()).isEqualTo("Success");
             assertThat(createReponse.getMessageData().size()).isEqualTo(1);
             ItemType itemResponse = createReponse.getMessageData().get(0);
@@ -91,7 +149,7 @@ public abstract class TestDefaultCrud<
     }
   
     
-    protected <GetResponseType extends CrudResponse<ItemType>> void getItemById(String testName, Class<GetResponseType> responseClazz) {
+    protected  void getItemById(String testName) {
         printTestName(testName);
         String url = makeResourceUrl("/get");
         AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getInitialItem().getId()); 
@@ -100,13 +158,13 @@ public abstract class TestDefaultCrud<
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        GetResponseType responseMessage = gson.fromJson(response.getBody(), responseClazz);
+        GetResponseType responseMessage = gson.fromJson(response.getBody(), getGetResponseClass());
         List<ItemType> items = responseMessage.getMessageData();
         assertThat(items.size()).isEqualTo(1);
         assertThat(gson.toJson(items.get(0))).isEqualTo(gson.toJson(getInitialItem()));
     }
         
-    protected <GetResponseType extends CrudResponse<ItemType>> void getNoExistingItemById(String testName, Class<GetResponseType> responseClazz) {
+    protected void getNoExistingItemById(String testName) {
         printTestName(testName);
         String url = makeResourceUrl("/get");
         AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getNoExistingItem().getId());
@@ -117,7 +175,7 @@ public abstract class TestDefaultCrud<
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND); 
     }
     
-    protected <UpdateResponseType, GetResponseType extends CrudResponse<ItemType>> void updateItem(String testName, Class<UpdateResponseType> responseClazz) {
+    protected void updateItem(String testName) {
         printTestName(testName);
         String url = makeResourceUrl("/update");
         getUpdatedItem().setId(getInitialItem().getId());
@@ -128,20 +186,19 @@ public abstract class TestDefaultCrud<
         AuthorizedQueryInfo getInfo = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId());
         ResponseEntity<String> getResponse = makePostRequest(makeResourceUrl("/get"), getInfo);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        DishGetResponse getResponseObject = gson.fromJson(getResponse.getBody(), DishGetResponse.class);   //TODO This is wrong as fuck
+        GetResponseType getResponseObject = gson.fromJson(getResponse.getBody(), getGetResponseClass());   //TODO This is wrong as fuck
         System.out.println(gson.toJson(getResponseObject));
-        List<Dish> returnedDishesList = getResponseObject.getDishes();
-        assertThat(returnedDishesList.size()).isEqualTo(1);
-        Dish returnedDish = returnedDishesList.get(0);
+        List<ItemType> returnedItemsList = getResponseObject.getMessageData();
+        assertThat(returnedItemsList.size()).isEqualTo(1);
+        ItemType returnedItem = returnedItemsList.get(0);
   
         assertNotNull(getUpdatedItem());
         assertNotNull(getUpdatedItem().getId());
-        assertNotNull(returnedDish);
-        assertThat(gson.toJson(returnedDish)).isEqualTo(gson.toJson(getUpdatedItem()));  
-        
+        assertNotNull(returnedItem);
+        assertThat(gson.toJson(returnedItem)).isEqualTo(gson.toJson(getUpdatedItem()));  
     }
     
-    protected <GetResponseType extends CrudResponse<ItemType>> void getItemToDelete(String testName, Class<GetResponseType> responseClazz) {
+    protected void getItemToDelete(String testName) {
                 printTestName(testName);
         String url = makeResourceUrl("/get");
         AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId()); 
@@ -151,12 +208,12 @@ public abstract class TestDefaultCrud<
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
     
-     protected <DeleteResponseType extends CrudResponse<ItemType>> void deleteItem(String testName, Class<DeleteResponseType> responseClazz) {
+     protected void deleteItem(String testName) {
         printTestName("deleteDish");
         String url = makeResourceUrl("/delete");
         AuthorizedQueryInfo info = generateDeleteRequest(getAdminCredentials().getSessionToken(), getUpdatedItem().getId());
         ResponseEntity<String> delResp = makePostRequest(url, info);
-        DeleteResponseType delRespObject = gson.fromJson("", responseClazz);
+        DeleteResponseType delRespObject = gson.fromJson("", getDeleteResponseClass());
         assertThat(delResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         
         String getUrl = makeResourceUrl("/get");
@@ -165,11 +222,11 @@ public abstract class TestDefaultCrud<
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         
         delResp = makePostRequest(url, info);
-        delRespObject = gson.fromJson("", responseClazz);
+        delRespObject = gson.fromJson("", getDeleteResponseClass());
         assertThat(delResp.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
      
-        protected <GetResponseType extends CrudResponse<ItemType>> void getDeletedItem(String testName, Class<GetResponseType> responseClazz) {
+        protected void getDeletedItem(String testName) {
                 printTestName(testName);
         String url = makeResourceUrl("/get");
         AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId()); 
