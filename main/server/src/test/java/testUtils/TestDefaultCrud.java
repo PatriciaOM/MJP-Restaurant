@@ -26,7 +26,11 @@ import static testUtils.TestDefault.printTestName;
  *
  * @author twiki
  */
-public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseEntry<DatabaseIdType>, CreateResponseType extends CrudResponse<ItemType>> extends TestDefault {
+public abstract class TestDefaultCrud<
+        DatabaseIdType,
+        ItemType extends DatabaseEntry<DatabaseIdType>,
+        CreateResponseType extends CrudResponse<ItemType>
+    > extends TestDefault {
     Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
 
     protected abstract Credentials getUserCredentials();
@@ -114,7 +118,7 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
     }
     
     protected <UpdateResponseType, GetResponseType extends CrudResponse<ItemType>> void updateItem(String testName, Class<UpdateResponseType> responseClazz) {
-        printTestName("updateDish");
+        printTestName(testName);
         String url = makeResourceUrl("/update");
         getUpdatedItem().setId(getInitialItem().getId());
         AuthorizedQueryInfo info = generateUpdateRequest(getAdminCredentials().getSessionToken(), getUpdatedItem());
@@ -122,9 +126,8 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);  // TODO maybe should check that it returns the updated item?
         
         AuthorizedQueryInfo getInfo = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId());
-        ResponseEntity<String> getResponse = makePostRequest("/dish/get", getInfo);
+        ResponseEntity<String> getResponse = makePostRequest(makeResourceUrl("/get"), getInfo);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        // TODO this is usign dish
         DishGetResponse getResponseObject = gson.fromJson(getResponse.getBody(), DishGetResponse.class);   //TODO This is wrong as fuck
         System.out.println(gson.toJson(getResponseObject));
         List<Dish> returnedDishesList = getResponseObject.getDishes();
