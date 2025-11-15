@@ -132,7 +132,7 @@ public class WorkerFrame extends AbstractFrame {
                     if (controller != null) {
                         controller.editWorker(workerId);
                     } else {
-                        System.err.println("WorkerController no asignado en WorkerFrame.");
+                        System.err.println("WorkerController no assignat a WorkerFrame.");
                     }
                 }
             }

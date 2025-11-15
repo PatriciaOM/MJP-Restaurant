@@ -22,11 +22,10 @@ public enum UserShift {
      * Converteix una cadena (ex: "matí") en el corresponent valor de l'enum.
      * @param value valor en text (sense accents)
      * @return el valor corresponent de {@link UserShift}
-     * @throws IllegalArgumentException si no coincideix amb cap torn vàlid
      */
-    public static UserShift fromString(String value) throws IllegalArgumentException {
+    public static UserShift fromString(String value) {
         if (value == null) {
-            throw new IllegalArgumentException("El valor del torn no pot ser nul.");
+            return null;
         }
 
         String normalized = value.toLowerCase()
@@ -40,7 +39,7 @@ public enum UserShift {
             }
         }
 
-        throw new IllegalArgumentException("Torn invàlid: " + value + ". Els valors vàlids són: matí, tarda, indiferent.");
+        return null;
     }
 
     public String getValue() {

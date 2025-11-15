@@ -55,11 +55,8 @@ public class WorkerValidator {
         }
 
         // Validar torn amb l'enum
-        try {
-            com.mjprestaurant.model.user.UserShift.fromString(
-                    data.get("Torn (matí | tarda | indiferent)")
-            );
-        } catch (IllegalArgumentException ex) {
+        String shiftStr = data.get("Torn (matí | tarda | indiferent)").toLowerCase().trim();
+        if (!shiftStr.equals("matí") && !shiftStr.equals("tarda") && !shiftStr.equals("indiferent")) {
             return "El torn ha de ser 'matí', 'tarda' o 'indiferent'.";
         }
 
