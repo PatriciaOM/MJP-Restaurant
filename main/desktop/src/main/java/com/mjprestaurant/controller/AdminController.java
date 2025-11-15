@@ -130,26 +130,50 @@ public class AdminController implements ActionListener {
         }
     }
 
+    /**
+     * Retorna la pantalla d'administració
+     * @return pantalla d'admin
+     */
     public AdminFrame getAdminFrame() {
         return adminFrame;
     }
 
+    /**
+     * Inicialitza la pantalla d'admin
+     * @param adminFrame pantalla d'administració
+     */
     public void setAdminFrame(AdminFrame adminFrame) {
         this.adminFrame = adminFrame;
     }
 
+    /**
+     * Retorna la pantalla de login
+     * @return pantalla de login
+     */
     public LoginFrame getLogin() {
         return login;
     }
 
+    /**
+     * Inicialitza la pantalla de login
+     * @param login
+     */
     public void setLogin(LoginFrame login) {
         this.login = login;
     }
 
+    /**
+     * Retorna el controlador de login
+     * @return controlador pel login
+     */
     public LoginController getLoginController() {
         return loginController;
     }
 
+    /**
+     * Inicialitza el controlador del login
+     * @param loginController controlador del login
+     */
     public void setLoginController(LoginController loginController) {
         this.loginController = loginController;
     }

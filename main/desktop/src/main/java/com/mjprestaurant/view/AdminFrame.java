@@ -15,7 +15,7 @@ import com.mjprestaurant.model.CustomComponents;
  * @author Patricia Oliva
  */
 public class AdminFrame extends AbstractFrame {
-    JButton buttonTables, buttonWorkers;
+    JButton buttonTables, buttonWorkers, buttonDishes;
     /**
      * Constructor principal que seteja com a títol de la pantalla el nom de l'usuari loguejat
      * @param username nom de l'usuari
@@ -38,6 +38,9 @@ public class AdminFrame extends AbstractFrame {
         buttonTables = customComponents.getCustomButton();
         customComponents.setCustomButton("Treballadors");
         buttonWorkers = customComponents.getCustomButton();
+        customComponents.setCustomButton("Plats");
+        buttonDishes = customComponents.getCustomButton();
+        
         
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setBorder(BorderFactory.createEmptyBorder(100,0,20,0));
@@ -48,6 +51,7 @@ public class AdminFrame extends AbstractFrame {
         adminPanel.setBorder(BorderFactory.createEmptyBorder(60, 0, 0, 0));
         adminPanel.add(buttonTables);
         adminPanel.add(buttonWorkers);
+        adminPanel.add(buttonDishes);
 
         setLayout(new BorderLayout());
         add(titlePanel, BorderLayout.NORTH);
@@ -69,6 +73,10 @@ public class AdminFrame extends AbstractFrame {
      */
     public JButton getButtonWorkers() {
         return buttonWorkers;
+    }
+
+    public JButton getButtonDishes() {
+        return buttonDishes;
     }
     
 }

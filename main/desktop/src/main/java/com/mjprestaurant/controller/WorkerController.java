@@ -6,11 +6,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.*;
+import java.time.format.*;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,17 +19,15 @@ import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.CustomComponents;
 import com.mjprestaurant.model.user.User;
 import com.mjprestaurant.model.user.UserCreateInfo;
-import com.mjprestaurant.model.user.UserCreateResponse;
 import com.mjprestaurant.model.user.UserDeleteInfo;
 import com.mjprestaurant.model.user.UserGetInfo;
 import com.mjprestaurant.model.user.UserGetResponse;
 import com.mjprestaurant.model.user.UserShift;
 import com.mjprestaurant.model.user.UserUpdateInfo;
-import com.mjprestaurant.utils.WorkerFactory;
+import com.mjprestaurant.utils.UserMapper;
 import com.mjprestaurant.utils.WorkerValidator;
 import com.mjprestaurant.view.LoginFrame;
 import com.mjprestaurant.view.WorkerFrame;
-
 /**
  * Classe controller de la pantalla d'edició de treballadors
  * @author Patricia Oliva
@@ -138,9 +136,9 @@ public class WorkerController implements ActionListener {
                 return;
             }
 
-            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            java.time.LocalDate startDate = java.time.LocalDate.parse(startDateStr, formatter);
-            java.time.LocalDate today = java.time.LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate startDate = LocalDate.parse(startDateStr, formatter);
+            LocalDate today = LocalDate.now();
 
             if (startDate.isBefore(today)) {
                 JOptionPane.showMessageDialog(null,
@@ -152,7 +150,7 @@ public class WorkerController implements ActionListener {
 
             // Validar data de finalització (pot estar buida)
             String endDateStr = workerData.get("Data de finalització (pot deixar-se en blanc)");
-            java.time.LocalDate endDate = null;
+            LocalDate endDate = null;
 
             if (endDateStr != null && !endDateStr.trim().isEmpty()) {
                 if (!endDateStr.matches("^\\d{2}/\\d{2}/\\d{4}$")) {
@@ -163,7 +161,7 @@ public class WorkerController implements ActionListener {
                     return;
                 }
 
-                endDate = java.time.LocalDate.parse(endDateStr, formatter);
+                endDate = LocalDate.parse(endDateStr, formatter);
 
                 if (endDate.isBefore(today)) {
                     JOptionPane.showMessageDialog(null,
@@ -216,9 +214,6 @@ public class WorkerController implements ActionListener {
                     endDate,
                     dni
             );
-
-            // Crear usuari amb tots els camps del formulari
-            //User user = WorkerFactory.fromMap(workerData);
             user.setId(null);
 
             // Crear objecte per enviar al servidor
@@ -269,6 +264,7 @@ public class WorkerController implements ActionListener {
     /**
      * Mètode que ens serveix per eliminar a un treballador
      * Crea un nou formulari a on es demana l'id del treballador i ho envia al server
+     * @param token token de sessió
      */
     public void deleteWorker(String token) {
         String[] deleteFields = {"Login del treballador"};
@@ -280,7 +276,7 @@ public class WorkerController implements ActionListener {
 
             String workerName = data.get("Login del treballador");
 
-            // Validación
+            // Validació
             if (workerName == null || workerName.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null,
                         "Has d'introduir el login del treballador.",
@@ -335,6 +331,7 @@ public class WorkerController implements ActionListener {
 
         }, e -> System.out.println("Eliminació cancel·lada"));
     }
+
     /**
      * Mètode de consulta de treballadors
      * @return llista de tots els treballadors
@@ -351,9 +348,8 @@ public class WorkerController implements ActionListener {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
-            conn.setDoOutput(true); // Permitir enviar un cuerpo JSON
+            conn.setDoOutput(true); 
 
-            // Crear el cuerpo de la petición con el token
             String jsonBody = mapper.writeValueAsString(new UserGetInfo(userToken));
 
             try (OutputStream os = conn.getOutputStream()) {
@@ -364,7 +360,6 @@ public class WorkerController implements ActionListener {
             int status = conn.getResponseCode();
 
             if (status == 200) {
-                // Leer la respuesta JSON
                 UserGetResponse response = mapper.readValue(conn.getInputStream(), UserGetResponse.class);
                 conn.disconnect();
                 return response.getUser();
@@ -379,6 +374,11 @@ public class WorkerController implements ActionListener {
         }
     }
 
+    /**
+     * Mètode d'actualització d'un treballador. Recull l'id de la llista, crea un formulari per demanar el camp a modificar 
+     * i el nou valor que aquest tindrà i genera un objecte user per enviar aquestes dades al servidor.
+     * @param workerId id recullit de la taula, referent al treballador a modificar
+     */
     public void editWorker(int workerId) {
         List<User> allUsers;
         try {
@@ -397,12 +397,11 @@ public class WorkerController implements ActionListener {
             }
 
             String[] editFields = {"Camp a modificar", "Nou valor"};
-            // Cerrar formulario previo si existe
+            // Tancar formulari previ si existeix
             if (editForm != null && editForm.getCurrentFrame() != null) {
                 editForm.closeCurrentForm();
             }
 
-            
             editForm = new CustomComponents();
             editForm.createForm("Editar treballador", editFields, e -> {
                 @SuppressWarnings("unchecked")
@@ -428,7 +427,7 @@ public class WorkerController implements ActionListener {
                 }
 
                 try {
-                    // Aplicar el cambio en el objeto User
+                    // Aplicar el canvi en l'objecte user
                     switch (field.toLowerCase()) {
                         case "login": user.setUsername(newValue); break;
                         case "contrasenya": user.setPassword(newValue); break;
@@ -451,15 +450,15 @@ public class WorkerController implements ActionListener {
                             user.setShift(newShift);
                             break;
                         case "data d'inici":
-                            java.time.format.DateTimeFormatter f = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            user.setStartDate(java.time.LocalDate.parse(newValue, f));
+                            DateTimeFormatter f = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                            user.setStartDate(LocalDate.parse(newValue, f));
                             break;
                         case "data de finalització":
                             if (newValue.trim().isEmpty()) {
                                 user.setEndDate(null);
                             } else {
-                                java.time.format.DateTimeFormatter f2 = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                                user.setEndDate(java.time.LocalDate.parse(newValue, f2));
+                                DateTimeFormatter f2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                                user.setEndDate(LocalDate.parse(newValue, f2));
                             }
                             break;
                         default:
@@ -469,7 +468,7 @@ public class WorkerController implements ActionListener {
                             return;
                     }
 
-                    Map<String, String> completeMap = mapUserToWorkerData(user);
+                    Map<String, String> completeMap = UserMapper.mapUserToWorkerData(user);
                     
                     String error = WorkerValidator.validate(completeMap);
 
@@ -483,16 +482,14 @@ public class WorkerController implements ActionListener {
                     try {
                         URL url = new URL("http://localhost:8080/user/update");
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                        conn.setRequestMethod("POST"); // PUT para actualizar
+                        conn.setRequestMethod("POST"); 
                         conn.setRequestProperty("Content-Type", "application/json");
                         conn.setDoOutput(true);
 
-                        // 4️⃣ Convertir a JSON
                         ObjectMapper mapper = new ObjectMapper();
                         mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
                         mapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-                        // Crear JSON con campo y valor
                         String json = mapper.writeValueAsString(updateInfo);
                         try (OutputStream os = conn.getOutputStream()) {
                             os.write(json.getBytes());
@@ -540,28 +537,6 @@ public class WorkerController implements ActionListener {
         } catch (ControllerException e){
             e.printStackTrace();
         }
-    }
-
-
-    private Map<String, String> mapUserToWorkerData(User user) {
-        Map<String, String> map = new HashMap<>();
-
-        java.time.format.DateTimeFormatter f = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        map.put("Login", user.getUsername());
-        map.put("Contrasenya", user.getPassword());
-        map.put("Rol", user.getRole());
-        map.put("Nom", user.getName());
-        map.put("Cognoms", user.getSurname());
-        map.put("DNI", user.getDni());
-        map.put("Torn (matí | tarda | indiferent)", user.getShift().toString().toLowerCase());
-        map.put("Data d'inici", user.getStartDate().format(f));
-        map.put(
-            "Data de finalització (pot deixar-se en blanc)",
-            user.getEndDate() != null ? user.getEndDate().format(f) : ""
-        );
-
-        return map;
     }
 
 }
