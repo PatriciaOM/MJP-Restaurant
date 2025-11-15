@@ -40,6 +40,7 @@ public class TableFrame extends AbstractFrame {
 
     @Override
     protected void initComponents() {
+        CustomComponents customComponent = new CustomComponents();
         JLabel title = new JLabel("Administració de taules del restaurant:", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.PLAIN, 24));
 
@@ -69,10 +70,10 @@ public class TableFrame extends AbstractFrame {
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
 
         // Botons inferiors
-        new CustomComponents().setCustomButton("Afegir");
-        buttonAdd = CustomComponents.getCustomButton();
-        new CustomComponents().setCustomButton("Eliminar");
-        buttonDelete = CustomComponents.getCustomButton();
+        customComponent.setCustomButton("Afegir");
+        buttonAdd = customComponent.getCustomButton();
+       customComponent.setCustomButton("Eliminar");
+        buttonDelete = customComponent.getCustomButton();
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(60, 0, 50, 0));
@@ -89,10 +90,11 @@ public class TableFrame extends AbstractFrame {
     protected void createMenuBar() {
         super.createMenuBar();
 
+        CustomComponents customComponents = new CustomComponents();
         JMenuBar menuBar = getJMenuBar();
         if (menuBar != null) {
-            new CustomComponents().setCustomButton("Enrere");
-            btnBack = CustomComponents.getCustomButton();
+            customComponents.setCustomButton("Enrere");
+            btnBack = customComponents.getCustomButton();
             menuBar.add(btnBack, 0);
             menuBar.revalidate();
             menuBar.repaint();
@@ -167,9 +169,9 @@ public class TableFrame extends AbstractFrame {
         private final JButton btnEdit;
 
         public ButtonRenderer() {
-            CustomComponents cc = new CustomComponents();
-            cc.setCustomButton("Editar");
-            this.btnEdit = CustomComponents.getCustomButton();
+            CustomComponents customComponent = new CustomComponents();
+            customComponent.setCustomButton("Editar");
+            this.btnEdit = customComponent.getCustomButton();
             this.btnEdit.setOpaque(true);
             this.btnEdit.setFocusPainted(false);
             this.btnEdit.setBorderPainted(false);

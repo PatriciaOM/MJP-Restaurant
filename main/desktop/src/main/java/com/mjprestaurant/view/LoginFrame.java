@@ -19,6 +19,7 @@ public class LoginFrame extends JFrame {
      * Constructor principal
      */
     public LoginFrame() {
+        CustomComponents customComponent = new CustomComponents();
         setTitle("MJPRestaurant");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ImageIcon icon = new ImageIcon(getClass().getResource("/assets/img/sushi.png"));
@@ -58,8 +59,8 @@ public class LoginFrame extends JFrame {
         lblUser.setHorizontalTextPosition(SwingConstants.RIGHT);
         lblUser.setIconTextGap(3); 
         lblUser.setHorizontalAlignment(SwingConstants.LEFT);
-        CustomComponents.setCustomTextField();
-        txtUser = CustomComponents.getCustomTextField();
+        customComponent.setCustomTextField();
+        txtUser = customComponent.getCustomTextField();
         txtUser.setPreferredSize(new Dimension(180, 25)); // alçada fixe
 
         //Contrasenya row: controlem errors a l'hora de no trobar els recursos
@@ -78,8 +79,8 @@ public class LoginFrame extends JFrame {
         lblPass.setHorizontalTextPosition(SwingConstants.RIGHT);
         lblPass.setIconTextGap(3); 
         lblPass.setHorizontalAlignment(SwingConstants.LEFT);
-        CustomComponents.setCustomPasswordField();
-        txtPass = CustomComponents.getCustomPwdField();
+        customComponent.setCustomPasswordField();
+        txtPass = customComponent.getCustomPwdField();
         txtPass.setPreferredSize(new Dimension(150, 25)); // alçada fixe
 
         loginPanel.setBorder(BorderFactory.createEmptyBorder(0, 70, 0,0));
@@ -100,8 +101,8 @@ public class LoginFrame extends JFrame {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
         // Botó custom de login
-        new CustomComponents().setCustomButton("Entrar");
-        btnLogin = CustomComponents.getCustomButton();
+        customComponent.setCustomButton("Entrar");
+        btnLogin = customComponent.getCustomButton();
 
         buttonPanel.add(btnLogin);
 

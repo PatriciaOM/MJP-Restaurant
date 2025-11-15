@@ -22,11 +22,11 @@ import javax.swing.text.JTextComponent;
  * @author Patricia Oliva
  */
 public class CustomComponents {
-    private static JButton customButton;
-    private static JTextField customTextField;
-    private static JPasswordField customPwdField;
-    private static Map<String, JTextField> textFields;
-    private static JFrame currentFrame;
+    private JButton customButton;
+    private JTextField customTextField;
+    private JPasswordField customPwdField;
+    private Map<String, JTextField> textFields;
+    private JFrame currentFrame;
 
     //BOTONS
     /**
@@ -72,14 +72,14 @@ public class CustomComponents {
      * Retorna el botó custom
      * @return botó amb estil predeterminat
      */
-    public static JButton getCustomButton(){
+    public JButton getCustomButton(){
         return customButton;
     }
 
     /**
      * Mètode per setejar els TextField amb un estil estandaritzat
      */
-    public static void setCustomTextField() {
+    public void setCustomTextField() {
        customTextField = new JTextField() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -107,14 +107,14 @@ public class CustomComponents {
      * Retorna el JTextField custom
      * @return textfield amb estil predeterminat
      */
-    public static JTextField getCustomTextField() {
+    public JTextField getCustomTextField() {
         return customTextField;
     }
 
     /**
      * Mètode per setejar els PasswordField amb un estil estandaritzat
      */
-    public static void setCustomPasswordField() {
+    public void setCustomPasswordField() {
         customPwdField = new JPasswordField() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -142,7 +142,7 @@ public class CustomComponents {
      * Retorna el JPasswordField custom
      * @return pwdfield amb estil predeterminat
      */
-    public static JPasswordField getCustomPwdField() {
+    public JPasswordField getCustomPwdField() {
         return customPwdField;
     }
 
@@ -166,8 +166,11 @@ public class CustomComponents {
      * @param frameTitle títol pel formulari
      * @param fields camps del formulari necessaris
      */
-    public static void createForm(String frameTitle, String[] fields, ActionListener onAccept, ActionListener onCancel) {
+    public void createForm(String frameTitle, String[] fields, ActionListener onAccept, ActionListener onCancel) {
         JFrame frame = new JFrame(frameTitle);
+        if (currentFrame != null) {
+            currentFrame.dispose();
+        }
         currentFrame = frame; 
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -191,8 +194,8 @@ public class CustomComponents {
             label.setFont(new Font("Arial", Font.PLAIN, 13));
             label.setHorizontalAlignment(SwingConstants.RIGHT);
 
-            CustomComponents.setCustomTextField();
-            JTextField textField = CustomComponents.getCustomTextField();
+            this.setCustomTextField();
+            JTextField textField = this.getCustomTextField();
             textField.setPreferredSize(new Dimension(180, 25));
             textFields.put(field, textField);
 
@@ -201,10 +204,10 @@ public class CustomComponents {
         }
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        new CustomComponents().setCustomButton("Acceptar");
-        JButton btnAccept = CustomComponents.getCustomButton();
-        new CustomComponents().setCustomButton("Cancelar");
-        JButton btnCancel = CustomComponents.getCustomButton();
+        this.setCustomButton("Acceptar");
+        JButton btnAccept = this.getCustomButton();
+        this.setCustomButton("Cancelar");
+        JButton btnCancel = this.getCustomButton();
         buttonPanel.add(btnAccept);
         buttonPanel.add(btnCancel);
 
@@ -218,7 +221,6 @@ public class CustomComponents {
         frame.setSize(500, 180 + fields.length * 45);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
-        frame.setVisible(true);
 
         Map<String, String> data = new HashMap<>();
 
@@ -234,6 +236,12 @@ public class CustomComponents {
             if (onCancel != null) onCancel.actionPerformed(e);
             frame.dispose();
         });
+
+        frame.setAlwaysOnTop(true);
+        frame.setVisible(true);
+        frame.toFront();
+        frame.requestFocus();
+        frame.setAlwaysOnTop(false);
     }
 
     /**
@@ -244,9 +252,12 @@ public class CustomComponents {
      * @param onAccept ActionListener per al botó Acceptar
      * @param onCancel ActionListener per al botó Cancel·lar
      */
-    public static void createForm(String frameTitle, String[] fields, Map<String, String> initialValues,
+    public void createForm(String frameTitle, String[] fields, Map<String, String> initialValues,
                                 ActionListener onAccept, ActionListener onCancel) {
         JFrame frame = new JFrame(frameTitle);
+        if (currentFrame !=null) {
+            currentFrame.dispose();
+        }
         currentFrame = frame;
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -270,8 +281,8 @@ public class CustomComponents {
             label.setFont(new Font("Arial", Font.PLAIN, 13));
             label.setHorizontalAlignment(SwingConstants.RIGHT);
 
-            CustomComponents.setCustomTextField();
-            JTextField textField = CustomComponents.getCustomTextField();
+            this.setCustomTextField();
+            JTextField textField = this.getCustomTextField();
             textField.setPreferredSize(new Dimension(180, 25));
 
             // Rellenar con valor inicial si existe
@@ -286,10 +297,10 @@ public class CustomComponents {
         }
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        new CustomComponents().setCustomButton("Acceptar");
-        JButton btnAccept = CustomComponents.getCustomButton();
-        new CustomComponents().setCustomButton("Cancelar");
-        JButton btnCancel = CustomComponents.getCustomButton();
+        this.setCustomButton("Acceptar");
+        JButton btnAccept = this.getCustomButton();
+        this.setCustomButton("Cancelar");
+        JButton btnCancel = this.getCustomButton();
         buttonPanel.add(btnAccept);
         buttonPanel.add(btnCancel);
 
@@ -303,11 +314,11 @@ public class CustomComponents {
         frame.setSize(500, 180 + fields.length * 45);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
-        frame.setVisible(true);
 
         Map<String, String> data = new HashMap<>();
 
         btnAccept.addActionListener(e -> {
+            data.clear();
             for (String field : fields) {
                 data.put(field, textFields.get(field).getText().trim());
             }
@@ -319,6 +330,12 @@ public class CustomComponents {
             if (onCancel != null) onCancel.actionPerformed(e);
             frame.dispose();
         });
+
+        frame.setAlwaysOnTop(true);
+        frame.setVisible(true);
+        frame.toFront();
+        frame.requestFocus();
+        frame.setAlwaysOnTop(false);
     }
 
 
@@ -326,18 +343,22 @@ public class CustomComponents {
      * Mètode que buida el TextField incorrecte
      * @param fieldName nom del camp a esborrar
      */
-    public static void clearField(String fieldName) {
+    public void clearField(String fieldName) {
         if (textFields != null && textFields.containsKey(fieldName)) {
             textFields.get(fieldName).setText("");
             textFields.get(fieldName).requestFocus();
         }
     }
 
-    public static void closeCurrentForm() {
+    public void closeCurrentForm() {
         if (currentFrame != null) {
             currentFrame.dispose();
             currentFrame = null;
         }
+    }
+
+    public JFrame getCurrentFrame(){
+        return currentFrame;
     }
 
 }

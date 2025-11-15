@@ -56,7 +56,8 @@ public class WorkerValidator {
 
         // Validar torn amb l'enum
         String shiftStr = data.get("Torn (matí | tarda | indiferent)").toLowerCase().trim();
-        if (!shiftStr.equals("matí") && !shiftStr.equals("tarda") && !shiftStr.equals("indiferent")) {
+        shiftStr = shiftStr.replace("í", "i");
+        if (!shiftStr.equals("mati") && !shiftStr.equals("tarda") && !shiftStr.equals("indiferent")) {
             return "El torn ha de ser 'matí', 'tarda' o 'indiferent'.";
         }
 

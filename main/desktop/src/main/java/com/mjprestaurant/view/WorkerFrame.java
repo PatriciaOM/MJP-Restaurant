@@ -37,6 +37,7 @@ public class WorkerFrame extends AbstractFrame {
 
     @Override
     protected void initComponents() {
+        CustomComponents customComponent = new CustomComponents();
         JLabel title = new JLabel("Administració de treballadors: ", SwingConstants.CENTER);
         System.out.println(title);
         title.setFont(new Font("Arial", Font.PLAIN, 24));
@@ -65,10 +66,10 @@ public class WorkerFrame extends AbstractFrame {
         JScrollPane scrollPane = new JScrollPane(workerTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
 
-        new CustomComponents().setCustomButton("Afegir");
-        buttonAdd = CustomComponents.getCustomButton();
-        new CustomComponents().setCustomButton("Eliminar");
-        buttonDelete = CustomComponents.getCustomButton();
+        customComponent.setCustomButton("Afegir");
+        buttonAdd = customComponent.getCustomButton();
+        customComponent.setCustomButton("Eliminar");
+        buttonDelete = customComponent.getCustomButton();
         
         JPanel workerPanel = new JPanel();
         workerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
@@ -87,10 +88,12 @@ public class WorkerFrame extends AbstractFrame {
         // Llama al método original para crear el menú base
         super.createMenuBar();
 
+        CustomComponents customComponent = new CustomComponents();
+
         JMenuBar menuBar = getJMenuBar();
         if (menuBar != null) {
-            new CustomComponents().setCustomButton("Enrere");
-            btnBack = CustomComponents.getCustomButton();
+            customComponent.setCustomButton("Enrere");
+            btnBack = customComponent.getCustomButton();
 
             // Insertamos el botón antes del de logout
             menuBar.add(btnBack, 0);
@@ -112,10 +115,9 @@ public class WorkerFrame extends AbstractFrame {
         if (tableModel == null) return;
         tableModel.setRowCount(0);
 
-        int idCounter = 1;
         for (User u : users) {
             String fullName = u.getName() + " " + u.getSurname();
-            tableModel.addRow(new Object[]{idCounter++, u.getDni(), fullName, u.getShift(), "Editar"});
+            tableModel.addRow(new Object[]{u.getId(), u.getDni(), fullName, u.getShift(), "Editar"});
         }
 
         workerTable.getColumn("Accions").setCellRenderer(new ButtonRenderer());
@@ -160,9 +162,9 @@ public class WorkerFrame extends AbstractFrame {
         private final JButton btnEdit;
 
         public ButtonRenderer() {         
-            CustomComponents cc = new CustomComponents();
-            cc.setCustomButton("Editar");
-            this.btnEdit = CustomComponents.getCustomButton();
+            CustomComponents customComponent = new CustomComponents();
+            customComponent.setCustomButton("Editar");
+            this.btnEdit = customComponent.getCustomButton();
             this.btnEdit.setOpaque(true); 
             this.btnEdit.setFocusPainted(false);
             this.btnEdit.setBorderPainted(false);

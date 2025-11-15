@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,15 +35,6 @@ import com.mjprestaurant.view.WorkerFrame;
  * @author Patricia Oliva
  */
 public class WorkerController implements ActionListener {
-
-    /*private static final String[] workerFields = {
-        "DNI",
-        "Nom",
-        "Cognoms",
-        "Data d'inici",
-        "Torn",
-        "Rol"
-        };*/
     private static final String[] workerFields = {
         "Login",
         "Contrasenya",
@@ -58,6 +49,7 @@ public class WorkerController implements ActionListener {
     private WorkerFrame workerFrame;
     private LoginFrame login;
     private String token;
+    private CustomComponents editForm;
 
     /**
      * Constructor principal
@@ -102,7 +94,8 @@ public class WorkerController implements ActionListener {
      */
     public void createWorker() {
 
-        CustomComponents.createForm("Nou treballador", workerFields, e -> {
+        CustomComponents customComponent = new CustomComponents();
+        customComponent.createForm("Nou treballador", workerFields, e -> {
             @SuppressWarnings("unchecked")
             Map<String, String> workerData = (Map<String, String>) e.getSource();
 
@@ -120,7 +113,7 @@ public class WorkerController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "El camp \"" + key + "\" no pot estar buit.",
                             "Error de validació", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField(key);
+                    customComponent.clearField(key);
                     return;
                 }
             }
@@ -131,7 +124,7 @@ public class WorkerController implements ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "El camp DNI ha de tenir 8 números seguits d'una lletra (ex: 12345678A).",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
-                CustomComponents.clearField("DNI");
+                customComponent.clearField("DNI");
                 return;
             }
 
@@ -141,7 +134,7 @@ public class WorkerController implements ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "La data d'inici ha d'estar en format dd/mm/yyyy (ex: 05/11/2025).",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
-                CustomComponents.clearField("Data d'inici");
+                customComponent.clearField("Data d'inici");
                 return;
             }
 
@@ -153,7 +146,7 @@ public class WorkerController implements ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "La data d'inici no pot ser anterior a la data actual.",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
-                CustomComponents.clearField("Data d'inici");
+                customComponent.clearField("Data d'inici");
                 return;
             }
 
@@ -166,7 +159,7 @@ public class WorkerController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "La data de finalització ha d'estar en format dd/mm/yyyy (ex: 10/11/2025).",
                             "Error de validació", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField("Data de finalització (pot deixar-se en blanc)");
+                    customComponent.clearField("Data de finalització (pot deixar-se en blanc)");
                     return;
                 }
 
@@ -176,7 +169,7 @@ public class WorkerController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "La data de finalització no pot ser anterior a la data actual.",
                             "Error de validació", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField("Data de finalització (pot deixar-se en blanc)");
+                    customComponent.clearField("Data de finalització (pot deixar-se en blanc)");
                     return;
                 }
 
@@ -184,7 +177,7 @@ public class WorkerController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "La data de finalització no pot ser anterior a la data d'inici.",
                             "Error de validació", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField("Data de finalització (pot deixar-se en blanc)");
+                    customComponent.clearField("Data de finalització (pot deixar-se en blanc)");
                     return;
                 }
             }
@@ -197,7 +190,7 @@ public class WorkerController implements ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "El torn ha de ser 'matí', 'tarda' o 'indiferent'.",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
-                CustomComponents.clearField("Torn (matí | tarda | indiferent)");
+                customComponent.clearField("Torn (matí | tarda | indiferent)");
                 return;
             }
 
@@ -208,7 +201,7 @@ public class WorkerController implements ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "El rol ha de ser 'user' o 'admin'.",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
-                CustomComponents.clearField("Rol");
+                customComponent.clearField("Rol");
             }
 
              // Crear usuari amb tots els camps del formulari
@@ -254,7 +247,7 @@ public class WorkerController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "Treballador creat correctament",
                             "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                    CustomComponents.closeCurrentForm();
+                    customComponent.closeCurrentForm();
                     workerFrame.reloadUsersTable(token);
                 } else {
                     JOptionPane.showMessageDialog(null,
@@ -280,7 +273,8 @@ public class WorkerController implements ActionListener {
     public void deleteWorker(String token) {
         String[] deleteFields = {"Login del treballador"};
 
-        CustomComponents.createForm("Eliminar treballador", deleteFields, e -> {
+        CustomComponents customComponent = new CustomComponents();
+        customComponent.createForm("Eliminar treballador", deleteFields, e -> {
             @SuppressWarnings("unchecked")
             Map<String, String> data = (Map<String, String>) e.getSource();
 
@@ -291,7 +285,7 @@ public class WorkerController implements ActionListener {
                 JOptionPane.showMessageDialog(null,
                         "Has d'introduir el login del treballador.",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
-                CustomComponents.clearField("Login del treballador");
+                customComponent.clearField("Login del treballador");
                 return;
             }
 
@@ -318,7 +312,7 @@ public class WorkerController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "Treballador eliminat correctament.",
                             "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                    CustomComponents.closeCurrentForm();
+                    customComponent.closeCurrentForm();
                     workerFrame.reloadUsersTable(token);
                 } else if (conn.getResponseCode() == 404) {
                     JOptionPane.showMessageDialog(null,
@@ -385,148 +379,6 @@ public class WorkerController implements ActionListener {
         }
     }
 
-    /**
-     * Mètode d'edició de treballadors
-     * Es crea un formulari demanant el camp que es vol modificar i el nou valor que ha de tenir i s'envia al server
-     * @param workerId id del treballador seleccionat
-     */
-    /*public void editWorker(int workerId) {
-        // Obtener todos los usuarios para recuperar el que toca
-        List<User> allUsers;
-            try {
-                allUsers = WorkerController.getAllWorkers(token);
-            
-            User user = allUsers.stream()
-                    .filter(u -> u.getId() == workerId)
-                    .findFirst()
-                    .orElse(null);
-
-            if (user == null) {
-                JOptionPane.showMessageDialog(null,
-                        "No s'ha trobat cap treballador amb aquest ID.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            String[] editFields = {"Camp a modificar", "Nou valor"};
-
-            CustomComponents.createForm("Editar treballador", editFields, e -> {
-                @SuppressWarnings("unchecked")
-                Map<String, String> workerData = (Map<String, String>) e.getSource();
-
-                String field = workerData.get("Camp a modificar");
-                String newValue = workerData.get("Nou valor");
-
-                if (field == null || field.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null,
-                            "Has d'introduir el camp a modificar.",
-                            "Error de validació", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField("Camp a modificar");
-                    return;
-                }
-
-                if (newValue == null || newValue.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null,
-                            "Has d'introduir el nou valor.",
-                            "Error de validació", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField("Nou valor");
-                    return;
-                }
-
-                try {
-
-                    // 2️⃣ Aplicar el cambio en el objeto User
-                    switch (field.toLowerCase()) {
-                        case "login": user.setUsername(newValue); break;
-                        case "contrasenya": user.setPassword(newValue); break;
-                        case "rol": user.setRole(newValue.toUpperCase()); break;
-                        case "nom": user.setName(newValue); break;
-                        case "cognoms": user.setSurname(newValue); break;
-                        case "dni": user.setDni(newValue); break;
-                        case "torn": 
-                            user.setShift(com.mjprestaurant.model.user.UserShift.fromString(newValue));
-                            break;
-                        case "data d'inici":
-                            java.time.format.DateTimeFormatter f = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                            user.setStartDate(java.time.LocalDate.parse(newValue, f));
-                            break;
-                        case "data de finalització":
-                            if (newValue.trim().isEmpty()) {
-                                user.setEndDate(null);
-                            } else {
-                                java.time.format.DateTimeFormatter f2 = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                                user.setEndDate(java.time.LocalDate.parse(newValue, f2));
-                            }
-                            break;
-                        default:
-                            JOptionPane.showMessageDialog(null,
-                                    "El camp introduït no és vàlid.",
-                                    "Error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                    }
-
-                    Map<String, String> completeMap = mapUserToWorkerData(user);
-
-                    // Sobrescribir solo el campo editado:
-                    completeMap.put(field, newValue);
-                    
-                    String error = WorkerValidator.validate(completeMap);
-
-                    if (error != null) {
-                        JOptionPane.showMessageDialog(null, error, "Error de validació", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    // 3️⃣ Crear UserUpdateInfo
-                    UserUpdateInfo updateInfo = new UserUpdateInfo(token, user);
-
-                    // 4️⃣ Convertir a JSON
-                    ObjectMapper mapper = new ObjectMapper();
-                    mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
-                    mapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-                    String json = mapper.writeValueAsString(updateInfo);
-
-                    // 5️⃣ Enviar al servidor
-                    URL url = new URL("http://localhost:8080/user/update");
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Content-Type", "application/json");
-                    conn.setDoOutput(true);
-
-                    try (OutputStream os = conn.getOutputStream()) {
-                        os.write(json.getBytes(StandardCharsets.UTF_8));
-                        os.flush();
-                    }
-
-                    int responseCode = conn.getResponseCode();
-                    if (responseCode == 200) {
-                        JOptionPane.showMessageDialog(null,
-                                "Treballador actualitzat correctament.",
-                                "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                        CustomComponents.closeCurrentForm();
-                        workerFrame.reloadUsersTable(token);
-                    } else {
-                        JOptionPane.showMessageDialog(null,
-                                "Error del servidor: " + responseCode,
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                    conn.disconnect();
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(null,
-                            "Error de connexió amb el servidor.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                }
-
-            }, e -> System.out.println("Edició cancel·lada"));
-        } catch (ControllerException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-        }
-    }*/
     public void editWorker(int workerId) {
         List<User> allUsers;
         try {
@@ -545,8 +397,14 @@ public class WorkerController implements ActionListener {
             }
 
             String[] editFields = {"Camp a modificar", "Nou valor"};
+            // Cerrar formulario previo si existe
+            if (editForm != null && editForm.getCurrentFrame() != null) {
+                editForm.closeCurrentForm();
+            }
 
-            CustomComponents.createForm("Editar treballador", editFields, e -> {
+            
+            editForm = new CustomComponents();
+            editForm.createForm("Editar treballador", editFields, e -> {
                 @SuppressWarnings("unchecked")
                 Map<String, String> data = (Map<String, String>) e.getSource();
 
@@ -557,7 +415,7 @@ public class WorkerController implements ActionListener {
                     JOptionPane.showMessageDialog(null, 
                         "Has d'introduir el camp a modificar.",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField("Camp a modificar");
+                    editForm.clearField("Camp a modificar");
                     return;
                 }
 
@@ -565,7 +423,7 @@ public class WorkerController implements ActionListener {
                     JOptionPane.showMessageDialog(null, 
                         "Has d'introduir el nou valor.",
                         "Error de validació", JOptionPane.ERROR_MESSAGE);
-                    CustomComponents.clearField("Nou valor");
+                    editForm.clearField("Nou valor");
                     return;
                 }
 
@@ -647,7 +505,7 @@ public class WorkerController implements ActionListener {
                             JOptionPane.showMessageDialog(null, 
                                 "Treballador actualitzat correctament.",
                                 "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                                CustomComponents.closeCurrentForm();
+                                editForm.closeCurrentForm();
                                 workerFrame.reloadUsersTable(token);
                         } else if (responseCode == 404) {
                             JOptionPane.showMessageDialog(null, 
@@ -672,9 +530,15 @@ public class WorkerController implements ActionListener {
                         "Error de connexió amb el servidor.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            }, e -> System.out.println("Edició cancel·lada"));
+                editForm.closeCurrentForm();
+                editForm = null;
+                workerFrame.reloadUsersTable(token);
+            }, e -> {
+                System.out.println("Edició cancel·lada");
+            editForm = null;
+            });
         } catch (ControllerException e){
-
+            e.printStackTrace();
         }
     }
 

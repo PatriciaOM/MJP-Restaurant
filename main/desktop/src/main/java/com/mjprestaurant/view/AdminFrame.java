@@ -29,14 +29,15 @@ public class AdminFrame extends AbstractFrame {
      */
     @Override
     public void initComponents() {
+        CustomComponents customComponents = new CustomComponents();
         JLabel title = new JLabel("Administració de: ", SwingConstants.CENTER);
         System.out.println(title);
         title.setFont(new Font("Arial", Font.PLAIN, 24));
         
-        new CustomComponents().setCustomButton("Taules");
-        buttonTables = CustomComponents.getCustomButton();
-        new CustomComponents().setCustomButton("Treballadors");
-        buttonWorkers = CustomComponents.getCustomButton();
+        customComponents.setCustomButton("Taules");
+        buttonTables = customComponents.getCustomButton();
+        customComponents.setCustomButton("Treballadors");
+        buttonWorkers = customComponents.getCustomButton();
         
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setBorder(BorderFactory.createEmptyBorder(100,0,20,0));
