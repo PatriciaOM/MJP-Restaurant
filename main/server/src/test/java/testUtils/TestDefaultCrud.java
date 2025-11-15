@@ -10,22 +10,16 @@ import java.time.LocalDate;
 import java.util.List;
 import mjp.server.ServerMJP.database.DatabaseEntry;
 import mjp.server.ServerMJP.database.Dish;
-import mjp.server.ServerMJP.database.DishRepository;
 import mjp.server.ServerMJP.database.User;
-import mjp.server.ServerMJP.model.SessionManager;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
-import mjp.server.queryData.dish.DishCreateInfo;
-import mjp.server.queryData.dish.DishGetInfo;
 import mjp.server.responseData.CrudResponse;
-import mjp.server.responseData.dish.DishCreateResponse;
 import mjp.server.responseData.dish.DishGetResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import testUtils.Credentials;
 import static testUtils.TestDefault.printTestName;
 
 /**
@@ -34,28 +28,7 @@ import static testUtils.TestDefault.printTestName;
  */
 public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseEntry<DatabaseIdType>, CreateResponseType extends CrudResponse<ItemType>> extends TestDefault {
     Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
-//
-//    protected class Credentials {
-//        String username;
-//        String password;
-//        String sessionToken;
-//
-//
-//        public String getUsername() {return username;}
-//
-//        public String getPassword() {return password;}
-//
-//        public String getSessionToken() {return sessionToken;}
-//
-//        public void setUsername(String username) {this.username = username;}
-//
-//        public void setPassword(String password) {this.password = password;}
-//
-//        public void setSessionToken(String sessionToken) {this.sessionToken = sessionToken;}
-//    }
-    
-    
-    
+
     protected abstract Credentials getUserCredentials();
     protected abstract Credentials getAdminCredentials();
     protected abstract ItemType getInitialItem();
@@ -67,10 +40,11 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
     public abstract AuthorizedQueryInfo<ItemType> generateUpdateRequest(String sessionToken, ItemType entry);
     public abstract AuthorizedQueryInfo<DatabaseIdType> generateDeleteRequest(String sessionToken, DatabaseIdType entryId);
     
-//    public abstract CrudResponse<ItemType> createResponse(String Message, List<ItemType> entries);
-    
-    
-    
+    public abstract String getResourceUri();
+       
+    public String makeResourceUrl(String crudAction) {
+        return super.makeUrl(getResourceUri()) + crudAction;
+    }
     
     protected void basicSetup(String testname){
         printTestName(testname);
@@ -92,8 +66,7 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
     protected void createAllItems(String testName, Class<CreateResponseType> responseClazz){
         List<ItemType> allItems = getAllTestItems();
         printTestName(testName);
-        String url = makeUrl("/dish/create");//
-//        Dish dish = initialDish;
+        String url = makeResourceUrl("/create");
         AuthorizedQueryInfo info;
         
         for (ItemType item : allItems){
@@ -104,10 +77,10 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
             CreateResponseType createReponse = gson.fromJson(response.getBody(), responseClazz);
             assertThat(createReponse.getMessageStatus()).isEqualTo("Success");
             assertThat(createReponse.getMessageData().size()).isEqualTo(1);
-            ItemType dishResponse = createReponse.getMessageData().get(0);
-            assertNotNull(dishResponse.getId());
-            item.setId(dishResponse.getId());
-            assertThat(gson.toJson(dishResponse)).isEqualTo(gson.toJson(item));
+            ItemType itemResponse = createReponse.getMessageData().get(0);
+            assertNotNull(itemResponse.getId());
+            item.setId(itemResponse.getId());
+            assertThat(gson.toJson(itemResponse)).isEqualTo(gson.toJson(item));
         }
         assertNotNull(allItems.get(0).getId());
         assertNotNull(getInitialItem().getId());
@@ -116,7 +89,7 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
     
     protected <GetResponseType extends CrudResponse<ItemType>> void getItemById(String testName, Class<GetResponseType> responseClazz) {
         printTestName(testName);
-        String url = makeUrl("/dish/get");
+        String url = makeResourceUrl("/get");
         AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getInitialItem().getId()); 
         assertNotNull(getInitialItem().getId());
         assertNotNull(info.getMessageData());
@@ -131,20 +104,18 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
         
     protected <GetResponseType extends CrudResponse<ItemType>> void getNoExistingItemById(String testName, Class<GetResponseType> responseClazz) {
         printTestName(testName);
-        String url = makeUrl("/dish/get");
-        DishGetInfo info = new DishGetInfo(getUserCredentials().getSessionToken(), 5000L);
+        String url = makeResourceUrl("/get");
+        AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getNoExistingItem().getId());
         assertNotNull(getNoExistingItem().getId());
-        assertNotNull(info.getId());
+        assertNotNull(info.getMessageData());
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND); 
     }
     
-    
-      
     protected <UpdateResponseType, GetResponseType extends CrudResponse<ItemType>> void updateItem(String testName, Class<UpdateResponseType> responseClazz) {
         printTestName("updateDish");
-        String url = makeUrl("/dish/update");
+        String url = makeResourceUrl("/update");
         getUpdatedItem().setId(getInitialItem().getId());
         AuthorizedQueryInfo info = generateUpdateRequest(getAdminCredentials().getSessionToken(), getUpdatedItem());
         ResponseEntity<String> response = makePostRequest(url, info);
@@ -169,7 +140,7 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
     
     protected <GetResponseType extends CrudResponse<ItemType>> void getItemToDelete(String testName, Class<GetResponseType> responseClazz) {
                 printTestName(testName);
-        String url = makeUrl("/dish/get");
+        String url = makeResourceUrl("/get");
         AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId()); 
         assertNotNull(info.getMessageData());
         assertNotNull(info.getMessageData());
@@ -179,13 +150,13 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
     
      protected <DeleteResponseType extends CrudResponse<ItemType>> void deleteItem(String testName, Class<DeleteResponseType> responseClazz) {
         printTestName("deleteDish");
-        String url = makeUrl("/dish/delete");
+        String url = makeResourceUrl("/delete");
         AuthorizedQueryInfo info = generateDeleteRequest(getAdminCredentials().getSessionToken(), getUpdatedItem().getId());
         ResponseEntity<String> delResp = makePostRequest(url, info);
         DeleteResponseType delRespObject = gson.fromJson("", responseClazz);
         assertThat(delResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         
-        String getUrl = makeUrl("/dish/get");
+        String getUrl = makeResourceUrl("/get");
         AuthorizedQueryInfo getInfo = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId());
         ResponseEntity<String> getResponse = makePostRequest(getUrl, getInfo);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -197,7 +168,7 @@ public abstract class TestDefaultCrud<DatabaseIdType, ItemType extends DatabaseE
      
         protected <GetResponseType extends CrudResponse<ItemType>> void getDeletedItem(String testName, Class<GetResponseType> responseClazz) {
                 printTestName(testName);
-        String url = makeUrl("/dish/get");
+        String url = makeResourceUrl("/get");
         AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId()); 
         assertNotNull(info.getMessageData());
         assertNotNull(info.getMessageData());
