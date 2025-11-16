@@ -58,48 +58,48 @@ public abstract class TestDefaultCrud<
         return super.makeUrl(getResourceUri()) + crudAction;
     }
     
-    protected void createItemBasicTests(String testname) {
+    protected void createItemBasicTests(String testname, String sessionToken) {
         AuthorizedQueryInfo createInfo =  generateCreateRequest(getAdminCredentials().getSessionToken(), getInitialItem());
         this.basicRequestTests(
             "create" + getClassName(),
             makeResourceUrl("/create"),
             createInfo,
             getInitialItem(),
-            getAdminCredentials().getSessionToken()
+            sessionToken
         );
     }
     
-    protected void getItemBasicTests(String testname) {
+    protected void getItemBasicTests(String testname, String sessionToken) {
         AuthorizedQueryInfo getInfo =  generateCreateRequest(getUserCredentials().getSessionToken(), getInitialItem());
         this.basicRequestTests(
             "get" + getClassName() + "BasicTests",
             makeResourceUrl("/get"),
             getInfo,
             null,
-            getUserCredentials().getSessionToken()
+            sessionToken
         );
     }
     
     
-    protected void updateItemBasicTests(String testname) {
+    protected void updateItemBasicTests(String testname, String sessionToken) {
         AuthorizedQueryInfo info =  generateUpdateRequest(getAdminCredentials().getSessionToken(), getUpdatedItem());
             this.basicRequestTests(
                 "update" + getClassName() + "BasicTests",
             makeResourceUrl("/update"),
                 info,
                 getUpdatedItem(),
-                getAdminCredentials().getSessionToken()
+                sessionToken
             );
     }
     
-    protected void deleteItemBasicTests(String testname){
+    protected void deleteItemBasicTests(String testname, String sessionToken){
         AuthorizedQueryInfo info =  generateDeleteRequest(getAdminCredentials().getSessionToken(), getInitialItem().getId());
         this.basicRequestTests(
             "delete" + getClassName() + "BasicTests",
             makeResourceUrl("/delete"),
             info,
             getInitialItem().getId(),
-            getAdminCredentials().getSessionToken()
+            sessionToken
         );
     }
     
@@ -163,8 +163,8 @@ public abstract class TestDefaultCrud<
     protected void getNoExistingItemById(String testName) {
         printTestName(testName);
         String url = makeResourceUrl("/get");
-        AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getNoExistingItem().getId());
         assertNotNull(getNoExistingItem().getId());
+        AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getNoExistingItem().getId());
         assertNotNull(info.getMessageData());
         
         ResponseEntity<String> response = makePostRequest(url, info);

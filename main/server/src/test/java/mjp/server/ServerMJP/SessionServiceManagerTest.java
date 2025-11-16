@@ -65,73 +65,85 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     public String getResourceUri() {return this.resourceUri;}
     
     static SessionService initialSessionService = new SessionService(
-        "0",
+        1L,
+        0,
         4,
         1,
         2,
         LocalDate.of(2020, Month.DECEMBER, 12),
         LocalDate.of(2020, Month.DECEMBER, 12),
+        SessionService.SessionServiceStatus.CLOSED,
         5,
             ""
     );
       
     static SessionService mockSessionService1 = new SessionService(
-            "1",
-            4,
-            1,
-            2,
-            LocalDate.of(2020, Month.DECEMBER, 13),
-            LocalDate.of(2020, Month.DECEMBER, 13),
-            5,
-            "Very Nice place"
+        1L,
+        1,
+        4,
+        1,
+        2,
+        LocalDate.of(2020, Month.DECEMBER, 13),
+        LocalDate.of(2020, Month.DECEMBER, 13),
+        SessionService.SessionServiceStatus.OPEN,
+        5,
+        "Very Nice place"
     );    
     
     static SessionService mockSessionService2 = new SessionService(
-            "1",
-            4,
-            1,
-            2,
-            LocalDate.of(2020, Month.DECEMBER, 14),
-            LocalDate.of(2020, Month.DECEMBER, 14),
-            5,
-            "Very Nicer place"
+        1L,
+        1,
+        4,
+        1,
+        2,
+        LocalDate.of(2020, Month.DECEMBER, 14),
+        LocalDate.of(2020, Month.DECEMBER, 14),
+        SessionService.SessionServiceStatus.PAID,
+        5,
+        "Very Nicer place"
     );  
     
     static SessionService mockSessionService3 = new SessionService(
-            "1",
-            4,
-            1,
-            2,
-            LocalDate.of(2020, Month.DECEMBER, 15),
-            LocalDate.of(2020, Month.DECEMBER, 15),
-            5,
-            "Very Nicer placer"
+        1L,
+        1,
+        4,
+        1,
+        2,
+        LocalDate.of(2020, Month.DECEMBER, 15),
+        LocalDate.of(2020, Month.DECEMBER, 15),
+        SessionService.SessionServiceStatus.OPEN,
+        5,
+        "Very Nicer placer"
     );
     
     
     List<SessionService> allItems = List.of(initialSessionService, mockSessionService1, mockSessionService2, mockSessionService3);
     
     static SessionService noExsistingSessionService = new SessionService(
-            500000L,
-            "3",
-            4,
-            1,
-            2,
-            LocalDate.of(2020, Month.DECEMBER, 15),
-            LocalDate.of(2020, Month.DECEMBER, 15),
-            5,
-            "Very Nicer placer"
+        500000L, 
+        5L, 
+        3,
+        4,
+        1,
+        2,
+        LocalDate.of(2020, Month.DECEMBER, 15),
+        LocalDate.of(2020, Month.DECEMBER, 15),
+        SessionService.SessionServiceStatus.PAID,
+        5,
+        "Very Nicer placer"
     );
     
-       static SessionService updatedSessionService = new SessionService(
-            "0",
-            4,
-            1,
-            2,
-            LocalDate.of(2020, Month.DECEMBER, 12),
-            LocalDate.of(2020, Month.DECEMBER, 12),
-            5,
-            "Nice Place"
+    static SessionService updatedSessionService = new SessionService(
+        1L,
+        0,
+        4,
+        1,
+        2,
+        LocalDate.of(2020, Month.DECEMBER, 12),
+        LocalDate.of(2020, Month.DECEMBER, 12),
+        SessionService.SessionServiceStatus.PAID,
+        5,
+        "Nice Place"
     );
         
     @Override
@@ -223,7 +235,7 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     @Test
     @Order(200)
     void createSessionServiceBasicTests(){
-        createItemBasicTests("create" + getClassName() + "BasicTests");
+        createItemBasicTests("create" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
     
     @Test
@@ -237,7 +249,7 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     @Test
     @Order(400)
     void getSessionServicesBasicTests(){
-        getItemBasicTests("get" + getClassName() + "BasicTests");
+        getItemBasicTests("get" + getClassName() + "BasicTests", getUserCredentials().getSessionToken());
     }
   
     @Test
@@ -255,7 +267,7 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     @Test
     @Order(600)
     void updateSessionServcieBasicTests(){
-        updateItemBasicTests("create" + getClassName() + "BasicTests");
+        updateItemBasicTests("create" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
     
     @Test
@@ -267,7 +279,7 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     @Test
     @Order(800)
     void deleteSessionServcieBasicTests(){
-        deleteItemBasicTests("delete" + getClassName() + "BasicTests");
+        deleteItemBasicTests("delete" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
      @Test
     @Order(850)

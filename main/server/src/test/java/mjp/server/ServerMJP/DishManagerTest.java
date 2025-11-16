@@ -217,7 +217,7 @@ public class DishManagerTest extends TestDefaultCrud<
     @Test
     @Order(200)
     void createSessionServiceBasicTests(){
-        createItemBasicTests("createSessionServiceBasicTests");
+        createItemBasicTests("createSessionServiceBasicTests", getAdminCredentials().getSessionToken());
     }
     
     @Test
@@ -231,7 +231,7 @@ public class DishManagerTest extends TestDefaultCrud<
     @Test
     @Order(400)
     void getSessionServicesBasicTests(){
-        getItemBasicTests("getSessionServicesBasicTests");
+        getItemBasicTests("getSessionServicesBasicTests", getUserCredentials().getSessionToken());
     }
   
     @Test
@@ -249,7 +249,7 @@ public class DishManagerTest extends TestDefaultCrud<
     @Test
     @Order(600)
     void updateDishBasicTests(){
-        updateItemBasicTests("createDishBasicTests");
+        updateItemBasicTests("createDishBasicTests", getAdminCredentials().getSessionToken());
     }
     
     @Test
@@ -261,7 +261,7 @@ public class DishManagerTest extends TestDefaultCrud<
     @Test
     @Order(800)
     void deleteDishBasicTests(){
-        deleteItemBasicTests("deleteDishBasicTests");
+        deleteItemBasicTests("deleteDishBasicTests", getAdminCredentials().getSessionToken());
     }
      @Test
     @Order(850)
