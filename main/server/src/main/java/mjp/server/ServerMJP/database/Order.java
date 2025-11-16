@@ -19,69 +19,62 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "SessionService")
-public class SessionService implements DatabaseEntry<Long> {
+public class Order implements DatabaseEntry<Long> {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id; 
     
-    public enum SessionServiceStatus {
-        OPEN,
-        CLOSED,
-        PAID
-    }
+//    public enum SessionServiceStatus {
+//        OPEN,
+//        CLOSED,
+//        PAID
+//    }
     
-    private Long idTable;
-    private int numTable;
+    private String numTable;
     private int maxClients;
     private int waiterId;
     private int clients;
     private LocalDate startDate; // TODO bad type
     private LocalDate endDate; // TODO bad type
-    private SessionServiceStatus status;
+//    private SessionServiceStatus status;
     private int rating;
     private String comment;
     
     // TODO pvirave smth image;
         
-    public SessionService(){};
+    public Order(){};
 
-    public SessionService(Long id, Long idTable, int numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate, SessionServiceStatus status, int rating, String comment) {
+    public Order(Long id, String numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate,  int rating, String comment) {
         this.id = id;
-        this.idTable = idTable;
         this.numTable = numTable;
         this.maxClients = maxClients;
         this.waiterId = waiterId;
         this.clients = clients;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.status = status;
         this.rating = rating;
         this.comment = comment;
     }
     
-    public SessionService( Long idTable,int numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate, SessionServiceStatus status, int rating, String comment) {
-        this.idTable = idTable;
+    public Order(String numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate,  int rating, String comment) {
         this.numTable = numTable;
         this.maxClients = maxClients;
         this.waiterId = waiterId;
         this.clients = clients;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.status = status;
         this.rating = rating;
         this.comment = comment;
     }
     
-    public SessionService(SessionService orig) {
+    public Order(Order orig) {
         this.id = orig.id;
-        this.idTable = orig.idTable;
         this.numTable = orig.numTable;
         this.maxClients = orig.maxClients;
         this.waiterId = orig.waiterId;
         this.clients = orig.clients;
         this.startDate = orig.startDate;
         this.endDate = orig.endDate;
-        this.status = orig.status;
         this.rating = orig.rating;
         this.comment = orig.comment;
     }
@@ -90,12 +83,8 @@ public class SessionService implements DatabaseEntry<Long> {
         return id;
     }
 
-    public int getNumTable() {
+    public String getNumTable() {
         return numTable;
-    }
-
-    public Long getIdTable() {
-        return idTable;
     }
 
     public int getMaxClients() {
@@ -118,9 +107,9 @@ public class SessionService implements DatabaseEntry<Long> {
         return endDate;
     }
 
-    public SessionServiceStatus getStatus() {
-        return status;
-    }
+//    public SessionServiceStatus getStatus() {
+//        return status;
+//    }
 
     public int getRating() {
         return rating;
@@ -134,12 +123,8 @@ public class SessionService implements DatabaseEntry<Long> {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public void setIdTable(Long idTable) {
-        this.idTable = idTable;
-    }
 
-    public void setNumTable(int numTable) {
+    public void setNumTable(String numTable) {
         this.numTable = numTable;
     }
 
@@ -163,9 +148,9 @@ public class SessionService implements DatabaseEntry<Long> {
         this.endDate = endDate;
     }
 
-    public void setStatus(SessionServiceStatus status) {
-        this.status = status;
-    }
+//    public void setStatus(SessionServiceStatus status) {
+//        this.status = status;
+//    }
 
     public void setRating(int rating) {
         this.rating = rating;

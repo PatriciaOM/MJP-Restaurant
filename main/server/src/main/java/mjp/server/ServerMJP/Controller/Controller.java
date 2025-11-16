@@ -35,6 +35,7 @@ import org.springframework.web.server.ResponseStatusException;
 import mjp.server.ServerMJP.model.AuthenticationManager;
 import mjp.server.ServerMJP.database.UserRepository;
 import mjp.server.ServerMJP.model.DishManager;
+import mjp.server.ServerMJP.model.SessionServiceManager;
 import mjp.server.ServerMJP.model.TableManager;
 import mjp.server.ServerMJP.model.UserManager;
 import mjp.server.queryData.TableStatusInfo;
@@ -43,6 +44,10 @@ import mjp.server.queryData.dish.DishCreateInfo;
 import mjp.server.queryData.dish.DishDeleteInfo;
 import mjp.server.queryData.dish.DishGetInfo;
 import mjp.server.queryData.dish.DishUpdateInfo;
+import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
+import mjp.server.queryData.sessionService.SessionServiceDeleteInfo;
+import mjp.server.queryData.sessionService.SessionServiceGetInfo;
+import mjp.server.queryData.sessionService.SessionServiceUpdateInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
 import mjp.server.queryData.table.TableGetInfo;
@@ -58,6 +63,10 @@ import mjp.server.responseData.dish.DishDeleteResponse;
 import mjp.server.responseData.dish.DishGetResponse;
 import mjp.server.responseData.dish.DishResponse;
 import mjp.server.responseData.dish.DishUpdateResponse;
+import mjp.server.responseData.sessionService.SessionServiceCreateResponse;
+import mjp.server.responseData.sessionService.SessionServiceDeleteResponse;
+import mjp.server.responseData.sessionService.SessionServiceGetResponse;
+import mjp.server.responseData.sessionService.SessionServiceUpdateResponse;
 import mjp.server.responseData.table.TableCreateResponse;
 import mjp.server.responseData.table.TableDeleteResponse;
 import mjp.server.responseData.table.TableGetResponse;
@@ -93,6 +102,7 @@ public class Controller {
     final TableManager tableManager;
     final UserManager userManager;
     final DishManager dishManager;
+    final SessionServiceManager sessionServiceManager;
     
     /**
      * Used for login purposes
@@ -104,13 +114,15 @@ public class Controller {
         AuthenticationManager model,
         TableManager tableManager,
         UserManager userManager,
-        DishManager dishManager
+        DishManager dishManager,
+        SessionServiceManager sessionServiceManager
     ){
 //        this.gson = new Gson();
         this.model = model;
         this.tableManager = tableManager;
         this.userManager = userManager;
         this.dishManager = dishManager;
+        this.sessionServiceManager = sessionServiceManager;
         
     }
     
@@ -227,19 +239,36 @@ public class Controller {
         DishDeleteResponse response = this.dishManager.delete(info, UserRole.ADMIN, new DishDeleteResponse());
         return this.gson.toJson(response);
     }
+       
+    @PostMapping("session-service/create")
+    public String dishCreate(@RequestBody SessionServiceCreateInfo info){
+        System.out.println(String.format("POST dish/create(%s)", this.gson.toJson(info)));
+        SessionServiceCreateResponse response = this.sessionServiceManager.create(info, UserRole.ADMIN, new SessionServiceCreateResponse());
+        return this.gson.toJson(response);
+    }
     
+    @PostMapping("session-service/get")
+    public String dishGet(@RequestBody SessionServiceGetInfo info){
+        System.out.println(String.format("POST dish/get(%s)", this.gson.toJson(info)));
+        SessionServiceGetResponse response = this.sessionServiceManager.get(info, new SessionServiceGetResponse());
+        return this.gson.toJson(response);
+    }
     
+    @PostMapping("session-service/update")
+    public String dishUpdate(@RequestBody SessionServiceUpdateInfo info){
+        System.out.println(String.format("POST dish/update(%s)", this.gson.toJson(info)));
+        SessionServiceUpdateResponse response = this.sessionServiceManager.update(info, UserRole.ADMIN, new SessionServiceUpdateResponse());
+        return this.gson.toJson(response);
+    }
     
+    @PostMapping("session-service/delete")
+    public String dishDelete(@RequestBody SessionServiceDeleteInfo info){
+        System.out.println(String.format("POST dish/delete(%s)", this.gson.toJson(info)));
+        SessionServiceDeleteResponse response = this.sessionServiceManager.delete(info, UserRole.ADMIN, new SessionServiceDeleteResponse());
+        return this.gson.toJson(response);
+    }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+       
     
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

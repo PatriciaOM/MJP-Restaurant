@@ -25,7 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
  *
  * @author twiki
  */
-public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Dish> {    
+public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
 
 
 
@@ -106,13 +106,13 @@ public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Dish> {
         return dish;
     }
 
-    public void setDish(Dish dish) {
-        this.dish = dish;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
-    public void setMessageData(Dish requestItem) {
-        setDish(requestItem);
+    public void setMessageData(Long requestItem) {
+        setId(requestItem);
     }
 
     public SearchType getSearchType() {
@@ -128,7 +128,7 @@ public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Dish> {
     }
     
     @Override
-    public Dish getMessageData() {
-        return this.getDish();
+    public Long getMessageData() {
+        return this.getId();
     }
 }

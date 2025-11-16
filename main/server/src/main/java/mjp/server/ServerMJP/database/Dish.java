@@ -49,7 +49,7 @@ public class Dish implements DatabaseEntry<Long> {
         this.category = category;
     }
     
-    public Dish(Long id, String name, float price, String description, boolean available) {
+    public Dish(Long id, String name, float price, String description, boolean available, DishCategory category) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -65,7 +65,7 @@ public class Dish implements DatabaseEntry<Long> {
         this.price = orig.price;
         this.description = orig.description;
         this.available = orig.available;
-        this.category = category;
+        this.category = orig.category;
     }
     
     
