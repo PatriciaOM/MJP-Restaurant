@@ -4,10 +4,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+/**
+ * Classe de validació de camps dels treballadors
+ * @author Patricia Oliva
+ */
 public class WorkerValidator {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    /**
+     * Mètode de validació dels camps que es poden introduïr al formulari
+     * @param data informació sobre el treballador
+     * @return correcte o no
+     */
     public static String validate(Map<String, String> data) {
 
         // Validar campos obligatorios
@@ -55,11 +64,9 @@ public class WorkerValidator {
         }
 
         // Validar torn amb l'enum
-        try {
-            com.mjprestaurant.model.user.UserShift.fromString(
-                    data.get("Torn (matí | tarda | indiferent)")
-            );
-        } catch (IllegalArgumentException ex) {
+        String shiftStr = data.get("Torn (matí | tarda | indiferent)").toLowerCase().trim();
+        shiftStr = shiftStr.replace("í", "i");
+        if (!shiftStr.equals("mati") && !shiftStr.equals("tarda") && !shiftStr.equals("indiferent")) {
             return "El torn ha de ser 'matí', 'tarda' o 'indiferent'.";
         }
 

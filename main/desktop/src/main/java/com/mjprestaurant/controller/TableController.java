@@ -73,10 +73,11 @@ public class TableController implements ActionListener {
     }
 
     /**
-     * Crea una nova taula
+     * Mètode que crea una nova taula
      */
     public void createTable() {
-        CustomComponents.createForm("Nova taula", tableFields, e -> {
+        CustomComponents customComponent = new CustomComponents();
+        customComponent.createForm("Nova taula", tableFields, e -> {
             @SuppressWarnings("unchecked")
             Map<String, String> tableData = (Map<String, String>) e.getSource();
 
@@ -137,7 +138,7 @@ public class TableController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "Taula creada correctament",
                             "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                    CustomComponents.closeCurrentForm();
+                    customComponent.closeCurrentForm();
                     tableFrame.reloadTables(token);
                 } else {
                     JOptionPane.showMessageDialog(null,
@@ -158,12 +159,13 @@ public class TableController implements ActionListener {
     }
 
     /**
-     * Elimina una taula pel seu número
+     * Mètode que elimina una taula pel seu número
+     * @param token sessió
      */
     public void deleteTable(String token) {
         String[] deleteFields = {"Id de la taula"};
-
-        CustomComponents.createForm("Eliminar taula", deleteFields, e -> {
+        CustomComponents customComponent = new CustomComponents();
+        customComponent.createForm("Eliminar taula", deleteFields, e -> {
             @SuppressWarnings("unchecked")
             Map<String, String> data = (Map<String, String>) e.getSource();
 
@@ -207,7 +209,7 @@ public class TableController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "Taula eliminada correctament.",
                             "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                    CustomComponents.closeCurrentForm();
+                    customComponent.closeCurrentForm();
                     tableFrame.reloadTables(token);
                 } else if (conn.getResponseCode() == 404) {
                     JOptionPane.showMessageDialog(null,
@@ -232,7 +234,10 @@ public class TableController implements ActionListener {
     }
 
     /**
-     * Obté totes les taules del servidor
+     * Mètode per obtenir totes les taules del restaurant
+     * @param userToken sessió
+     * @return llista de taules
+     * @throws ControllerException
      */
     public static List<TableRestaurant> getAllTables(String userToken) throws ControllerException {
         try {
@@ -271,6 +276,7 @@ public class TableController implements ActionListener {
 
     /**
      * Edita una taula del restaurant
+     * @param table taula a actualitzar
      */
     public void editTable(TableRestaurant table) {
         String[] editFields = {"Número de taula", "Màxim de comensals"};
@@ -281,7 +287,8 @@ public class TableController implements ActionListener {
             "Màxim de comensals", String.valueOf(table.getMaxGuests())
         );
 
-        CustomComponents.createForm("Editar taula", editFields, initialValues, e -> {
+        CustomComponents customComponent = new CustomComponents();
+        customComponent.createForm("Editar taula", editFields, initialValues, e -> {
             @SuppressWarnings("unchecked")
             Map<String, String> data = (Map<String, String>) e.getSource();
 
@@ -314,11 +321,10 @@ public class TableController implements ActionListener {
                 return;
             }
 
-            // Actualizar objeto con nuevos datos
+            // Actualitzar taula
             table.setNum(num);
             table.setMaxGuests(maxGuests);
 
-            // Crear objeto de envío
             TableUpdateInfo updateInfo = new TableUpdateInfo(token, table);
 
             try {
@@ -343,7 +349,7 @@ public class TableController implements ActionListener {
                     JOptionPane.showMessageDialog(null,
                             "Taula actualitzada correctament.",
                             "Èxit", JOptionPane.INFORMATION_MESSAGE);
-                    CustomComponents.closeCurrentForm();
+                    customComponent.closeCurrentForm();
                     tableFrame.reloadTables(token);
                 } else if (responseCode == 404) {
                     JOptionPane.showMessageDialog(null,
@@ -367,30 +373,58 @@ public class TableController implements ActionListener {
         }, e -> System.out.println("Edició cancel·lada"));
     }
 
+    /**
+     * Retorna els camps de les taules
+     * @return
+     */
     public static String[] getTablefields() {
         return tableFields;
     }
 
+    /**
+     * Retorna la pantalla de taules
+     * @return pantalla de taules
+     */
     public TableFrame getTableFrame() {
         return tableFrame;
     }
 
+    /**
+     * Inicialitza la pantalla de les taules
+     * @param tableFrame pantalla per les taules
+     */
     public void setTableFrame(TableFrame tableFrame) {
         this.tableFrame = tableFrame;
     }
 
+    /**
+     * Retorna la pantalla del login
+     * @return pantalla login
+     */
     public LoginFrame getLogin() {
         return login;
     }
 
+    /**
+     * Inicialitza la pantalla del login
+     * @param login pantalla de login
+     */
     public void setLogin(LoginFrame login) {
         this.login = login;
     }
 
+    /**
+     * Retorna el token de la sessió
+     * @return sessió
+     */
     public String getToken() {
         return token;
     }
 
+    /**
+     * Inicialitza el token 
+     * @param token token de la sessió
+     */
     public void setToken(String token) {
         this.token = token;
     }

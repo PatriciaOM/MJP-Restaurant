@@ -48,11 +48,12 @@ public abstract class AbstractFrame extends JFrame {
      * Mètode que crea la barra de menú compartida per totes les pantalles
      */
     protected void createMenuBar() {
+        CustomComponents customComponents = new CustomComponents();
         JMenuBar menuBar = new JMenuBar();
         menuBar.setLayout(new FlowLayout(FlowLayout.RIGHT, 30, 10)); // margen horizontal y vertical
 
-        new CustomComponents().setCustomButton("Tanca la sessió");
-        btnLogout = CustomComponents.getCustomButton();
+        customComponents.setCustomButton("Tanca la sessió");
+        btnLogout = customComponents.getCustomButton();
 
         menuBar.add(btnLogout);
         setJMenuBar(menuBar);

@@ -23,6 +23,10 @@ import com.mjprestaurant.controller.WorkerController;
 import com.mjprestaurant.model.CustomComponents;
 import com.mjprestaurant.model.user.User;
 
+/**
+ * Classe per la pantalla dels treballadors
+ * @author Patricia Oliva
+ */
 public class WorkerFrame extends AbstractFrame {
     JButton buttonAdd, buttonChange, buttonDelete, btnBack;
 
@@ -30,6 +34,11 @@ public class WorkerFrame extends AbstractFrame {
     private DefaultTableModel tableModel;
     private WorkerController controller;
 
+    /**
+     * Constructor principal que rep la llista d'usuaris a ensenyar i el títol
+     * @param title títol de la pantalla
+     * @param users llista d'usuaris a ensenyar
+     */
     public WorkerFrame(String title, List<User> users) {
         super(title);
         loadWorkers(users); //carregar llista
@@ -37,6 +46,7 @@ public class WorkerFrame extends AbstractFrame {
 
     @Override
     protected void initComponents() {
+        CustomComponents customComponent = new CustomComponents();
         JLabel title = new JLabel("Administració de treballadors: ", SwingConstants.CENTER);
         System.out.println(title);
         title.setFont(new Font("Arial", Font.PLAIN, 24));
@@ -65,10 +75,10 @@ public class WorkerFrame extends AbstractFrame {
         JScrollPane scrollPane = new JScrollPane(workerTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
 
-        new CustomComponents().setCustomButton("Afegir");
-        buttonAdd = CustomComponents.getCustomButton();
-        new CustomComponents().setCustomButton("Eliminar");
-        buttonDelete = CustomComponents.getCustomButton();
+        customComponent.setCustomButton("Afegir");
+        buttonAdd = customComponent.getCustomButton();
+        customComponent.setCustomButton("Eliminar");
+        buttonDelete = customComponent.getCustomButton();
         
         JPanel workerPanel = new JPanel();
         workerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
@@ -87,10 +97,12 @@ public class WorkerFrame extends AbstractFrame {
         // Llama al método original para crear el menú base
         super.createMenuBar();
 
+        CustomComponents customComponent = new CustomComponents();
+
         JMenuBar menuBar = getJMenuBar();
         if (menuBar != null) {
-            new CustomComponents().setCustomButton("Enrere");
-            btnBack = CustomComponents.getCustomButton();
+            customComponent.setCustomButton("Enrere");
+            btnBack = customComponent.getCustomButton();
 
             // Insertamos el botón antes del de logout
             menuBar.add(btnBack, 0);
@@ -99,7 +111,10 @@ public class WorkerFrame extends AbstractFrame {
         }
     }
 
-
+    /**
+     * Retorna el botó d'enrere
+     * @return botó enrere
+     */
     public JButton getBtnBack() {
         return btnBack;
     }
@@ -112,10 +127,9 @@ public class WorkerFrame extends AbstractFrame {
         if (tableModel == null) return;
         tableModel.setRowCount(0);
 
-        int idCounter = 1;
         for (User u : users) {
             String fullName = u.getName() + " " + u.getSurname();
-            tableModel.addRow(new Object[]{idCounter++, u.getDni(), fullName, u.getShift(), "Editar"});
+            tableModel.addRow(new Object[]{u.getId(), u.getDni(), fullName, u.getShift(), "Editar"});
         }
 
         workerTable.getColumn("Accions").setCellRenderer(new ButtonRenderer());
@@ -132,13 +146,17 @@ public class WorkerFrame extends AbstractFrame {
                     if (controller != null) {
                         controller.editWorker(workerId);
                     } else {
-                        System.err.println("WorkerController no asignado en WorkerFrame.");
+                        System.err.println("WorkerController no assignat a WorkerFrame.");
                     }
                 }
             }
         });
     }
     
+    /**
+     * Mètode que fa l'actualització de la llista d'usuaris quan es fa una modificació
+     * @param token token de sessió
+     */
     public void reloadUsersTable(String token) {
         try {
             // Obtener lista actualizada de trabajadores
@@ -160,9 +178,9 @@ public class WorkerFrame extends AbstractFrame {
         private final JButton btnEdit;
 
         public ButtonRenderer() {         
-            CustomComponents cc = new CustomComponents();
-            cc.setCustomButton("Editar");
-            this.btnEdit = CustomComponents.getCustomButton();
+            CustomComponents customComponent = new CustomComponents();
+            customComponent.setCustomButton("Editar");
+            this.btnEdit = customComponent.getCustomButton();
             this.btnEdit.setOpaque(true); 
             this.btnEdit.setFocusPainted(false);
             this.btnEdit.setBorderPainted(false);
@@ -200,52 +218,85 @@ public class WorkerFrame extends AbstractFrame {
     }
 
     /**
-     * Retorna la taula de treballadors
-     * @return taula de treballadors
+     * Estableix el botó per afegir nous elements
+     * @param buttonAdd botó d'afegir
      */
-    public JTable getWorkerTable() {
-        return workerTable; 
-    }
-
     public void setButtonAdd(JButton buttonAdd) {
         this.buttonAdd = buttonAdd;
     }
 
+    /**
+     * Retorna el botó de canvi/edició
+     * @return botó de canvi
+     */
     public JButton getButtonChange() {
         return buttonChange;
     }
 
+    /**
+     * Estableix el botó de canvi/edició
+     * @param buttonChange botó de canvi
+     */
     public void setButtonChange(JButton buttonChange) {
         this.buttonChange = buttonChange;
     }
 
+    /**
+     * Estableix el botó per eliminar elements
+     * @param buttonDelete botó d'eliminar
+     */
     public void setButtonDelete(JButton buttonDelete) {
         this.buttonDelete = buttonDelete;
     }
 
+    /**
+     * Estableix el botó de tornada enrere
+     * @param btnBack botó de tornar enrere
+     */
     public void setBtnBack(JButton btnBack) {
         this.btnBack = btnBack;
     }
 
+    /**
+     * Estableix la taula de treballadors
+     * @param workerTable taula de treballadors
+     */
     public void setWorkerTable(JTable workerTable) {
         this.workerTable = workerTable;
     }
 
+    /**
+     * Retorna el model de la taula
+     * @return model de la taula
+     */
     public DefaultTableModel getTableModel() {
         return tableModel;
     }
 
+    /**
+     * Estableix el model de la taula
+     * @param tableModel model de la taula
+     */
     public void setTableModel(DefaultTableModel tableModel) {
         this.tableModel = tableModel;
     }
 
+    /**
+     * Retorna el controlador associat
+     * @return controlador
+     */
     public WorkerController getController() {
         return controller;
     }
 
+    /**
+     * Estableix el controlador associat
+     * @param controller controlador
+     */
     public void setController(WorkerController controller) {
         this.controller = controller;
     }
+
 
     
 
