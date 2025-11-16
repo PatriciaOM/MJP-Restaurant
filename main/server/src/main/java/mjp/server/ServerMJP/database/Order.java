@@ -18,7 +18,7 @@ import java.time.LocalDate;
  */
 
 @Entity
-@Table(name = "Order")
+@Table(name = "OrderRestaurant")
 public class Order implements DatabaseEntry<Long> {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
