@@ -9,20 +9,19 @@ import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
-import mjp.server.ServerMJP.database.SessionService;
+import mjp.server.ServerMJP.database.Order;
 import mjp.server.queryData.AuthorizedQueryInfo;
-import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
-import mjp.server.queryData.sessionService.SessionServiceDeleteInfo;
-import mjp.server.queryData.sessionService.SessionServiceGetInfo;
-import mjp.server.queryData.sessionService.SessionServiceUpdateInfo;
-import mjp.server.responseData.sessionService.SessionServiceCreateResponse;
-import mjp.server.responseData.sessionService.SessionServiceDeleteResponse;
-import mjp.server.responseData.sessionService.SessionServiceGetResponse;
-import mjp.server.responseData.sessionService.SessionServiceUpdateResponse;
+import mjp.server.queryData.Order.OrderCreateInfo;
+import mjp.server.queryData.Order.OrderDeleteInfo;
+import mjp.server.queryData.Order.OrderGetInfo;
+import mjp.server.queryData.Order.OrderUpdateInfo;
+import mjp.server.responseData.Order.OrderCreateResponse;
+import mjp.server.responseData.Order.OrderDeleteResponse;
+import mjp.server.responseData.Order.OrderGetResponse;
+import mjp.server.responseData.Order.OrderUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,15 +37,15 @@ import testUtils.TestDefaultCrud;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SessionServiceManagerTest extends TestDefaultCrud<
+public class OrderManagerTest extends TestDefaultCrud<
         Long,
-        SessionService,
-        SessionServiceCreateResponse,
-        SessionServiceGetResponse,
-        SessionServiceUpdateResponse,
-        SessionServiceDeleteResponse
+        Order,
+        OrderCreateResponse,
+        OrderGetResponse,
+        OrderUpdateResponse,
+        OrderDeleteResponse
     > {
-    private static String resourceUri = "/session-service";
+    private static String resourceUri = "/order";
     static Credentials user = new Credentials("Twiki", "Tuki", null);
     static Credentials admin = new Credentials("Ping", "Pong", null);
     
@@ -64,86 +63,44 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     
     public String getResourceUri() {return this.resourceUri;}
     
-    static SessionService initialSessionService = new SessionService(
+    static Order initialItem = new Order(
         1L,
-        0,
-        4,
-        1,
-        2,
-        LocalDate.of(2020, Month.DECEMBER, 12),
-        LocalDate.of(2020, Month.DECEMBER, 12),
-        SessionService.SessionServiceStatus.CLOSED,
-        5,
-            ""
+        LocalDate.of(2020, Month.DECEMBER, 13),
+        Order.Status.OPEN
     );
       
-    static SessionService mockSessionService1 = new SessionService(
+    static Order mockItem1 = new Order(
         1L,
-        1,
-        4,
-        1,
-        2,
-        LocalDate.of(2020, Month.DECEMBER, 13),
-        LocalDate.of(2020, Month.DECEMBER, 13),
-        SessionService.SessionServiceStatus.OPEN,
-        5,
-        "Very Nice place"
+        LocalDate.of(2020, Month.APRIL, 13),
+        Order.Status.OPEN
     );    
     
-    static SessionService mockSessionService2 = new SessionService(
+    static Order mockItem2 = new Order(
         1L,
-        1,
-        4,
-        1,
-        2,
-        LocalDate.of(2020, Month.DECEMBER, 14),
-        LocalDate.of(2020, Month.DECEMBER, 14),
-        SessionService.SessionServiceStatus.PAID,
-        5,
-        "Very Nicer place"
+        LocalDate.of(2020, Month.DECEMBER, 12),
+        Order.Status.OPEN
     );  
     
-    static SessionService mockSessionService3 = new SessionService(
+    static Order mockItem3 = new Order(
         1L,
-        1,
-        4,
-        1,
-        2,
-        LocalDate.of(2020, Month.DECEMBER, 15),
-        LocalDate.of(2020, Month.DECEMBER, 15),
-        SessionService.SessionServiceStatus.OPEN,
-        5,
-        "Very Nicer placer"
+        LocalDate.of(2020, Month.NOVEMBER, 13),
+        Order.Status.OPEN
     );
     
     
-    List<SessionService> allItems = List.of(initialSessionService, mockSessionService1, mockSessionService2, mockSessionService3);
+    List<Order> allItems = List.of(initialItem, mockItem1, mockItem2, mockItem3);
     
-    static SessionService noExsistingSessionService = new SessionService(
-        500000L, 
-        5L, 
-        3,
-        4,
-        1,
-        2,
-        LocalDate.of(2020, Month.DECEMBER, 15),
-        LocalDate.of(2020, Month.DECEMBER, 15),
-        SessionService.SessionServiceStatus.PAID,
-        5,
-        "Very Nicer placer"
+    static Order noExsistingItem = new Order(
+        5000L,
+        1L,
+        LocalDate.of(2020, Month.NOVEMBER, 13),
+        Order.Status.OPEN
     );
     
-    static SessionService updatedSessionService = new SessionService(
+    static Order updatedItem = new Order(
         1L,
-        0,
-        4,
-        1,
-        2,
-        LocalDate.of(2020, Month.DECEMBER, 12),
-        LocalDate.of(2020, Month.DECEMBER, 12),
-        SessionService.SessionServiceStatus.PAID,
-        5,
-        "Nice Place"
+        LocalDate.of(2020, Month.DECEMBER, 13),
+        Order.Status.SERVED
     );
         
     @Override
@@ -158,63 +115,63 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
  
 
     @Override
-    protected SessionService getInitialItem() {
-        return initialSessionService;
+    protected Order getInitialItem() {
+        return initialItem;
     }
 
     @Override
-    protected SessionService getUpdatedItem() {
-        return updatedSessionService;
+    protected Order getUpdatedItem() {
+        return updatedItem;
     }
 
     @Override
-    protected List<SessionService> getAllTestItems() {
+    protected List<Order> getAllTestItems() {
         return this.allItems;
     }
     
     @Override
-    protected SessionService getNoExistingItem() {
-        return noExsistingSessionService;
+    protected Order getNoExistingItem() {
+        return noExsistingItem;
     }  
     
     @Override
-    public AuthorizedQueryInfo<SessionService> generateCreateRequest(String sessionToken, SessionService entry) {
-        return new SessionServiceCreateInfo(sessionToken, entry);
+    public AuthorizedQueryInfo<Order> generateCreateRequest(String sessionToken, Order entry) {
+        return new OrderCreateInfo(sessionToken, entry);
     }
 
     @Override
     public AuthorizedQueryInfo<Long> generateGetRequest(String sessionToken, Long entryId) {
-        return new SessionServiceGetInfo(sessionToken, entryId);
+        return new OrderGetInfo(sessionToken, entryId);
     }
     
     @Override
-    public AuthorizedQueryInfo<SessionService> generateUpdateRequest(String sessionToken, SessionService entry) {
-        return new SessionServiceUpdateInfo(sessionToken, entry);
+    public AuthorizedQueryInfo<Order> generateUpdateRequest(String sessionToken, Order entry) {
+        return new OrderUpdateInfo(sessionToken, entry);
     }    
      
     @Override
     public AuthorizedQueryInfo<Long> generateDeleteRequest(String sessionToken, Long entryId) {
-        return new SessionServiceDeleteInfo(sessionToken, entryId);
+        return new OrderDeleteInfo(sessionToken, entryId);
     }
     
     @Override
-    public Class<SessionServiceCreateResponse> getCreateResponseClass() {
-        return SessionServiceCreateResponse.class;
+    public Class<OrderCreateResponse> getCreateResponseClass() {
+        return OrderCreateResponse.class;
     }
 
     @Override
-    public Class<SessionServiceGetResponse> getGetResponseClass() {
-        return SessionServiceGetResponse.class;
+    public Class<OrderGetResponse> getGetResponseClass() {
+        return OrderGetResponse.class;
     }
 
     @Override
-    public Class<SessionServiceUpdateResponse> getUpdateResponseClass() {
-        return SessionServiceUpdateResponse.class;
+    public Class<OrderUpdateResponse> getUpdateResponseClass() {
+        return OrderUpdateResponse.class;
     }
 
     @Override
-    public Class<SessionServiceDeleteResponse> getDeleteResponseClass() {
-        return SessionServiceDeleteResponse.class;
+    public Class<OrderDeleteResponse> getDeleteResponseClass() {
+        return OrderDeleteResponse.class;
     }
     
 
@@ -240,11 +197,11 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     
     @Override
     public String getClassName() {
-        return "SessionService";
+        return "Order";
     }
        
     @Test
-    @Order(001)
+    @org.junit.jupiter.api.Order(001)
     void setup(){
         basicSetup("setup");
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
@@ -254,69 +211,69 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     }
     
     @Test
-    @Order(200)
-    void createSessionServiceBasicTests(){
+    @org.junit.jupiter.api.Order(200)
+    void createOrderBasicTests(){
         createItemBasicTests("create" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
     
     @Test
-    @Order(300)
-    void createAllSessionService(){
+    @org.junit.jupiter.api.Order(300)
+    void createAllOrder(){
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
         assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
         this.createAllItems("createAll" + getClassName());
     }
     
     @Test
-    @Order(400)
-    void getSessionServicesBasicTests(){
+    @org.junit.jupiter.api.Order(400)
+    void getOrdersBasicTests(){
         getItemBasicTests("get" + getClassName() + "BasicTests", getUserCredentials().getSessionToken());
     }
   
     @Test
-    @Order(500)
-    void getSessionServcieById(){
+    @org.junit.jupiter.api.Order(500)
+    void getOrderById(){
         getItemById("get" + getClassName() + "ById");
     }
       
     @Test
-    @Order(550)
-    void getNoExistingSessionServcieById(){
+    @org.junit.jupiter.api.Order(550)
+    void getNoExistingOrderById(){
         getNoExistingItemById("getNoExisting" + getClassName() + "ById");
     }
     
     @Test
-    @Order(600)
-    void updateSessionServcieBasicTests(){
+    @org.junit.jupiter.api.Order(600)
+    void updateOrderBasicTests(){
         updateItemBasicTests("create" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
     
     @Test
-    @Order(700)
-    void updateSessionServcie(){
+    @org.junit.jupiter.api.Order(700)
+    void updateOrder(){
         this.updateItem("update" + getClassName());       
     }
     
     @Test
-    @Order(800)
-    void deleteSessionServcieBasicTests(){
+    @org.junit.jupiter.api.Order(800)
+    void deleteOrderBasicTests(){
         deleteItemBasicTests("delete" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
      @Test
-    @Order(850)
-    void getToDeletSessionServcie(){
+    @org.junit.jupiter.api.Order(850)
+    void getToDeletOrder(){
         getItemToDelete("getToDele" + getClassName());
     }
            
     @Test
-    @Order(900)
-    void deleteSessionServcie(){
+    @org.junit.jupiter.api.Order(900)
+    void deleteOrder(){
         deleteItem("delete"+ getClassName());
     }
           
     @Test
-    @Order(1000)
-    void getDeletedSessionServcie(){
+    @org.junit.jupiter.api.Order(1000)
+    void getDeletedOrder(){
         getDeletedItem("getDeleted" + getClassName());
     }
 

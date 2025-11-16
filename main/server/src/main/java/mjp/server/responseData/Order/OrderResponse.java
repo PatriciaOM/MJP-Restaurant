@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mjp.server.responseData.dish;
+package mjp.server.responseData.Order;
 
 import java.util.List;
-import mjp.server.ServerMJP.database.Dish;
+import mjp.server.ServerMJP.database.Order;
 import mjp.server.responseData.CrudResponse;
 import mjp.server.responseData.ResponseData;
 
@@ -13,28 +13,28 @@ import mjp.server.responseData.ResponseData;
  *
  * @author twiki
  */
-public class DishResponse extends ResponseData implements CrudResponse<Dish> {
+public class OrderResponse extends ResponseData implements CrudResponse<Order> {
     String messageStatus;
-    List<Dish> dishes;
+    List<Order> Items;
     
-    DishResponse(){};
+    OrderResponse(){};
     
-    DishResponse(String messageStatus, List<Dish> dishes) {
+    OrderResponse(String messageStatus, List<Order> Items) {
         this.messageStatus = messageStatus;
-        this.dishes = dishes;
+        this.Items = Items;
     }
     
-    DishResponse(DishResponse orig) {
+    OrderResponse(OrderResponse orig) {
         this.messageStatus = orig.messageStatus;
-        this.dishes = orig.dishes;
+        this.Items = orig.Items;
     }
     
-    public void setDishes(List<Dish> dishes) {
-        this.dishes = dishes;
+    public void setItems(List<Order> Items) {
+        this.Items = Items;
     }
     
-    public List<Dish> getDishes() {
-        return this.dishes;
+    public List<Order> getItems() {
+        return this.Items;
     }
 
     @Override
@@ -49,11 +49,11 @@ public class DishResponse extends ResponseData implements CrudResponse<Dish> {
 
     @Override
     public void setMessageData(List data) {
-        this.setDishes(data);
+        this.setItems(data);
     }
 
     @Override
     public List getMessageData() {
-        return this.getDishes();
+        return this.getItems();
     }
 }

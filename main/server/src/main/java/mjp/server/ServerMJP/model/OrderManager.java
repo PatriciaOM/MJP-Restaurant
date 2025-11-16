@@ -7,9 +7,12 @@ package mjp.server.ServerMJP.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mjp.server.ServerMJP.database.Order;
+import mjp.server.ServerMJP.database.OrderRepository;
 import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.SessionServiceRepository;
 import mjp.server.queryData.sessionService.SessionServiceGetInfo;
+import mjp.server.queryData.Order.OrderGetInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,13 +22,13 @@ import org.springframework.web.server.ResponseStatusException;
  * @author twiki
  */
 @Component
-public class SessionServiceManager extends Manager<SessionService, SessionServiceRepository, SessionServiceGetInfo>{
+public class OrderManager extends Manager<Order, OrderRepository, OrderGetInfo>{
 
     protected SessionManager sessionManager;
-    protected SessionServiceRepository respository;
+    protected OrderRepository respository;
     
-    public SessionServiceManager(
-        SessionServiceRepository respository,
+    public OrderManager(
+        OrderRepository respository,
         SessionManager sessionManager
     ){
         this.respository = respository;
@@ -38,24 +41,26 @@ public class SessionServiceManager extends Manager<SessionService, SessionServic
     }
 
     @Override
-    protected SessionServiceRepository getRepository() {
+    protected OrderRepository getRepository() {
         return this.respository;
     }
     
     @Override
-    public List<SessionService> findItems(SessionServiceRepository repository, SessionServiceGetInfo infoData) {
+    public List<Order> findItems(OrderRepository repository, OrderGetInfo infoData) {
         
-        List<SessionService> ret = new ArrayList();
-        Optional<SessionService> dishResult;
+        List<Order> ret = new ArrayList();
+        Optional<Order> itemResult;
         switch (infoData.getSearchType()) {
             case ALL:
                 return this.convertIterableToList(repository.findAll());
             case BY_ID:
-                dishResult = repository.findById(infoData.getId());
-                if (dishResult.isEmpty())
+                assert infoData.getId() != null;
+                System.out.println("Getting Order with id" + infoData.getId());
+                itemResult = repository.findById(infoData.getId());
+                if (itemResult.isEmpty())
                     ret = new ArrayList<>();
                 else
-                    ret = List.of(dishResult.get());
+                    ret = List.of(itemResult.get());
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

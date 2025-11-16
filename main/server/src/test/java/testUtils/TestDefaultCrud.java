@@ -51,6 +51,11 @@ public abstract class TestDefaultCrud<
     public abstract Class<UpdateResponseType> getUpdateResponseClass();
     public abstract Class<DeleteResponseType> getDeleteResponseClass();
     
+    public abstract Credentials getCreateCredentials();
+    public abstract Credentials getGetCredentials();
+    public abstract Credentials getUpdateCredentials();
+    public abstract Credentials getDeleteCredentials();
+    
     public abstract String getResourceUri();
     public abstract String getClassName();
        
@@ -127,8 +132,8 @@ public abstract class TestDefaultCrud<
         AuthorizedQueryInfo info;
         
         for (ItemType item : allItems){
-            assertNotNull(getAdminCredentials().getSessionToken());
-            info = generateCreateRequest(getAdminCredentials().getSessionToken(), item);
+            assertNotNull(getCreateCredentials().getSessionToken());
+            info = generateCreateRequest(getCreateCredentials().getSessionToken(), item);
             ResponseEntity<String> response = makePostRequest(url, info);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             System.out.println("The response body is: " + response.getBody());
@@ -148,7 +153,7 @@ public abstract class TestDefaultCrud<
     protected  void getItemById(String testName) {
         printTestName(testName);
         String url = makeResourceUrl("/get");
-        AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getInitialItem().getId()); 
+        AuthorizedQueryInfo info = generateGetRequest(getGetCredentials().getSessionToken(), getInitialItem().getId()); 
         assertNotNull(getInitialItem().getId());
         assertNotNull(info.getMessageData());
         
@@ -164,7 +169,7 @@ public abstract class TestDefaultCrud<
         printTestName(testName);
         String url = makeResourceUrl("/get");
         assertNotNull(getNoExistingItem().getId());
-        AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getNoExistingItem().getId());
+        AuthorizedQueryInfo info = generateGetRequest(getGetCredentials().getSessionToken(), getNoExistingItem().getId());
         assertNotNull(info.getMessageData());
         
         ResponseEntity<String> response = makePostRequest(url, info);
@@ -175,11 +180,11 @@ public abstract class TestDefaultCrud<
         printTestName(testName);
         String url = makeResourceUrl("/update");
         getUpdatedItem().setId(getInitialItem().getId());
-        AuthorizedQueryInfo info = generateUpdateRequest(getAdminCredentials().getSessionToken(), getUpdatedItem());
+        AuthorizedQueryInfo info = generateUpdateRequest(getUpdateCredentials().getSessionToken(), getUpdatedItem());
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);  // TODO maybe should check that it returns the updated item?
         
-        AuthorizedQueryInfo getInfo = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId());
+        AuthorizedQueryInfo getInfo = generateGetRequest(getGetCredentials().getSessionToken(), getUpdatedItem().getId());
         ResponseEntity<String> getResponse = makePostRequest(makeResourceUrl("/get"), getInfo);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         GetResponseType getResponseObject = gson.fromJson(getResponse.getBody(), getGetResponseClass());   //TODO This is wrong as fuck
@@ -197,7 +202,7 @@ public abstract class TestDefaultCrud<
     protected void getItemToDelete(String testName) {
                 printTestName(testName);
         String url = makeResourceUrl("/get");
-        AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId()); 
+        AuthorizedQueryInfo info = generateGetRequest(getGetCredentials().getSessionToken(), getUpdatedItem().getId()); 
         assertNotNull(info.getMessageData());
         assertNotNull(info.getMessageData());
         ResponseEntity<String> response = makePostRequest(url, info);
@@ -207,13 +212,13 @@ public abstract class TestDefaultCrud<
      protected void deleteItem(String testName) {
         printTestName(testName);
         String url = makeResourceUrl("/delete");
-        AuthorizedQueryInfo info = generateDeleteRequest(getAdminCredentials().getSessionToken(), getUpdatedItem().getId());
+        AuthorizedQueryInfo info = generateDeleteRequest(getDeleteCredentials().getSessionToken(), getUpdatedItem().getId());
         ResponseEntity<String> delResp = makePostRequest(url, info);
         DeleteResponseType delRespObject = gson.fromJson("", getDeleteResponseClass());
         assertThat(delResp.getStatusCode()).isEqualTo(HttpStatus.OK);
         
         String getUrl = makeResourceUrl("/get");
-        AuthorizedQueryInfo getInfo = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId());
+        AuthorizedQueryInfo getInfo = generateGetRequest(getGetCredentials().getSessionToken(), getUpdatedItem().getId());
         ResponseEntity<String> getResponse = makePostRequest(getUrl, getInfo);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         
@@ -225,7 +230,7 @@ public abstract class TestDefaultCrud<
         protected void getDeletedItem(String testName) {
                 printTestName(testName);
         String url = makeResourceUrl("/get");
-        AuthorizedQueryInfo info = generateGetRequest(getUserCredentials().getSessionToken(), getUpdatedItem().getId()); 
+        AuthorizedQueryInfo info = generateGetRequest(getGetCredentials().getSessionToken(), getUpdatedItem().getId()); 
         assertNotNull(info.getMessageData());
         assertNotNull(info.getMessageData());
         ResponseEntity<String> response = makePostRequest(url, info);

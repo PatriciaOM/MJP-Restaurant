@@ -18,105 +18,41 @@ import java.time.LocalDate;
  */
 
 @Entity
-@Table(name = "SessionService")
+@Table(name = "OrderRestaurant")
 public class Order implements DatabaseEntry<Long> {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id; 
     
-//    public enum SessionServiceStatus {
-//        OPEN,
-//        CLOSED,
-//        PAID
-//    }
-    
-    private String numTable;
-    private int maxClients;
-    private int waiterId;
-    private int clients;
-    private LocalDate startDate; // TODO bad type
-    private LocalDate endDate; // TODO bad type
-//    private SessionServiceStatus status;
-    private int rating;
-    private String comment;
-    
-    // TODO pvirave smth image;
-        
-    public Order(){};
-
-    public Order(Long id, String numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate,  int rating, String comment) {
-        this.id = id;
-        this.numTable = numTable;
-        this.maxClients = maxClients;
-        this.waiterId = waiterId;
-        this.clients = clients;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.rating = rating;
-        this.comment = comment;
+    public enum Status {
+        OPEN,
+        SENDED,
+        SERVED
     }
     
-    public Order(String numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate,  int rating, String comment) {
-        this.numTable = numTable;
-        this.maxClients = maxClients;
-        this.waiterId = waiterId;
-        this.clients = clients;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.rating = rating;
-        this.comment = comment;
+    private Long idSessionService;
+    private LocalDate date;
+    private Status state;
+    
+    public Order(){};
+
+    public Order(Long id, Long idSessionSrevice, LocalDate date, Status state) {
+        this.id = id;
+        this.idSessionService = idSessionSrevice;
+        this.date = date;
+        this.state = state;
+    }
+    
+    public Order(Long idSessionSrevice, LocalDate date, Status state) {
+        this.idSessionService = idSessionSrevice;
+        this.date = date;
+        this.state = state;
     }
     
     public Order(Order orig) {
-        this.id = orig.id;
-        this.numTable = orig.numTable;
-        this.maxClients = orig.maxClients;
-        this.waiterId = orig.waiterId;
-        this.clients = orig.clients;
-        this.startDate = orig.startDate;
-        this.endDate = orig.endDate;
-        this.rating = orig.rating;
-        this.comment = orig.comment;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getNumTable() {
-        return numTable;
-    }
-
-    public int getMaxClients() {
-        return maxClients;
-    }
-
-    public int getWaiterId() {
-        return waiterId;
-    }
-
-    public int getClients() {
-        return clients;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-//    public SessionServiceStatus getStatus() {
-//        return status;
-//    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public String getComment() {
-        return comment;
+        this.idSessionService = orig.idSessionService;
+        this.date = orig.date;
+        this.state = orig.state;
     }
 
     @Override
@@ -124,40 +60,34 @@ public class Order implements DatabaseEntry<Long> {
         this.id = id;
     }
 
-    public void setNumTable(String numTable) {
-        this.numTable = numTable;
+    public void setIdSessionService(Long idSessionService) {
+        this.idSessionService = idSessionService;
     }
 
-    public void setMaxClients(int maxClients) {
-        this.maxClients = maxClients;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
-    public void setWaiterId(int waiterId) {
-        this.waiterId = waiterId;
+    public void setState(Status state) {
+        this.state = state;
     }
 
-    public void setClients(int clients) {
-        this.clients = clients;
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public Long getIdSessionService() {
+        return idSessionService;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public LocalDate getDate() {
+        return date;
     }
 
-//    public void setStatus(SessionServiceStatus status) {
-//        this.status = status;
-//    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
+    public Status getState() {
+        return state;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
     
 }
