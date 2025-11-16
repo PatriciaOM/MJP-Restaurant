@@ -128,12 +128,11 @@ public abstract class TestDefault {
     
     public <MessageDataType> void basicRequestTests(
             String testName,
-            String endPoint,
+            String url,
             AuthorizedQueryInfo messageObject,
             MessageDataType messageData,
             String sessionToken
     ) {
-        String url;
         ResponseEntity<String> response;
         
         printTestName(testName);
@@ -141,7 +140,6 @@ public abstract class TestDefault {
         messageObject.setSessionToken(sessionToken);
         
         printTestName(testName + " Whithout sessionToken");
-        url = makeUrl(endPoint);
         messageObject.setSessionToken(null);
         messageObject.setMessageData(messageData);
         response = makePostRequest(url, messageObject);
@@ -151,7 +149,6 @@ public abstract class TestDefault {
         printTestName(testName + " Whith invalid sessionToken");
         messageObject.setSessionToken("Invalid session token");
         messageObject.setMessageData(messageData);
-        url = makeUrl(endPoint);
         response = makePostRequest(url, messageObject);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         
@@ -159,7 +156,6 @@ public abstract class TestDefault {
             printTestName(testName + " Whithout info");
             messageObject.setSessionToken(sessionToken);
             messageObject.setMessageData(null);
-            url = makeUrl(endPoint);
             response = makePostRequest(url, messageObject);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }

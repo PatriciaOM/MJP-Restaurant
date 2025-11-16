@@ -9,16 +9,10 @@ import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.util.List;
 import mjp.server.ServerMJP.database.DatabaseEntry;
-import mjp.server.ServerMJP.database.Dish;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
-import mjp.server.queryData.dish.DishCreateInfo;
-import mjp.server.queryData.dish.DishDeleteInfo;
-import mjp.server.queryData.dish.DishGetInfo;
-import mjp.server.queryData.dish.DishUpdateInfo;
 import mjp.server.responseData.CrudResponse;
-import mjp.server.responseData.dish.DishGetResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -58,6 +52,7 @@ public abstract class TestDefaultCrud<
     public abstract Class<DeleteResponseType> getDeleteResponseClass();
     
     public abstract String getResourceUri();
+    public abstract String getClassName();
        
     public String makeResourceUrl(String crudAction) {
         return super.makeUrl(getResourceUri()) + crudAction;
@@ -66,8 +61,8 @@ public abstract class TestDefaultCrud<
     protected void createItemBasicTests(String testname) {
         AuthorizedQueryInfo createInfo =  generateCreateRequest(getAdminCredentials().getSessionToken(), getInitialItem());
         this.basicRequestTests(
-            "createDish",
-            "/dish/create",
+            "create" + getClassName(),
+            makeResourceUrl("/create"),
             createInfo,
             getInitialItem(),
             getAdminCredentials().getSessionToken()
@@ -77,8 +72,8 @@ public abstract class TestDefaultCrud<
     protected void getItemBasicTests(String testname) {
         AuthorizedQueryInfo getInfo =  generateCreateRequest(getUserCredentials().getSessionToken(), getInitialItem());
         this.basicRequestTests(
-            "getDishBasicTests",
-            "/dish/get",
+            "get" + getClassName() + "BasicTests",
+            makeResourceUrl("/get"),
             getInfo,
             null,
             getUserCredentials().getSessionToken()
@@ -87,10 +82,10 @@ public abstract class TestDefaultCrud<
     
     
     protected void updateItemBasicTests(String testname) {
-        AuthorizedQueryInfo info =  new DishUpdateInfo();
+        AuthorizedQueryInfo info =  generateUpdateRequest(getAdminCredentials().getSessionToken(), getUpdatedItem());
             this.basicRequestTests(
-                "updateDishBasicTests",
-                "/dish/update",
+                "update" + getClassName() + "BasicTests",
+            makeResourceUrl("/update"),
                 info,
                 getUpdatedItem(),
                 getAdminCredentials().getSessionToken()
@@ -100,8 +95,8 @@ public abstract class TestDefaultCrud<
     protected void deleteItemBasicTests(String testname){
         AuthorizedQueryInfo info =  generateDeleteRequest(getAdminCredentials().getSessionToken(), getInitialItem().getId());
         this.basicRequestTests(
-            "deleteDishBasicTests",
-            "/dish/delete",
+            "delete" + getClassName() + "BasicTests",
+            makeResourceUrl("/delete"),
             info,
             getInitialItem().getId(),
             getAdminCredentials().getSessionToken()
@@ -136,6 +131,7 @@ public abstract class TestDefaultCrud<
             info = generateCreateRequest(getAdminCredentials().getSessionToken(), item);
             ResponseEntity<String> response = makePostRequest(url, info);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            System.out.println("The response body is: " + response.getBody());
             CreateResponseType createReponse = gson.fromJson(response.getBody(), getCreateResponseClass());
             assertThat(createReponse.getMessageStatus()).isEqualTo("Success");
             assertThat(createReponse.getMessageData().size()).isEqualTo(1);
@@ -209,7 +205,7 @@ public abstract class TestDefaultCrud<
     }
     
      protected void deleteItem(String testName) {
-        printTestName("deleteDish");
+        printTestName(testName);
         String url = makeResourceUrl("/delete");
         AuthorizedQueryInfo info = generateDeleteRequest(getAdminCredentials().getSessionToken(), getUpdatedItem().getId());
         ResponseEntity<String> delResp = makePostRequest(url, info);

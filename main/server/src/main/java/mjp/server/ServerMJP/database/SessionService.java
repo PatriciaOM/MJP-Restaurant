@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 /**
  *
@@ -23,19 +24,19 @@ public class SessionService implements DatabaseEntry<Long> {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id; 
     
-    public enum SessionServiceStatus {
-        OPEN,
-        CLOSED,
-        PAID
-    }
+//    public enum SessionServiceStatus {
+//        OPEN,
+//        CLOSED,
+//        PAID
+//    }
     
-    private String tableId;
+    private String numTable;
     private int maxClients;
     private int waiterId;
     private int clients;
-    private int startDate; // TODO bad type
-    private int endDate; // TODO bad type
-    private SessionServiceStatus status;
+    private LocalDate startDate; // TODO bad type
+    private LocalDate endDate; // TODO bad type
+//    private SessionServiceStatus status;
     private int rating;
     private String comment;
     
@@ -43,40 +44,37 @@ public class SessionService implements DatabaseEntry<Long> {
         
     public SessionService(){};
 
-    public SessionService(Long id, String tableId, int maxClients, int waiterId, int clients, int startDate, int endDate, SessionServiceStatus status, int rating, String comment) {
+    public SessionService(Long id, String numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate,  int rating, String comment) {
         this.id = id;
-        this.tableId = tableId;
+        this.numTable = numTable;
         this.maxClients = maxClients;
         this.waiterId = waiterId;
         this.clients = clients;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.status = status;
         this.rating = rating;
         this.comment = comment;
     }
     
-    public SessionService(String tableId, int maxClients, int waiterId, int clients, int startDate, int endDate, SessionServiceStatus status, int rating, String comment) {
-        this.tableId = tableId;
+    public SessionService(String numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate,  int rating, String comment) {
+        this.numTable = numTable;
         this.maxClients = maxClients;
         this.waiterId = waiterId;
         this.clients = clients;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.status = status;
         this.rating = rating;
         this.comment = comment;
     }
     
     public SessionService(SessionService orig) {
         this.id = orig.id;
-        this.tableId = orig.tableId;
+        this.numTable = orig.numTable;
         this.maxClients = orig.maxClients;
         this.waiterId = orig.waiterId;
         this.clients = orig.clients;
         this.startDate = orig.startDate;
         this.endDate = orig.endDate;
-        this.status = orig.status;
         this.rating = orig.rating;
         this.comment = orig.comment;
     }
@@ -85,8 +83,8 @@ public class SessionService implements DatabaseEntry<Long> {
         return id;
     }
 
-    public String getTableId() {
-        return tableId;
+    public String getNumTable() {
+        return numTable;
     }
 
     public int getMaxClients() {
@@ -101,17 +99,17 @@ public class SessionService implements DatabaseEntry<Long> {
         return clients;
     }
 
-    public int getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public int getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public SessionServiceStatus getStatus() {
-        return status;
-    }
+//    public SessionServiceStatus getStatus() {
+//        return status;
+//    }
 
     public int getRating() {
         return rating;
@@ -126,8 +124,8 @@ public class SessionService implements DatabaseEntry<Long> {
         this.id = id;
     }
 
-    public void setTableId(String tableId) {
-        this.tableId = tableId;
+    public void setNumTable(String numTable) {
+        this.numTable = numTable;
     }
 
     public void setMaxClients(int maxClients) {
@@ -142,17 +140,17 @@ public class SessionService implements DatabaseEntry<Long> {
         this.clients = clients;
     }
 
-    public void setStartDate(int startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(int endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
-    public void setStatus(SessionServiceStatus status) {
-        this.status = status;
-    }
+//    public void setStatus(SessionServiceStatus status) {
+//        this.status = status;
+//    }
 
     public void setRating(int rating) {
         this.rating = rating;

@@ -197,6 +197,11 @@ public class DishManagerTest extends TestDefaultCrud<
     @Override
     public Class<DishDeleteResponse> getDeleteResponseClass() {
         return DishDeleteResponse.class;
+    }   
+    
+    @Override
+    public String getClassName() {
+        return "Dish";
     }
        
     @Test
@@ -211,22 +216,22 @@ public class DishManagerTest extends TestDefaultCrud<
     
     @Test
     @Order(200)
-    void createDishBasicTests(){
-        createItemBasicTests("createDishBasicTests");
+    void createSessionServiceBasicTests(){
+        createItemBasicTests("createSessionServiceBasicTests");
     }
     
     @Test
     @Order(300)
-    void createAllDishes(){
+    void createAllSessionServices(){
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
         assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
-        this.createAllItems("Create all dishes");
+        this.createAllItems("createAllSessionServices");
     }
     
     @Test
     @Order(400)
-    void getDishBasicTests(){
-        getItemBasicTests("createDishBasicTests");
+    void getSessionServicesBasicTests(){
+        getItemBasicTests("getSessionServicesBasicTests");
     }
   
     @Test

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import mjp.server.ServerMJP.database.Dish;
 import mjp.server.ServerMJP.database.DishRepository;
+import mjp.server.ServerMJP.database.SessionService;
+import mjp.server.ServerMJP.database.SessionServiceRepository;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.TableRestaurantRepository;
 import mjp.server.ServerMJP.database.UserRepository;
@@ -19,6 +21,7 @@ import mjp.server.queryData.dish.DishGetInfo;
 import static mjp.server.queryData.dish.DishGetInfo.SearchType.ALL;
 import static mjp.server.queryData.dish.DishGetInfo.SearchType.BY_ID;
 import static mjp.server.queryData.dish.DishGetInfo.SearchType.BY_NAME;
+import mjp.server.queryData.sessionService.SessionServiceGetInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
 import mjp.server.queryData.table.TableGetInfo;
@@ -40,13 +43,13 @@ import org.springframework.web.server.ResponseStatusException;
  * @author twiki
  */
 @Component
-public class DishManager extends Manager<Dish, DishRepository, DishGetInfo>{
+public class SessionServiceManager extends Manager<SessionService, SessionServiceRepository, SessionServiceGetInfo>{
 
     protected SessionManager sessionManager;
-    protected DishRepository respository;
+    protected SessionServiceRepository respository;
     
-    public DishManager(
-        DishRepository respository,
+    public SessionServiceManager(
+        SessionServiceRepository respository,
         SessionManager sessionManager
     ){
         this.respository = respository;
@@ -59,15 +62,15 @@ public class DishManager extends Manager<Dish, DishRepository, DishGetInfo>{
     }
 
     @Override
-    protected DishRepository getRepository() {
+    protected SessionServiceRepository getRepository() {
         return this.respository;
     }
     
     @Override
-    public List<Dish> findItems(DishRepository repository, DishGetInfo infoData) {
+    public List<SessionService> findItems(SessionServiceRepository repository, SessionServiceGetInfo infoData) {
         
-        List<Dish> ret = new ArrayList();
-        Optional<Dish> dishResult;
+        List<SessionService> ret = new ArrayList();
+        Optional<SessionService> dishResult;
         switch (infoData.getSearchType()) {
             case ALL:
                 return this.convertIterableToList(repository.findAll());
@@ -77,9 +80,6 @@ public class DishManager extends Manager<Dish, DishRepository, DishGetInfo>{
                     ret = new ArrayList<>();
                 else
                     ret = List.of(dishResult.get());
-                break;
-            case BY_NAME:
-                ret = repository.findAllByName(infoData.getName());
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

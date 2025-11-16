@@ -4,21 +4,9 @@
  */
 package mjp.server.queryData.sessionService;
 
-import mjp.server.queryData.table.*;
-import mjp.server.queryData.user.*;
-import com.google.gson.Gson;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import mjp.server.ServerMJP.database.SessionService;
-import mjp.server.ServerMJP.database.TableRestaurant;
-import mjp.server.ServerMJP.database.User;
-import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  *

@@ -4,11 +4,9 @@
  */
 package mjp.server.queryData.sessionService;
 
-import mjp.server.queryData.dish.*;
 import mjp.server.queryData.table.*;
 import mjp.server.queryData.user.*;
 import com.google.gson.Gson;
-import mjp.server.ServerMJP.database.Dish;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
