@@ -68,6 +68,7 @@ public class Dish {
         this.price = orig.price;
         this.description = orig.description;
         this.available = orig.available;
+        this.category = orig.category;
     }
     
     /**
@@ -161,6 +162,8 @@ public class Dish {
     public DishCategory getCategory() {
         return category;
     }
+
+    
     
 
 }

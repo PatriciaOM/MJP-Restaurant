@@ -14,14 +14,14 @@ public class DishGetResponse {
     /**
      * Constructor per defecte
      */
-    DishGetResponse(){};
+    public DishGetResponse(){};
     
     /**
      * Constructor principal
      * @param messageStatus missatge d'estat de la petició
      * @param dishes llista de plats que arriben del servidor
      */
-    DishGetResponse(String messageStatus, List<Dish> dishes) {
+    public DishGetResponse(String messageStatus, List<Dish> dishes) {
         this.messageStatus = messageStatus;
         this.dishes = dishes;
     }
@@ -30,7 +30,7 @@ public class DishGetResponse {
      * Constructor que té en compte una resposta concreta
      * @param orig resposta
      */
-    DishGetResponse(DishGetResponse orig) {
+    public DishGetResponse(DishGetResponse orig) {
         this.messageStatus = orig.messageStatus;
         this.dishes = orig.dishes;
     }

@@ -22,7 +22,7 @@ public class UserUpdateInfo {
      * Inicialitza l'usuari a actualitzar (setter intern).
      * @param val usuari
      */
-    void setUser(User val) {
+    public void setUser(User val) {
         this.user = val;
     }
 
@@ -38,7 +38,7 @@ public class UserUpdateInfo {
      * Inicialitza el token de sessió (setter intern).
      * @param val token de sessió
      */
-    void setSessionToken(String val) {
+    public void setSessionToken(String val) {
         this.sessionToken = val;
     }
 

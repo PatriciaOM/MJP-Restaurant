@@ -44,7 +44,7 @@ public class TableUpdateInfo {
      * Inicialitza la taula a actualitzar
      * @param val taula
      */
-    void setTable(TableRestaurant val) {
+    public void setTable(TableRestaurant val) {
         this.table = val;
     }
     

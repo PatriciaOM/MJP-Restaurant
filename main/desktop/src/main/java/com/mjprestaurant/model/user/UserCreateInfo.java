@@ -22,7 +22,7 @@ public class UserCreateInfo {
      * Inicialitza l'usuari a crear
      * @param val usuari a crear
      */
-    void setUser(User val) {
+    public void setUser(User val) {
         this.user = val;
     }
     
@@ -38,7 +38,7 @@ public class UserCreateInfo {
      * Inicialitza token de sessió
      * @param val token
      */
-    void setSessionToken(String val) {
+    public void setSessionToken(String val) {
         this.sessionToken = val;
     }
     

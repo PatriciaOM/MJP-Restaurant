@@ -36,7 +36,7 @@ public class TableCreateInfo {
      * Inicialitza el token
      * @param val token de sessió
      */
-    void setSessionToken(String val) {
+    public void setSessionToken(String val) {
         this.sessionToken = val;
     }
     

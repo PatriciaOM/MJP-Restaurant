@@ -23,7 +23,7 @@ public class UserDeleteInfo {
      * Inicialitza el nom d'usuari a eliminar
      * @param val nom d'usuari
      */
-    void setUserName(String val) {
+    public void setUserName(String val) {
         this.username = val;
     }
 
@@ -39,7 +39,7 @@ public class UserDeleteInfo {
      * Inicialitza el token de sessió
      * @param val token de sessió
      */
-    void setSessionToken(String val) {
+    public void setSessionToken(String val) {
         this.sessionToken = val;
     }
 
