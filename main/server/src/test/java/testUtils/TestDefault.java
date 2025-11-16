@@ -7,6 +7,7 @@ package testUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
@@ -14,6 +15,7 @@ import mjp.server.queryData.LoginInfo;
 import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.LoginResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
+import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Order;
@@ -58,8 +60,11 @@ public abstract class TestDefault {
     
     private static final String RESET = "\033[0m";
     private static final String CYAN = "\033[36m";
-       
-    private Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();
+    
+    private Gson gson = (new GsonBuilder())
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     
     String PROTOCOL = "http";
     String HOST = "localhost";

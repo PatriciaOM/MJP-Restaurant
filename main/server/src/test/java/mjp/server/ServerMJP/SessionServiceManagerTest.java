@@ -7,6 +7,7 @@ package mjp.server.ServerMJP;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 import mjp.server.ServerMJP.database.SessionService;
@@ -20,6 +21,7 @@ import mjp.server.responseData.sessionService.SessionServiceDeleteResponse;
 import mjp.server.responseData.sessionService.SessionServiceGetResponse;
 import mjp.server.responseData.sessionService.SessionServiceUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
+import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -52,7 +54,12 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     
     private static String userSessionToken;
     private static String adminSessionToken;
-    Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
+//    Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
+    
+    private Gson gson = (new GsonBuilder())
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     
     @LocalServerPort
     private int port;
@@ -70,8 +77,8 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
         4,
         1,
         2,
-        LocalDate.of(2020, Month.DECEMBER, 12),
-        LocalDate.of(2020, Month.DECEMBER, 12),
+        LocalDateTime.of(2020, Month.DECEMBER, 12, 20, 15, 3),
+        LocalDateTime.of(2020, Month.DECEMBER, 12, 20, 15, 3),
         SessionService.SessionServiceStatus.CLOSED,
         5,
             ""
@@ -83,8 +90,8 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
         4,
         1,
         2,
-        LocalDate.of(2020, Month.DECEMBER, 13),
-        LocalDate.of(2020, Month.DECEMBER, 13),
+        LocalDateTime.of(2020, Month.DECEMBER, 13, 20, 15, 3),
+        LocalDateTime.of(2020, Month.DECEMBER, 13, 20, 15, 3),
         SessionService.SessionServiceStatus.OPEN,
         5,
         "Very Nice place"
@@ -96,8 +103,8 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
         4,
         1,
         2,
-        LocalDate.of(2020, Month.DECEMBER, 14),
-        LocalDate.of(2020, Month.DECEMBER, 14),
+        LocalDateTime.of(2020, Month.DECEMBER, 14, 20, 15, 3),
+        LocalDateTime.of(2020, Month.DECEMBER, 14, 20, 15, 3),
         SessionService.SessionServiceStatus.PAID,
         5,
         "Very Nicer place"
@@ -109,8 +116,8 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
         4,
         1,
         2,
-        LocalDate.of(2020, Month.DECEMBER, 15),
-        LocalDate.of(2020, Month.DECEMBER, 15),
+        LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
+        LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
         SessionService.SessionServiceStatus.OPEN,
         5,
         "Very Nicer placer"
@@ -126,8 +133,8 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
         4,
         1,
         2,
-        LocalDate.of(2020, Month.DECEMBER, 15),
-        LocalDate.of(2020, Month.DECEMBER, 15),
+        LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
+        LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
         SessionService.SessionServiceStatus.PAID,
         5,
         "Very Nicer placer"
@@ -139,8 +146,8 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
         4,
         1,
         2,
-        LocalDate.of(2020, Month.DECEMBER, 12),
-        LocalDate.of(2020, Month.DECEMBER, 12),
+        LocalDateTime.of(2020, Month.DECEMBER, 12, 20, 15, 3),
+        LocalDateTime.of(2020, Month.DECEMBER, 12, 20, 15, 3),
         SessionService.SessionServiceStatus.PAID,
         5,
         "Nice Place"

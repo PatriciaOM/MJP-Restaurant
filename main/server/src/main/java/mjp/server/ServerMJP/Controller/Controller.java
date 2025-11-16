@@ -10,6 +10,7 @@ import mjp.server.responseData.UserResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import mjp.server.ServerMJP.ServerMjpApplication;
@@ -85,6 +86,7 @@ import mjp.server.responseData.user.UserDeleteResponse;
 import mjp.server.responseData.user.UserGetResponse;
 import mjp.server.responseData.user.UserUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
+import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 
 
 
@@ -102,7 +104,10 @@ public class Controller {
      * And storing the response data into json objects ready to be sent.
      */
 //    private Gson gson;
-    private Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();
+    private Gson gson = (new GsonBuilder())
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     /**
      * This object is responsible for the logic of handling the the requests.
      */

@@ -10,7 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -31,19 +31,19 @@ public class Order implements DatabaseEntry<Long> {
     }
     
     private Long idSessionService;
-    private LocalDate date;
+    private LocalDateTime date;
     private Status state;
     
     public Order(){};
 
-    public Order(Long id, Long idSessionSrevice, LocalDate date, Status state) {
+    public Order(Long id, Long idSessionSrevice, LocalDateTime date, Status state) {
         this.id = id;
         this.idSessionService = idSessionSrevice;
         this.date = date;
         this.state = state;
     }
     
-    public Order(Long idSessionSrevice, LocalDate date, Status state) {
+    public Order(Long idSessionSrevice, LocalDateTime date, Status state) {
         this.idSessionService = idSessionSrevice;
         this.date = date;
         this.state = state;
@@ -64,7 +64,7 @@ public class Order implements DatabaseEntry<Long> {
         this.idSessionService = idSessionService;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -81,7 +81,7 @@ public class Order implements DatabaseEntry<Long> {
         return idSessionService;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 

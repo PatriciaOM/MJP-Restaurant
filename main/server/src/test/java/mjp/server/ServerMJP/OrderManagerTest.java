@@ -7,6 +7,7 @@ package mjp.server.ServerMJP;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 import mjp.server.ServerMJP.database.Order;
@@ -20,6 +21,7 @@ import mjp.server.responseData.Order.OrderDeleteResponse;
 import mjp.server.responseData.Order.OrderGetResponse;
 import mjp.server.responseData.Order.OrderUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
+import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -51,7 +53,13 @@ public class OrderManagerTest extends TestDefaultCrud<
     
     private static String userSessionToken;
     private static String adminSessionToken;
-    Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
+//    Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
+    
+    private Gson gson = (new GsonBuilder())
+        .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+        .create();
+    
     
     @LocalServerPort
     private int port;
@@ -65,25 +73,25 @@ public class OrderManagerTest extends TestDefaultCrud<
     
     static Order initialItem = new Order(
         1L,
-        LocalDate.of(2020, Month.DECEMBER, 13),
+        LocalDateTime.of(2020, Month.DECEMBER, 13, 20, 20),
         Order.Status.OPEN
     );
       
     static Order mockItem1 = new Order(
         1L,
-        LocalDate.of(2020, Month.APRIL, 13),
+        LocalDateTime.of(2020, Month.APRIL, 13, 13, 20, 20),
         Order.Status.OPEN
     );    
     
     static Order mockItem2 = new Order(
         1L,
-        LocalDate.of(2020, Month.DECEMBER, 12),
+        LocalDateTime.of(2020, Month.DECEMBER, 12, 13, 20, 20),
         Order.Status.OPEN
     );  
     
     static Order mockItem3 = new Order(
         1L,
-        LocalDate.of(2020, Month.NOVEMBER, 13),
+        LocalDateTime.of(2020, Month.NOVEMBER, 13, 13, 20, 20),
         Order.Status.OPEN
     );
     
@@ -93,13 +101,13 @@ public class OrderManagerTest extends TestDefaultCrud<
     static Order noExsistingItem = new Order(
         5000L,
         1L,
-        LocalDate.of(2020, Month.NOVEMBER, 13),
+        LocalDateTime.of(2020, Month.NOVEMBER, 13, 13, 20, 20),
         Order.Status.OPEN
     );
     
     static Order updatedItem = new Order(
         1L,
-        LocalDate.of(2020, Month.DECEMBER, 13),
+        LocalDateTime.of(2020, Month.DECEMBER, 13, 13, 20, 20),
         Order.Status.SERVED
     );
         

@@ -4,13 +4,12 @@
  */
 package mjp.server.ServerMJP.database;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -35,8 +34,8 @@ public class SessionService implements DatabaseEntry<Long> {
     private int maxClients;
     private int waiterId;
     private int clients;
-    private LocalDate startDate; // TODO bad type
-    private LocalDate endDate; // TODO bad type
+    private LocalDateTime startDate; // TODO bad type
+    private LocalDateTime endDate; // TODO bad type
     private SessionServiceStatus status;
     private int rating;
     private String comment;
@@ -45,7 +44,7 @@ public class SessionService implements DatabaseEntry<Long> {
         
     public SessionService(){};
 
-    public SessionService(Long id, Long idTable, int numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate, SessionServiceStatus status, int rating, String comment) {
+    public SessionService(Long id, Long idTable, int numTable, int maxClients, int waiterId, int clients, LocalDateTime startDate, LocalDateTime endDate, SessionServiceStatus status, int rating, String comment) {
         this.id = id;
         this.idTable = idTable;
         this.numTable = numTable;
@@ -59,7 +58,7 @@ public class SessionService implements DatabaseEntry<Long> {
         this.comment = comment;
     }
     
-    public SessionService( Long idTable,int numTable, int maxClients, int waiterId, int clients, LocalDate startDate, LocalDate endDate, SessionServiceStatus status, int rating, String comment) {
+    public SessionService( Long idTable,int numTable, int maxClients, int waiterId, int clients, LocalDateTime startDate, LocalDateTime endDate, SessionServiceStatus status, int rating, String comment) {
         this.idTable = idTable;
         this.numTable = numTable;
         this.maxClients = maxClients;
@@ -110,11 +109,11 @@ public class SessionService implements DatabaseEntry<Long> {
         return clients;
     }
 
-    public LocalDate getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
@@ -155,11 +154,11 @@ public class SessionService implements DatabaseEntry<Long> {
         this.clients = clients;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
