@@ -28,7 +28,7 @@ public class TableGetResponse {
      * Inicialitza la llista de taules
      * @param val llista de taules
      */
-    void setTables(List<TableRestaurant> val) {
+    public void setTables(List<TableRestaurant> val) {
         this.tables = val;
     }
     

@@ -539,4 +539,22 @@ public class WorkerController implements ActionListener {
         }
     }
 
+    /**
+     * Retorna el token
+     * @return token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * Inicialitza el token de sessió
+     * @param token token de sessió
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    
+
 }

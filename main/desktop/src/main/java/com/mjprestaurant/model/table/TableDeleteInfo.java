@@ -30,7 +30,7 @@ public class TableDeleteInfo {
      * Inicialitza l'id
      * @param val id de la taula a eliminar
      */
-    void setId(Long val) {
+    public void setId(Long val) {
         this.id = val;
     }
     

@@ -60,7 +60,7 @@ public class TableGetInfo {
      * Inicialitza la sessió
      * @param val token de sessió
      */
-    void setSessionToken(String val) {
+    public void setSessionToken(String val) {
         this.sessionToken = val;
     }
     
@@ -108,7 +108,7 @@ public class TableGetInfo {
      * Inicialitza el número de la taula
      * @param val número de taula
      */
-    void setNumber(int val) {
+    public void setNumber(int val) {
         this.number = val;
     }
     

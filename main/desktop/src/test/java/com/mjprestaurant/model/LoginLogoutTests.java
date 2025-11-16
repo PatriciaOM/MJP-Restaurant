@@ -14,7 +14,7 @@ import com.mjprestaurant.model.user.UserRole;
  * Classe de test pel model
  * @author Patricia Oliva
  */
-public class ModelTests {
+public class LoginLogoutTests {
     
     /**
      * Comprova que el constructor amb paràmetres inicialitza correctament els valors enviats.
