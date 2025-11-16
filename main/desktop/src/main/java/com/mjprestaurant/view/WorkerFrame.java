@@ -23,6 +23,10 @@ import com.mjprestaurant.controller.WorkerController;
 import com.mjprestaurant.model.CustomComponents;
 import com.mjprestaurant.model.user.User;
 
+/**
+ * Classe per la pantalla dels treballadors
+ * @author Patricia Oliva
+ */
 public class WorkerFrame extends AbstractFrame {
     JButton buttonAdd, buttonChange, buttonDelete, btnBack;
 
@@ -30,6 +34,11 @@ public class WorkerFrame extends AbstractFrame {
     private DefaultTableModel tableModel;
     private WorkerController controller;
 
+    /**
+     * Constructor principal que rep la llista d'usuaris a ensenyar i el títol
+     * @param title títol de la pantalla
+     * @param users llista d'usuaris a ensenyar
+     */
     public WorkerFrame(String title, List<User> users) {
         super(title);
         loadWorkers(users); //carregar llista
@@ -102,7 +111,10 @@ public class WorkerFrame extends AbstractFrame {
         }
     }
 
-
+    /**
+     * Retorna el botó d'enrere
+     * @return botó enrere
+     */
     public JButton getBtnBack() {
         return btnBack;
     }
@@ -141,6 +153,10 @@ public class WorkerFrame extends AbstractFrame {
         });
     }
     
+    /**
+     * Mètode que fa l'actualització de la llista d'usuaris quan es fa una modificació
+     * @param token token de sessió
+     */
     public void reloadUsersTable(String token) {
         try {
             // Obtener lista actualizada de trabajadores
@@ -202,52 +218,85 @@ public class WorkerFrame extends AbstractFrame {
     }
 
     /**
-     * Retorna la taula de treballadors
-     * @return taula de treballadors
+     * Estableix el botó per afegir nous elements
+     * @param buttonAdd botó d'afegir
      */
-    public JTable getWorkerTable() {
-        return workerTable; 
-    }
-
     public void setButtonAdd(JButton buttonAdd) {
         this.buttonAdd = buttonAdd;
     }
 
+    /**
+     * Retorna el botó de canvi/edició
+     * @return botó de canvi
+     */
     public JButton getButtonChange() {
         return buttonChange;
     }
 
+    /**
+     * Estableix el botó de canvi/edició
+     * @param buttonChange botó de canvi
+     */
     public void setButtonChange(JButton buttonChange) {
         this.buttonChange = buttonChange;
     }
 
+    /**
+     * Estableix el botó per eliminar elements
+     * @param buttonDelete botó d'eliminar
+     */
     public void setButtonDelete(JButton buttonDelete) {
         this.buttonDelete = buttonDelete;
     }
 
+    /**
+     * Estableix el botó de tornada enrere
+     * @param btnBack botó de tornar enrere
+     */
     public void setBtnBack(JButton btnBack) {
         this.btnBack = btnBack;
     }
 
+    /**
+     * Estableix la taula de treballadors
+     * @param workerTable taula de treballadors
+     */
     public void setWorkerTable(JTable workerTable) {
         this.workerTable = workerTable;
     }
 
+    /**
+     * Retorna el model de la taula
+     * @return model de la taula
+     */
     public DefaultTableModel getTableModel() {
         return tableModel;
     }
 
+    /**
+     * Estableix el model de la taula
+     * @param tableModel model de la taula
+     */
     public void setTableModel(DefaultTableModel tableModel) {
         this.tableModel = tableModel;
     }
 
+    /**
+     * Retorna el controlador associat
+     * @return controlador
+     */
     public WorkerController getController() {
         return controller;
     }
 
+    /**
+     * Estableix el controlador associat
+     * @param controller controlador
+     */
     public void setController(WorkerController controller) {
         this.controller = controller;
     }
+
 
     
 

@@ -350,6 +350,9 @@ public class CustomComponents {
         }
     }
 
+    /**
+     * Mètode que tanca el formulari quan l'acció s'acaba
+     */
     public void closeCurrentForm() {
         if (currentFrame != null) {
             currentFrame.dispose();
@@ -357,6 +360,10 @@ public class CustomComponents {
         }
     }
 
+    /**
+     * Mètode que retorna la pantalla actual
+     * @return pantalla actual
+     */
     public JFrame getCurrentFrame(){
         return currentFrame;
     }

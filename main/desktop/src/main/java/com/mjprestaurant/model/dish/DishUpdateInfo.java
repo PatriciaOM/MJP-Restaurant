@@ -6,7 +6,7 @@ package com.mjprestaurant.model.dish;
  */
 public class DishUpdateInfo {   
     String sessionToken;
-    Dish dish; 
+    Dish item; 
     
     /**
      * Constructor per defecte
@@ -20,6 +20,57 @@ public class DishUpdateInfo {
      */
     public DishUpdateInfo(String sessionToken, Dish dish) {
         this.sessionToken = sessionToken;
-        this.dish = dish;
-    }  
+        this.item = dish;
+    }
+
+    /**
+     * Retorna el token de sessió
+     * @return token
+     */
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    /**
+     * Inicialitza el token de sessió
+     * @param sessionToken token de sessió
+     */
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
+    }
+
+    /**
+     * Retorna el plat a actualitzar
+     * @return plat a actualitzar
+     */
+    public Dish getDish() {
+        return item;
+    }
+
+    /**
+     * Inicialitza el plat a actualitzar
+     * @param dish plat a actualitzar
+     */
+    public void setDish(Dish dish) {
+        this.item = dish;
+    }
+
+    /**
+     * Retorna l'item que es vol actualitzar
+     * @return item a actualitzar
+     */
+    public Dish getItem() {
+        return item;
+    }
+
+    /**
+     * Inicialitza l'item a actualitzar
+     * @param item item a actualitzar
+     */
+    public void setItem(Dish item) {
+        this.item = item;
+    } 
+
+    
+    
 }

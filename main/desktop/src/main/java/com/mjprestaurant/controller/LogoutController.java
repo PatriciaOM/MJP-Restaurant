@@ -17,12 +17,20 @@ public class LogoutController {
     private AbstractFrame userWindow;
     private LoginFrame login;
 
+    /**
+     * Constructor principal del logout
+     * @param userWindow pantalla actual
+     * @param login pantalla de login
+     */
     public LogoutController(AbstractFrame userWindow, LoginFrame login) {
         this.userWindow = userWindow;
         this.login = login;
         initController();
     }
 
+    /**
+     * Mètode inicialitzador
+     */
     private void initController() {
         userWindow.getBtnLogout().addActionListener(e -> {
             try {
@@ -33,9 +41,13 @@ public class LogoutController {
         });
     }
 
+    /**
+     * Mètode que gestiona el logout, amb el token de sessió de l'usuari
+     * @throws ControllerException
+     */
     public void logout() throws ControllerException {
         try {
-            String token = userWindow.getUsername(); // Se puede ajustar según tu token real
+            String token = userWindow.getUsername(); 
             HttpURLConnection conn = (HttpURLConnection) new URL("http://localhost:8080/logout").openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");

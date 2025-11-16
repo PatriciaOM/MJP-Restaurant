@@ -7,7 +7,7 @@ package com.mjprestaurant.model.dish;
  */
 public class DishCreateInfo {    
     private String sessionToken;
-    private Dish dish;
+    private Dish newEntry;
 
     /**
      * Constructor per defecte
@@ -22,7 +22,7 @@ public class DishCreateInfo {
      */
     public DishCreateInfo(String sessionToken, Dish dish) {
         this.sessionToken = sessionToken;
-        this.dish = dish;
+        this.newEntry = dish;
     }
 
     /**
@@ -46,7 +46,7 @@ public class DishCreateInfo {
      * @return plat
      */
     public Dish getDish() {
-        return dish;
+        return newEntry;
     }
 
     /**
@@ -54,9 +54,23 @@ public class DishCreateInfo {
      * @param dish plat
      */
     public void setDish(Dish dish) {
-        this.dish = dish;
-    }  
+        this.newEntry = dish;
+    }
 
-    
+    /**
+     * Retorna la nova entrada a afegir
+     * @return nova entrada
+     */
+    public Dish getNewEntry() {
+        return newEntry;
+    }
+
+    /**
+     * Inicialitza la nova entrada
+     * @param newEntry nova entrada
+     */
+    public void setNewEntry(Dish newEntry) {
+        this.newEntry = newEntry;
+    }  
     
 }

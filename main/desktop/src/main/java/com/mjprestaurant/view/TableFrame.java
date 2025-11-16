@@ -24,6 +24,10 @@ import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.CustomComponents;
 import com.mjprestaurant.model.table.TableRestaurant;
 
+/**
+ * Classe de la pantalla de les taules
+ * @author Patricia Oliva
+ */
 public class TableFrame extends AbstractFrame {
 
     private JButton buttonAdd, buttonDelete, btnBack;
@@ -32,6 +36,12 @@ public class TableFrame extends AbstractFrame {
     private TableController controller;
     private String token;
 
+    /**
+     * Constructor principal que rep el títol, la llista de taules i el controlador
+     * @param title títol
+     * @param tables llista de taules
+     * @param controller controlador
+     */
     public TableFrame(String title, List<TableRestaurant> tables, TableController controller) {
         super(title);
         this.controller = controller;
@@ -150,6 +160,10 @@ public class TableFrame extends AbstractFrame {
         });
     }
 
+    /**
+     * Mètode que actualitza la llista de taules quan hi ha modificació
+     * @param token sessió
+     */
     public void reloadTables(String token) {
         try {
             List<TableRestaurant> tables = TableController.getAllTables(token);

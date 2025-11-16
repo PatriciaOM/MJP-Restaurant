@@ -5,7 +5,7 @@
 package com.mjprestaurant.model.dish;
 
 /**
- *
+ * Classe per consultar la informació dels plats
  * @author Patricia Oliva
  */
 public class DishGetInfo {    
@@ -22,12 +22,14 @@ public class DishGetInfo {
     private String name;
      
 
-   public DishGetInfo(){}
+    /**
+     * Constructor per defecte
+     */
+    public DishGetInfo(){}
    
      /**
-     * Constructor for getting a Dish by Id. I takes two parameters the session token and the Id.
-     * @param sessionToken
-     * @param id 
+     * Constructor per demanar tots els plats
+     * @param sessionToken token de sessió
      */
     public DishGetInfo(String sessionToken) {
         this.sessionToken = sessionToken;
@@ -36,9 +38,9 @@ public class DishGetInfo {
    
    
      /**
-     * Constructor for getting a Dish by Id. I takes two parameters the session token and the Id.
-     * @param sessionToken
-     * @param id 
+     * Constructor per demanar un plat pel seu id
+     * @param sessionToken token de sessió
+     * @param id id del plat
      */
     public DishGetInfo(String sessionToken, long id) {
         this.sessionToken = sessionToken;
@@ -47,9 +49,9 @@ public class DishGetInfo {
     }
     
     /**
-     * Constructor for getting a Dish by name. I takes two parameters the session token and the name.
-     * @param sessionToken
-     * @param name 
+     * Constructor per consultar un plat pel seu nom
+     * @param sessionToken token de sessió
+     * @param name nom del plat
      */
     public DishGetInfo(String sessionToken, String name) {
         this.sessionToken = sessionToken;
@@ -57,6 +59,14 @@ public class DishGetInfo {
         this.searchType = SearchType.BY_NAME;
     }
       
+    /**
+     * Constructor amb tots els paràmetres
+     * @param sessionToken token de sessió
+     * @param dish plat
+     * @param searchType tipus de cerca
+     * @param id id del plat
+     * @param name nom del plat
+     */
     public DishGetInfo(String sessionToken, Dish dish, SearchType searchType, Long id, String name) {
         this.sessionToken = sessionToken;
         this.dish = dish;
@@ -65,6 +75,10 @@ public class DishGetInfo {
         this.name = name;
     }  
         
+    /**
+     * Constructor tenint un plat de referència
+     * @param orig plat original
+     */
     public DishGetInfo(DishGetInfo orig) {
         this.sessionToken = orig.sessionToken;
         this.dish = orig.getDish();
@@ -73,38 +87,74 @@ public class DishGetInfo {
         this.name = orig.name;
     }
            
+    /**
+     * Inicialitza el token de sessió
+     * @param val token
+     */
     public void setSessionToken(String val) {
         this.sessionToken = val;
     }
     
+    /**
+     * Retorna el token de sessió
+     * @return token
+     */
     public String getSessionToken() {
         return this.sessionToken;
     }
 
+    /**
+     * Retorna el plat
+     * @return plat
+     */
     public Dish getDish() {
         return dish;
     }
 
+    /**
+     * Inicialitza el plat
+     * @param dish plat a consultar
+     */
     public void setDish(Dish dish) {
         this.dish = dish;
     }
 
+    /**
+     * Inicialitza el missatge per l'usuari
+     * @param requestItem
+     */
     public void setMessageData(Dish requestItem) {
         setDish(requestItem);
     }
 
+    /**
+     * Retorna el tipus de cerca que es vol fer servir
+     * @return tipus de cerca
+     */
     public SearchType getSearchType() {
         return searchType;
     }
 
+    /**
+     * Retorna l'id del plat
+     * @return id del plat
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Retorna el nom del plat
+     * @return nom del plat
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * Retorna el missatge del servidor per l'usuari
+     * @return
+     */
     public Dish getMessageData() {
         return this.getDish();
     }

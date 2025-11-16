@@ -31,4 +31,38 @@ public class DishDeleteInfo {
     public DishDeleteInfo(DishDeleteInfo orig) {
         this.sessionToken = orig.sessionToken;
     }
+
+    /**
+     * Retorna el token de sessió
+     * @return token
+     */
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    /**
+     * Inicialitza el token de sessió
+     * @param sessionToken
+     */
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
+    }
+
+    /**
+     * Retorna l'id del plat
+     * @return id del plat
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Inicialitza l'id del plat
+     * @param id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
 }

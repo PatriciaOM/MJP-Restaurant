@@ -6,6 +6,10 @@ import java.util.Map;
 
 import com.mjprestaurant.model.user.User;
 
+/**
+ * Classe per utilitzats de mapejat
+ * @author Patricia Oliva
+ */
 public class UserMapper {
     /**
      * Mètode que mapeja un usuari per tal de facilitar la seva manipulació
