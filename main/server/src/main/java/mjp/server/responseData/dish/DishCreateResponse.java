@@ -6,7 +6,6 @@ package mjp.server.responseData.dish;
 
 import java.util.List;
 import mjp.server.ServerMJP.database.Dish;
-import mjp.server.responseData.CrudResponse;
 
 /**
  *

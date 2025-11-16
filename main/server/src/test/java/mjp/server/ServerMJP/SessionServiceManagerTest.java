@@ -217,6 +217,27 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
         return SessionServiceDeleteResponse.class;
     }
     
+
+    @Override
+    public Credentials getCreateCredentials(){
+        return this.getUserCredentials();
+    }
+
+    @Override
+    public Credentials getGetCredentials(){
+        return this.getUserCredentials();
+    }
+
+    @Override
+    public Credentials getUpdateCredentials(){
+        return this.getUserCredentials();
+    }
+
+    @Override
+    public Credentials getDeleteCredentials(){
+        return this.getUserCredentials();
+    }
+    
     @Override
     public String getClassName() {
         return "SessionService";

@@ -6,10 +6,6 @@ package mjp.server.responseData.sessionService;
 
 import java.util.List;
 import mjp.server.ServerMJP.database.SessionService;
-import mjp.server.responseData.table.*;
-import mjp.server.ServerMJP.database.TableRestaurant;
-import mjp.server.responseData.user.*;
-import mjp.server.ServerMJP.database.User;
 import mjp.server.responseData.CrudResponse;
 import mjp.server.responseData.ResponseData;
 

@@ -203,6 +203,26 @@ public class DishManagerTest extends TestDefaultCrud<
     public String getClassName() {
         return "Dish";
     }
+    
+    @Override
+    public Credentials getCreateCredentials(){
+        return this.getAdminCredentials();
+    }
+
+    @Override
+    public Credentials getGetCredentials(){
+        return this.getUserCredentials();
+    }
+
+    @Override
+    public Credentials getUpdateCredentials(){
+        return this.getAdminCredentials();
+    }
+
+    @Override
+    public Credentials getDeleteCredentials(){
+        return this.getAdminCredentials();
+    }
        
     @Test
     @Order(001)
