@@ -1,15 +1,22 @@
 package com.mjprestaurant.view;
 
 import java.awt.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
+import com.mjprestaurant.controller.LogoutController;
+import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.CustomComponents;
+
+import java.util.List;
 
 /**
  * Classe abstracta que crea els components bàsics per qualsevol tipus de pantalla
  * @author Patricia Oliva
  */
 public abstract class AbstractFrame extends JFrame {
+    protected List<AbstractFrame> childFrames = new ArrayList<>();
 
     String username;
     private JButton btnLogout;
@@ -40,18 +47,17 @@ public abstract class AbstractFrame extends JFrame {
     /**
      * Mètode que crea la barra de menú compartida per totes les pantalles
      */
-    private void createMenuBar() {
+    protected void createMenuBar() {
+        CustomComponents customComponents = new CustomComponents();
         JMenuBar menuBar = new JMenuBar();
         menuBar.setLayout(new FlowLayout(FlowLayout.RIGHT, 30, 10)); // margen horizontal y vertical
 
-        new CustomComponents().setCustomButton("Tanca la sessió");
-        btnLogout = CustomComponents.getCustomButton();
+        customComponents.setCustomButton("Tanca la sessió");
+        btnLogout = customComponents.getCustomButton();
 
         menuBar.add(btnLogout);
         setJMenuBar(menuBar);
     }
-
-
 
     /**
      * Retorna el botó del logout
@@ -77,6 +83,42 @@ public abstract class AbstractFrame extends JFrame {
         return username;
     }
 
-    // Mètode abstracte que les classes filles han d'implementar
+    /**
+     * Inicialitza el logout
+     * @param login pantalla de login
+     */
+    public void initLogout(LoginFrame login) {
+        btnLogout.addActionListener(e -> {
+            try {
+                new LogoutController(this, login).logout();
+            } catch (ControllerException ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Mètode que va afegint totes les pantalles que es van creant com a filles, per tal de tancar-les totes si es necessari
+     * @param frame pantalla
+     */
+    public void addChildFrame(AbstractFrame frame) {
+        childFrames.add(frame);
+    }
+
+    /**
+     * Mètode que tanca totes les pantalles filles de manera recursiva
+     */
+    public void closeAllFramesRecursively() {
+        for (AbstractFrame frame : childFrames) {
+            frame.closeAllFramesRecursively();
+            frame.dispose();
+        }
+        childFrames.clear();
+        this.dispose();
+    }
+
+    /**Mètode abstracte que les classes filles han d'implementar
+     * 
+     */
     protected abstract void initComponents();
 }

@@ -127,9 +127,9 @@ class LoginControllerTest {
      */
     @Test
     void testAdminAndWaiterFramesInitiallyNull() {
-        assertNull(controller.getAdminFrame(), 
+        assertNull(controller.getAdmin(), 
             "AdminFrame hauria de ser nul després d'inicialitzar");
-        assertNull(controller.getWaiterFrame(), 
+        assertNull(controller.getWaiter(), 
             "WaiterFrame hauria de ser nul després d'inicialitzar");
     }
 

@@ -1,17 +1,11 @@
 package com.mjprestaurant.controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjprestaurant.model.ControllerException;
-import com.mjprestaurant.model.LogoutInfo;
 import com.mjprestaurant.view.*;
 
 /**
@@ -19,121 +13,62 @@ import com.mjprestaurant.view.*;
  * @author Patricia Oliva
  */
 public class LogoutController {
+
     private AbstractFrame userWindow;
     private LoginFrame login;
-    private LoginController loginController;
-    private final String LOGOUT_URL = "http://localhost:8080/logout"; // URL server
 
     /**
-     * Constructor principal del logout, que necessita la finestra en la que es troba actualment l'usuari 
-     * i la pantalla del login
-     * @param userWindow pantalla en la que es troba l'usuari
+     * Constructor principal del logout
+     * @param userWindow pantalla actual
      * @param login pantalla de login
      */
-    public LogoutController(AbstractFrame userWindow, LoginFrame login, LoginController loginController) {
-        this.login = login;
+    public LogoutController(AbstractFrame userWindow, LoginFrame login) {
         this.userWindow = userWindow;
-        this.loginController = loginController;
+        this.login = login;
         initController();
     }
 
     /**
-     * Mètode init per iniciar els components
+     * Mètode inicialitzador
      */
     private void initController() {
-        userWindow.getBtnLogout().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    logout(userWindow.getUsername());
-                } catch (ControllerException e1) {
-                    e1.printStackTrace();
-                }
+        userWindow.getBtnLogout().addActionListener(e -> {
+            try {
+                logout();
+            } catch (ControllerException ex) {
+                ex.printStackTrace();
             }
         });
     }
 
     /**
-     * Mètode que fa el logout de l'aplicació desktop. Necessita el token de sessió per cancelar-la
-     * Un cop s'ha rebut la resposta del servidor de la sessió tancada, genera un avís amb un JOptionPane
-     * tanca la pantalla actual, posa la variable responseUser a null per permetre el login posterior d'un usuari
-     * diferent, esborra els textos que hi havien al TextField i el PasswordField i torna a mostrar 
-     * la pantalla de login
-     * @param token token de sessió
-     * @throws ControllerException 
+     * Mètode que gestiona el logout, amb el token de sessió de l'usuari
+     * @throws ControllerException
      */
-    public void logout(String token) throws ControllerException {
+    public void logout() throws ControllerException {
         try {
-            System.out.println(token);
-            // Creem un objecte de tipus LogoutInfo que s'enviarà al server amb el token de sessió
-            LogoutInfo logoutinfo = new LogoutInfo(token);
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(logoutinfo);
-
-            URI uri = new URI(LOGOUT_URL);
-            URL url = uri.toURL(); 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            String token = userWindow.getUsername(); 
+            HttpURLConnection conn = (HttpURLConnection) new URL("http://localhost:8080/logout").openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
-
-            try (OutputStream os = conn.getOutputStream()) {
-                os.write(json.getBytes());
-                os.flush();
-            }
+            conn.getOutputStream().write(("{\"token\":\"" + token + "\"}").getBytes());
+            conn.getOutputStream().flush();
 
             if (conn.getResponseCode() == 200) {
-                JOptionPane.showMessageDialog(null, "Sessió tancada correctament");
-            } else {
-                throw new ControllerException( "Error en tancar la sessió: ", null);
+                JOptionPane.showMessageDialog(null, "Sesión cerrada correctamente");
             }
 
             conn.disconnect();
-
-            // Tornem al login
-            if (userWindow != null) userWindow.dispose();
-            loginController.setResponseUser(null);
+            userWindow.closeAllFramesRecursively();
+            userWindow.dispose();
             login.getTxtUser().setText("");
             login.getTxtPass().setText("");
             login.setVisible(true);
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ControllerException("Error en desconnectar del servidor", null);
+            throw new ControllerException("Error al desconectar", login);
         }
     }
-
-    /**
-     * Retorna la pantalla en la que es troba l'usuari actualment
-     * @return pantalla del user
-     */
-    public AbstractFrame getUserWindow() {
-        return userWindow;
-    }
-
-    /**
-     * Inicialitza la pantalla en la que es troba l'usuari
-     * @param userWindow pantalla del user, de tipus AbstractFrame (pot ser admin o user)
-     */
-    public void setUserWindow(AbstractFrame userWindow) {
-        this.userWindow = userWindow;
-    }
-
-    /**
-     * Retorna la pantalla del login
-     * @return pantalla de login
-     */
-    public LoginFrame getLogin() {
-        return login;
-    }
-
-    /**
-     * Inicialitza la pantalla del login
-     * @param login pantalla de login
-     */
-    public void setLogin(LoginFrame login) {
-        this.login = login;
-    }
-
-    
 }
