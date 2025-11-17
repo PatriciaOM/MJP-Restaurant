@@ -7,8 +7,8 @@ package mjp.server.queryData;
 import mjp.server.uitls.serializers.MessageDataContainer;
 
 /**
- *
- * @author twiki
+ * A class that represents the data of a request that has been received. It is designed to be inherited by other classes that will have as properties the keys of the data received.
+ * @author Joan Renau Valls
  */
 public class InfoData extends MessageDataContainer{
     

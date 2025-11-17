@@ -9,8 +9,8 @@ import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.responseData.CrudResponse;
 
 /**
- *
- * @author twiki
+ * Class for the SessionService get responses.
+ * @author Joan Renau Valls
  */
 public class SessionServiceGetResponse extends SessionServiceResponse{
     

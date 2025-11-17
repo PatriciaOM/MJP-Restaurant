@@ -8,8 +8,8 @@ import java.util.List;
 import mjp.server.ServerMJP.database.User;
 
 /**
- *
- * @author twiki
+ * Class for the User get responses.
+ * @author Joan Renau Valls
  */
 public class UserGetResponse {
     

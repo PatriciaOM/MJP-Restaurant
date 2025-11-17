@@ -7,9 +7,10 @@ package mjp.server.responseData.order;
 import java.util.List;
 import mjp.server.ServerMJP.database.Order;
 
+
 /**
- *
- * @author twiki
+ * Class for the Order update responses.
+ * @author Joan Renau Valls
  */
 public class OrderUpdateResponse extends OrderResponse{
     

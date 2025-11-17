@@ -14,8 +14,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- *
- * @author twiki
+ * Class to allow Gson to serialize LocalDateTime
+ * @author Joan Renau Valls
  */
 public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
     @Override

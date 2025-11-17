@@ -8,19 +8,14 @@ import mjp.server.queryData.user.*;
 import mjp.server.ServerMJP.database.User;
 
 /**
- *  This class is for getting User.
- *  The fetch can be done by id username or search for all users.
- *  Depending on the type of search searchType will be set appropriately.
- *  Note that username and id are only needed depending on the search type. If not needed they are ignored.
- *  There is a constructor each search type that take the appropriate parameters for the search.
+ * Class for holding the information of a Table get request
  * @author Joan Renau Valls
  */
 public class TableGetInfo {
-//    
-//    private static String SEARCH_ALL = "all";
-//    private static String SEARCH_BY_ID = "byId";
-//    private static String SEARCH_BY_USERNAME = "byUsername";
     
+    /**
+     * Represents the different search methods for this endpoint.
+     */
     public enum SearchType{
         ALL,
         BY_ID,

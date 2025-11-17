@@ -8,8 +8,8 @@ import java.util.List;
 import mjp.server.ServerMJP.database.SessionService;
 
 /**
- *
- * @author twiki
+ * Class for the SessionService update responses.
+ * @author Joan Renau Valls
  */
 public class SessionServiceUpdateResponse extends SessionServiceResponse{
     

@@ -5,13 +5,20 @@
 package mjp.server.queryData;
 
 /**
- *
- * @author twiki
+ * Interface for InfoData that will hold an authorized request with some item with data.
+ * @author Joan Renau Valls
  */
 public interface AuthorizedQueryInfo<RequestItem> {
-//    AuthorizedQueryInfo createInsance(String sessionToken, RequestItem requestItem);
+    /**
+     * 
+     * @param sessionToken valid session token with the required permissions by the endpoint it has been seended
+     */
     public void setSessionToken(String sessionToken);
     public String getSessionToken();
+    /**
+     * 
+     * @param requestItem The dada that is being send
+     */
     public void setMessageData(RequestItem requestItem);
     public RequestItem getMessageData();
 }

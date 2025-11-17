@@ -5,8 +5,8 @@
 package mjp.server.queryData.user;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an User delete request
+ * @author Joan Renau Valls
  */
 public class UserDeleteInfo {
     

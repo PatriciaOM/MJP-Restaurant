@@ -8,8 +8,8 @@ import java.util.List;
 import mjp.server.ServerMJP.database.OrderItem;
 
 /**
- *
- * @author twiki
+ * Class for the OrderItem delete responses.
+ * @author Joan Renau Valls
  */
 public class OrderItemDeleteResponse extends OrderItemResponse{
     

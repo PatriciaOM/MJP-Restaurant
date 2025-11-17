@@ -7,9 +7,10 @@ package mjp.server.responseData.dish;
 import java.util.List;
 import mjp.server.ServerMJP.database.Dish;
 
+
 /**
- *
- * @author twiki
+ * Class for the Dish Delete responses.
+ * @author Joan Renau Valls
  */
 public class DishDeleteResponse extends DishResponse{
     

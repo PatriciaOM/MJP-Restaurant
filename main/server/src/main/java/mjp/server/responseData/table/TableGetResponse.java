@@ -8,8 +8,8 @@ import java.util.List;
 import mjp.server.ServerMJP.database.TableRestaurant;
 
 /**
- *
- * @author twiki
+ * Class for the table get responses.
+ * @author Joan Renau Valls
  */
 public class TableGetResponse {
     

@@ -8,8 +8,8 @@ import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.queryData.defaults.UpdateInfo;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an OrderItem update request
+ * @author Joan Renau Valls
  */
 public class OrderItemUpdateInfo extends UpdateInfo<OrderItem>  {    
     

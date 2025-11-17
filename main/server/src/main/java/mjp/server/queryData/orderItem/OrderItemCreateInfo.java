@@ -7,9 +7,10 @@ package mjp.server.queryData.orderItem;
 import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.queryData.defaults.CreateInfo;
 
+
 /**
- *
- * @author twiki
+ * Class for holding the information of an OrderItem create request
+ * @author Joan Renau Valls
  */
 public class OrderItemCreateInfo extends CreateInfo<OrderItem>{    
     

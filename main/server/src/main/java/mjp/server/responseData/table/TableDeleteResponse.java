@@ -4,13 +4,9 @@
  */
 package mjp.server.responseData.table;
 
-import mjp.server.responseData.user.*;
-import java.util.List;
-import mjp.server.ServerMJP.database.User;
-
 /**
- *
- * @author twiki
+ * Class for the table delete responses.
+ * @author Joan Renau Valls
  */
 public class TableDeleteResponse {
     public String message="success";

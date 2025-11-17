@@ -16,8 +16,8 @@ import mjp.server.queryData.InfoData;
 import mjp.server.queryData.defaults.UpdateInfo;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of a dish update request
+ * @author Joan Renau Valls
  */
 public class DishUpdateInfo extends UpdateInfo<Dish>  {    
     

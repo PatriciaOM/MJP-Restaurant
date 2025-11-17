@@ -8,8 +8,8 @@ import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.queryData.defaults.UpdateInfo;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an SessionService update request
+ * @author Joan Renau Valls
  */
 public class SessionServiceUpdateInfo extends UpdateInfo<SessionService>  {    
     

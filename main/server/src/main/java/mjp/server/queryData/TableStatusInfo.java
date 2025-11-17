@@ -5,11 +5,17 @@
 package mjp.server.queryData;
 
 /**
- *
- * @author twiki
+ * Endpoint that returns the current status of the tables.
+ * @author Joan Renau Valls
  */
 public class TableStatusInfo implements AuthorizedQueryInfo{
+    /**
+     * A valid session token obtained by login
+     */
     private String sessionToken;
+    /**
+     * The id of the table to get info for.
+     */
     private String tableId;
     
     public TableStatusInfo(String sessionToken, String tableId) {

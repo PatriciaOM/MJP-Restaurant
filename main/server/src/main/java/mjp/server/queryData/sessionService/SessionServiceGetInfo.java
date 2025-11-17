@@ -9,13 +9,14 @@ import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an SessionService get request
+ * @author Joan Renau Valls
  */
 public class SessionServiceGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
 
-
-
+    /**
+     * Represents the different search methods for this endpoint.
+     */
     public enum SearchType{
         ALL,
         BY_ID,

@@ -13,7 +13,13 @@ import mjp.server.queryData.InfoData;
  * @author twiki
  */
 public class UpdateInfo<ItemType> extends InfoData implements AuthorizedQueryInfo<ItemType> {    
+    /**
+     * A valid session token for the endpoint being accessed
+     */
     public String sessionToken;
+    /**
+     * The new item data. It must have set the id in order do be able to identify the right entry on the db.
+     */
     public ItemType item;
     
      

@@ -16,11 +16,17 @@ import mjp.server.queryData.InfoData;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls
  * @param <ItemType>
  */
-public class CreateInfo <ItemType extends DatabaseEntry> extends InfoData implements AuthorizedQueryInfo<ItemType> {    
+public class CreateInfo <ItemType extends DatabaseEntry> extends InfoData implements AuthorizedQueryInfo<ItemType> { 
+    /**
+     * A valid session token for the endpoint being accessed
+     */
     public String sessionToken;
+    /**
+     * The new entry data
+     */
     public ItemType newEntry;
     
              

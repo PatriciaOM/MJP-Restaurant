@@ -7,8 +7,8 @@ package mjp.server.queryData.sessionService;
 import mjp.server.queryData.defaults.DeleteInfo;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an SessionService delete request
+ * @author Joan Renau Valls
  */
 public class SessionServiceDeleteInfo extends DeleteInfo<Long> {    
    public SessionServiceDeleteInfo(){};
