@@ -1,4 +1,4 @@
-package com.mjprestaurant.model;
+package com.mjprestaurant.model.user;
 
 /**
  * Classe de l'usuari retornat pel server

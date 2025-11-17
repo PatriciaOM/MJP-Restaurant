@@ -1,5 +1,7 @@
 package com.mjprestaurant.model;
 
+import com.mjprestaurant.model.user.UserRole;
+
 /**
  * Classe per la resposta del login
  * @author Patricia Oliva

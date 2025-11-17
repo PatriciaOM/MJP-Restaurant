@@ -1,4 +1,4 @@
-package com.mjprestaurant.model;
+package com.mjprestaurant.model.user;
 
 /**
  * Classe enum pels rols dels tipus d'usuari

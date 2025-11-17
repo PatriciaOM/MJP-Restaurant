@@ -14,8 +14,8 @@ import com.mjprestaurant.model.CustomComponents;
  * Pantalla d'administradors
  * @author Patricia Oliva
  */
-public class AdminFrame  extends AbstractFrame {
-
+public class AdminFrame extends AbstractFrame {
+    JButton buttonTables, buttonWorkers, buttonDishes;
     /**
      * Constructor principal que seteja com a títol de la pantalla el nom de l'usuari loguejat
      * @param username nom de l'usuari
@@ -29,14 +29,18 @@ public class AdminFrame  extends AbstractFrame {
      */
     @Override
     public void initComponents() {
+        CustomComponents customComponents = new CustomComponents();
         JLabel title = new JLabel("Administració de: ", SwingConstants.CENTER);
         System.out.println(title);
         title.setFont(new Font("Arial", Font.PLAIN, 24));
         
-        new CustomComponents().setCustomButton("Taules");
-        JButton buttonTables = CustomComponents.getCustomButton();
-        new CustomComponents().setCustomButton("Treballadors");
-        JButton buttonWorkers = CustomComponents.getCustomButton();
+        customComponents.setCustomButton("Taules");
+        buttonTables = customComponents.getCustomButton();
+        customComponents.setCustomButton("Treballadors");
+        buttonWorkers = customComponents.getCustomButton();
+        customComponents.setCustomButton("Plats");
+        buttonDishes = customComponents.getCustomButton();
+        
         
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setBorder(BorderFactory.createEmptyBorder(100,0,20,0));
@@ -47,11 +51,32 @@ public class AdminFrame  extends AbstractFrame {
         adminPanel.setBorder(BorderFactory.createEmptyBorder(60, 0, 0, 0));
         adminPanel.add(buttonTables);
         adminPanel.add(buttonWorkers);
+        adminPanel.add(buttonDishes);
 
         setLayout(new BorderLayout());
         add(titlePanel, BorderLayout.NORTH);
         add(adminPanel, BorderLayout.CENTER);
 
+    }
+
+    /**
+     * Mètode que retorna el botó de taules
+     * @return botó taules
+     */
+    public JButton getButtonTables() {
+        return buttonTables;
+    }
+
+    /**
+     * Mètode que retorna el botó de treballadors
+     * @return botó treballadors
+     */
+    public JButton getButtonWorkers() {
+        return buttonWorkers;
+    }
+
+    public JButton getButtonDishes() {
+        return buttonDishes;
     }
     
 }
