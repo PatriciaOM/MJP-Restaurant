@@ -57,7 +57,6 @@ public class TableGetInfo {
     /**
      * Constructor for getting a User by number. I takes two parameters the session token and the number.
      * @param sessionToken
-     * @param username 
      */
     public TableGetInfo(String sessionToken, int number) {
         this.sessionToken = sessionToken;

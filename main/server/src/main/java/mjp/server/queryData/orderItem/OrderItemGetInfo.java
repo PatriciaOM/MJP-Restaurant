@@ -32,7 +32,6 @@ public class OrderItemGetInfo extends InfoData implements AuthorizedQueryInfo<Lo
      /**
      * Constructor for getting a OrderItem by Id. I takes two parameters the session token and the Id.
      * @param sessionToken
-     * @param id 
      */
     public OrderItemGetInfo(String sessionToken) {
         this.sessionToken = sessionToken;

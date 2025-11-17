@@ -125,8 +125,8 @@ public class UserManager {
         return users;
       }
 
+     // Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#allusers} endpoint. See {@link Model}
     /**
-     * Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#allusers} endpoint. See {@link Model}
      *
      * @return
      */

@@ -32,7 +32,6 @@ public class SessionServiceGetInfo extends InfoData implements AuthorizedQueryIn
      /**
      * Constructor for getting a SessionService by Id. I takes two parameters the session token and the Id.
      * @param sessionToken
-     * @param id 
      */
     public SessionServiceGetInfo(String sessionToken) {
         this.sessionToken = sessionToken;

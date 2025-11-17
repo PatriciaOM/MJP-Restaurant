@@ -21,7 +21,6 @@ public enum UserShift {
     }
     
     /**
-     * @param roleName The string representation fo the role to return
      * @return Returns the corresponding {@link UserRole}
      * @throws IllegalArgumentException 
      */

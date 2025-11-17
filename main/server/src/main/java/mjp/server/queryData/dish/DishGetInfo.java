@@ -46,7 +46,6 @@ public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {
      /**
      * Constructor for getting a Dish by Id. I takes two parameters the session token and the Id.
      * @param sessionToken
-     * @param id 
      */
     public DishGetInfo(String sessionToken) {
         this.sessionToken = sessionToken;
