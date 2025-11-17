@@ -8,22 +8,22 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
-import mjp.server.ServerMJP.database.Order;
+import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.queryData.AuthorizedQueryInfo;
-import mjp.server.queryData.order.OrderCreateInfo;
-import mjp.server.queryData.order.OrderDeleteInfo;
-import mjp.server.queryData.order.OrderGetInfo;
-import mjp.server.queryData.order.OrderUpdateInfo;
-import mjp.server.responseData.order.OrderCreateResponse;
-import mjp.server.responseData.order.OrderDeleteResponse;
-import mjp.server.responseData.order.OrderGetResponse;
-import mjp.server.responseData.order.OrderUpdateResponse;
+import mjp.server.queryData.orderItem.OrderItemCreateInfo;
+import mjp.server.queryData.orderItem.OrderItemDeleteInfo;
+import mjp.server.queryData.orderItem.OrderItemGetInfo;
+import mjp.server.queryData.orderItem.OrderItemUpdateInfo;
+import mjp.server.responseData.orderItem.OrderItemCreateResponse;
+import mjp.server.responseData.orderItem.OrderItemDeleteResponse;
+import mjp.server.responseData.orderItem.OrderItemGetResponse;
+import mjp.server.responseData.orderItem.OrderItemUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,15 +39,15 @@ import testUtils.TestDefaultCrud;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class OrderManagerTest extends TestDefaultCrud<
+public class OrderItemManagerTest extends TestDefaultCrud<
         Long,
-        Order,
-        OrderCreateResponse,
-        OrderGetResponse,
-        OrderUpdateResponse,
-        OrderDeleteResponse
+        OrderItem,
+        OrderItemCreateResponse,
+        OrderItemGetResponse,
+        OrderItemUpdateResponse,
+        OrderItemDeleteResponse
     > {
-    private static String resourceUri = "/order";
+    private static String resourceUri = "/order-item";
     static Credentials user = new Credentials("Twiki", "Tuki", null);
     static Credentials admin = new Credentials("Ping", "Pong", null);
     
@@ -56,10 +56,9 @@ public class OrderManagerTest extends TestDefaultCrud<
 //    Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
     
     private Gson gson = (new GsonBuilder())
-        .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-        .create();
-    
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     
     @LocalServerPort
     private int port;
@@ -71,44 +70,25 @@ public class OrderManagerTest extends TestDefaultCrud<
     
     public String getResourceUri() {return this.resourceUri;}
     
-    static Order initialItem = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.DECEMBER, 13, 20, 20),
-        Order.Status.OPEN
+    static OrderItem initialSessionService = new OrderItem(
     );
       
-    static Order mockItem1 = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.APRIL, 13, 13, 20, 20),
-        Order.Status.OPEN
+    static OrderItem mockSessionService1 = new OrderItem(
     );    
     
-    static Order mockItem2 = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.DECEMBER, 12, 13, 20, 20),
-        Order.Status.OPEN
+    static OrderItem mockSessionService2 = new OrderItem(
     );  
     
-    static Order mockItem3 = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.NOVEMBER, 13, 13, 20, 20),
-        Order.Status.OPEN
+    static OrderItem mockSessionService3 = new OrderItem(
     );
     
     
-    List<Order> allItems = List.of(initialItem, mockItem1, mockItem2, mockItem3);
+    List<OrderItem> allItems = List.of(initialSessionService, mockSessionService1, mockSessionService2, mockSessionService3);
     
-    static Order noExsistingItem = new Order(
-        5000L,
-        1L,
-        LocalDateTime.of(2020, Month.NOVEMBER, 13, 13, 20, 20),
-        Order.Status.OPEN
+    static OrderItem noExsistingSessionService = new OrderItem(
     );
     
-    static Order updatedItem = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.DECEMBER, 13, 13, 20, 20),
-        Order.Status.SERVED
+    static OrderItem updatedSessionService = new OrderItem(
     );
         
     @Override
@@ -123,63 +103,63 @@ public class OrderManagerTest extends TestDefaultCrud<
  
 
     @Override
-    protected Order getInitialItem() {
-        return initialItem;
+    protected OrderItem getInitialItem() {
+        return initialSessionService;
     }
 
     @Override
-    protected Order getUpdatedItem() {
-        return updatedItem;
+    protected OrderItem getUpdatedItem() {
+        return updatedSessionService;
     }
 
     @Override
-    protected List<Order> getAllTestItems() {
+    protected List<OrderItem> getAllTestItems() {
         return this.allItems;
     }
     
     @Override
-    protected Order getNoExistingItem() {
-        return noExsistingItem;
+    protected OrderItem getNoExistingItem() {
+        return noExsistingSessionService;
     }  
     
     @Override
-    public AuthorizedQueryInfo<Order> generateCreateRequest(String sessionToken, Order entry) {
-        return new OrderCreateInfo(sessionToken, entry);
+    public AuthorizedQueryInfo<OrderItem> generateCreateRequest(String sessionToken, OrderItem entry) {
+        return new OrderItemCreateInfo(sessionToken, entry);
     }
 
     @Override
     public AuthorizedQueryInfo<Long> generateGetRequest(String sessionToken, Long entryId) {
-        return new OrderGetInfo(sessionToken, entryId);
+        return new OrderItemGetInfo(sessionToken, entryId);
     }
     
     @Override
-    public AuthorizedQueryInfo<Order> generateUpdateRequest(String sessionToken, Order entry) {
-        return new OrderUpdateInfo(sessionToken, entry);
+    public AuthorizedQueryInfo<OrderItem> generateUpdateRequest(String sessionToken, OrderItem entry) {
+        return new OrderItemUpdateInfo(sessionToken, entry);
     }    
      
     @Override
     public AuthorizedQueryInfo<Long> generateDeleteRequest(String sessionToken, Long entryId) {
-        return new OrderDeleteInfo(sessionToken, entryId);
+        return new OrderItemDeleteInfo(sessionToken, entryId);
     }
     
     @Override
-    public Class<OrderCreateResponse> getCreateResponseClass() {
-        return OrderCreateResponse.class;
+    public Class<OrderItemCreateResponse> getCreateResponseClass() {
+        return OrderItemCreateResponse.class;
     }
 
     @Override
-    public Class<OrderGetResponse> getGetResponseClass() {
-        return OrderGetResponse.class;
+    public Class<OrderItemGetResponse> getGetResponseClass() {
+        return OrderItemGetResponse.class;
     }
 
     @Override
-    public Class<OrderUpdateResponse> getUpdateResponseClass() {
-        return OrderUpdateResponse.class;
+    public Class<OrderItemUpdateResponse> getUpdateResponseClass() {
+        return OrderItemUpdateResponse.class;
     }
 
     @Override
-    public Class<OrderDeleteResponse> getDeleteResponseClass() {
-        return OrderDeleteResponse.class;
+    public Class<OrderItemDeleteResponse> getDeleteResponseClass() {
+        return OrderItemDeleteResponse.class;
     }
     
 
@@ -205,11 +185,11 @@ public class OrderManagerTest extends TestDefaultCrud<
     
     @Override
     public String getClassName() {
-        return "Order";
+        return "SessionService";
     }
        
     @Test
-    @org.junit.jupiter.api.Order(001)
+    @Order(001)
     void setup(){
         basicSetup("setup");
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
@@ -219,69 +199,69 @@ public class OrderManagerTest extends TestDefaultCrud<
     }
     
     @Test
-    @org.junit.jupiter.api.Order(200)
-    void createOrderBasicTests(){
+    @Order(200)
+    void createOrderItemBasicTests(){
         createItemBasicTests("create" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
     
     @Test
-    @org.junit.jupiter.api.Order(300)
-    void createAllOrder(){
+    @Order(300)
+    void createAllOrderItem(){
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
         assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
         this.createAllItems("createAll" + getClassName());
     }
     
     @Test
-    @org.junit.jupiter.api.Order(400)
-    void getOrdersBasicTests(){
+    @Order(400)
+    void getOrderItemBasicTests(){
         getItemBasicTests("get" + getClassName() + "BasicTests", getUserCredentials().getSessionToken());
     }
   
     @Test
-    @org.junit.jupiter.api.Order(500)
-    void getOrderById(){
+    @Order(500)
+    void getOrderItemById(){
         getItemById("get" + getClassName() + "ById");
     }
       
     @Test
-    @org.junit.jupiter.api.Order(550)
-    void getNoExistingOrderById(){
+    @Order(550)
+    void getNoExistingSessionServcieById(){
         getNoExistingItemById("getNoExisting" + getClassName() + "ById");
     }
     
     @Test
-    @org.junit.jupiter.api.Order(600)
-    void updateOrderBasicTests(){
+    @Order(600)
+    void updateOrderItemBasicTests(){
         updateItemBasicTests("create" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
     
     @Test
-    @org.junit.jupiter.api.Order(700)
-    void updateOrder(){
+    @Order(700)
+    void updateOrderItem(){
         this.updateItem("update" + getClassName());       
     }
     
     @Test
-    @org.junit.jupiter.api.Order(800)
-    void deleteOrderBasicTests(){
+    @Order(800)
+    void deleteOrderItemBasicTests(){
         deleteItemBasicTests("delete" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
      @Test
-    @org.junit.jupiter.api.Order(850)
-    void getToDeletOrder(){
+    @Order(850)
+    void getToDeletOrderItem(){
         getItemToDelete("getToDele" + getClassName());
     }
            
     @Test
-    @org.junit.jupiter.api.Order(900)
-    void deleteOrder(){
+    @Order(900)
+    void deleteOrderItem(){
         deleteItem("delete"+ getClassName());
     }
           
     @Test
-    @org.junit.jupiter.api.Order(1000)
-    void getDeletedOrder(){
+    @Order(1000)
+    void getDeletedOrderItem(){
         getDeletedItem("getDeleted" + getClassName());
     }
 

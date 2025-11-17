@@ -7,6 +7,7 @@ package testUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import mjp.server.ServerMJP.database.DatabaseEntry;
 import mjp.server.ServerMJP.database.User;
@@ -14,6 +15,7 @@ import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.responseData.CrudResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
+import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.springframework.http.HttpStatus;
@@ -32,7 +34,10 @@ public abstract class TestDefaultCrud<
         UpdateResponseType extends CrudResponse<ItemType>,
         DeleteResponseType extends CrudResponse<ItemType>
     > extends TestDefault {
-    Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
+    Gson gson = (new GsonBuilder())
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
 
     protected abstract Credentials getUserCredentials();
     protected abstract Credentials getAdminCredentials();

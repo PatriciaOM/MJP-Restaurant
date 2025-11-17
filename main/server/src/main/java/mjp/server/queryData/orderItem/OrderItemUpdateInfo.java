@@ -2,25 +2,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mjp.server.queryData.Order;
+package mjp.server.queryData.orderItem;
 
-import mjp.server.ServerMJP.database.Order;
+import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.queryData.defaults.UpdateInfo;
 
 /**
  *
  * @author twiki
  */
-public class OrderUpdateInfo extends UpdateInfo<Order>  {    
+public class OrderItemUpdateInfo extends UpdateInfo<OrderItem>  {    
     
-    public OrderUpdateInfo(){};
+    public OrderItemUpdateInfo(){};
    
-    public OrderUpdateInfo(String sessionToken, Order order) {
+    public OrderItemUpdateInfo(String sessionToken, OrderItem orderItem) {
         this.sessionToken = sessionToken;
-        this.item = order;
+        this.item = orderItem;
     }  
         
-    public OrderUpdateInfo(OrderUpdateInfo orig) {
+    public OrderItemUpdateInfo(OrderItemUpdateInfo orig) {
         this.sessionToken = orig.sessionToken;
         this.item = orig.getItem();
     }

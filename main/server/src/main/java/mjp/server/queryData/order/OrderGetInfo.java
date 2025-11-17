@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mjp.server.queryData.Order;
+package mjp.server.queryData.order;
 
 import mjp.server.ServerMJP.database.Order;
 import mjp.server.queryData.sessionService.*;
@@ -35,7 +35,6 @@ public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> 
      /**
      * Constructor for getting an Order by Id. I takes two parameters the session token and the Id.
      * @param sessionToken
-     * @param id 
      */
     public OrderGetInfo(String sessionToken) {
         this.sessionToken = sessionToken;

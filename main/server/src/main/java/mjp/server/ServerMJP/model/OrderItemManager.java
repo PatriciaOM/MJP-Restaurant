@@ -7,12 +7,12 @@ package mjp.server.ServerMJP.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import mjp.server.ServerMJP.database.Order;
-import mjp.server.ServerMJP.database.OrderRepository;
+import mjp.server.ServerMJP.database.OrderItem;
+import mjp.server.ServerMJP.database.OrderItemRepository;
 import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.SessionServiceRepository;
+import mjp.server.queryData.orderItem.OrderItemGetInfo;
 import mjp.server.queryData.sessionService.SessionServiceGetInfo;
-import mjp.server.queryData.order.OrderGetInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,13 +22,13 @@ import org.springframework.web.server.ResponseStatusException;
  * @author twiki
  */
 @Component
-public class OrderManager extends Manager<Order, OrderRepository, OrderGetInfo>{
+public class OrderItemManager extends Manager<OrderItem, OrderItemRepository, OrderItemGetInfo>{
 
     protected SessionManager sessionManager;
-    protected OrderRepository respository;
+    protected OrderItemRepository respository;
     
-    public OrderManager(
-        OrderRepository respository,
+    public OrderItemManager(
+        OrderItemRepository respository,
         SessionManager sessionManager
     ){
         this.respository = respository;
@@ -41,26 +41,24 @@ public class OrderManager extends Manager<Order, OrderRepository, OrderGetInfo>{
     }
 
     @Override
-    protected OrderRepository getRepository() {
+    protected OrderItemRepository getRepository() {
         return this.respository;
     }
     
     @Override
-    public List<Order> findItems(OrderRepository repository, OrderGetInfo infoData) {
+    public List<OrderItem> findItems(OrderItemRepository repository, OrderItemGetInfo infoData) {
         
-        List<Order> ret = new ArrayList();
-        Optional<Order> itemResult;
+        List<OrderItem> ret = new ArrayList();
+        Optional<OrderItem> dishResult;
         switch (infoData.getSearchType()) {
             case ALL:
                 return this.convertIterableToList(repository.findAll());
             case BY_ID:
-                assert infoData.getId() != null;
-                System.out.println("Getting Order with id" + infoData.getId());
-                itemResult = repository.findById(infoData.getId());
-                if (itemResult.isEmpty())
+                dishResult = repository.findById(infoData.getId());
+                if (dishResult.isEmpty())
                     ret = new ArrayList<>();
                 else
-                    ret = List.of(itemResult.get());
+                    ret = List.of(dishResult.get());
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

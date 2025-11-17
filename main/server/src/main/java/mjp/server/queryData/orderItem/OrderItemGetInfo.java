@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mjp.server.queryData.sessionService;
+package mjp.server.queryData.orderItem;
 
-import mjp.server.ServerMJP.database.SessionService;
+import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
 
@@ -12,7 +12,7 @@ import mjp.server.queryData.InfoData;
  *
  * @author twiki
  */
-public class SessionServiceGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
+public class OrderItemGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
 
 
 
@@ -22,44 +22,44 @@ public class SessionServiceGetInfo extends InfoData implements AuthorizedQueryIn
     }
     
     private String sessionToken;
-    private SessionService sessionService;
+    private OrderItem orderItem;
     private SearchType searchType;
     private Long id;
      
 
-   public SessionServiceGetInfo(){}
+   public OrderItemGetInfo(){}
    
      /**
-     * Constructor for getting a SessionService by Id. I takes two parameters the session token and the Id.
+     * Constructor for getting a OrderItem by Id. I takes two parameters the session token and the Id.
      * @param sessionToken
      */
-    public SessionServiceGetInfo(String sessionToken) {
+    public OrderItemGetInfo(String sessionToken) {
         this.sessionToken = sessionToken;
         this.searchType = SearchType.ALL;
     }
    
    
      /**
-     * Constructor for getting a SessionService by Id. I takes two parameters the session token and the Id.
+     * Constructor for getting a OrderItem by Id. I takes two parameters the session token and the Id.
      * @param sessionToken
      * @param id 
      */
-    public SessionServiceGetInfo(String sessionToken, long id) {
+    public OrderItemGetInfo(String sessionToken, long id) {
         this.sessionToken = sessionToken;
         this.id = id;
         this.searchType = SearchType.BY_ID;
     }
        
-    public SessionServiceGetInfo(String sessionToken, SessionService sessionService, SearchType searchType, Long id) {
+    public OrderItemGetInfo(String sessionToken, OrderItem orderItem, SearchType searchType, Long id) {
         this.sessionToken = sessionToken;
-        this.sessionService = sessionService;
+        this.orderItem = orderItem;
         this.searchType = searchType;
         this.id = id;
     }  
         
-    public SessionServiceGetInfo(SessionServiceGetInfo orig) {
+    public OrderItemGetInfo(OrderItemGetInfo orig) {
         this.sessionToken = orig.sessionToken;
-        this.sessionService = orig.getSessionService();
+        this.orderItem = orig.getOrderItems();
         this.searchType = orig.searchType;
         this.id = orig.id;
     }
@@ -74,8 +74,8 @@ public class SessionServiceGetInfo extends InfoData implements AuthorizedQueryIn
         return this.sessionToken;
     }
 
-    public SessionService getSessionService() {
-        return sessionService;
+    public OrderItem getOrderItems() {
+        return orderItem;
     }
 
     public void setId(Long id) {
