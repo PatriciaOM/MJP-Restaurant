@@ -5,16 +5,11 @@
 
 package mjp.server.ServerMJP.Controller;
 
-import mjp.server.ServerMJP.model.SessionManager;
-import mjp.server.responseData.UserResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import mjp.server.ServerMJP.ServerMjpApplication;
-import mjp.server.ServerMJP.database.Dish;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.LoginInfo;
@@ -23,26 +18,21 @@ import mjp.server.responseData.LoginResponse;
 import mjp.server.responseData.LogoutResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import mjp.server.ServerMJP.model.AuthenticationManager;
 import mjp.server.ServerMJP.database.UserRepository;
 import mjp.server.ServerMJP.model.DishManager;
+import mjp.server.ServerMJP.model.OrderItemManager;
 import mjp.server.ServerMJP.model.OrderManager;
 import mjp.server.ServerMJP.model.SessionServiceManager;
 import mjp.server.ServerMJP.model.TableManager;
 import mjp.server.ServerMJP.model.UserManager;
-import mjp.server.queryData.Order.OrderCreateInfo;
+import mjp.server.queryData.order.OrderCreateInfo;
 import mjp.server.queryData.TableStatusInfo;
-import mjp.server.queryData.defaults.CreateInfo;
 import mjp.server.queryData.dish.DishCreateInfo;
 import mjp.server.queryData.dish.DishDeleteInfo;
 import mjp.server.queryData.dish.DishGetInfo;
@@ -51,9 +41,13 @@ import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
 import mjp.server.queryData.sessionService.SessionServiceDeleteInfo;
 import mjp.server.queryData.sessionService.SessionServiceGetInfo;
 import mjp.server.queryData.sessionService.SessionServiceUpdateInfo;
-import mjp.server.queryData.Order.OrderDeleteInfo;
-import mjp.server.queryData.Order.OrderGetInfo;
-import mjp.server.queryData.Order.OrderUpdateInfo;
+import mjp.server.queryData.order.OrderDeleteInfo;
+import mjp.server.queryData.order.OrderGetInfo;
+import mjp.server.queryData.order.OrderUpdateInfo;
+import mjp.server.queryData.orderItem.OrderItemCreateInfo;
+import mjp.server.queryData.orderItem.OrderItemDeleteInfo;
+import mjp.server.queryData.orderItem.OrderItemGetInfo;
+import mjp.server.queryData.orderItem.OrderItemUpdateInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
 import mjp.server.queryData.table.TableGetInfo;
@@ -62,17 +56,19 @@ import mjp.server.queryData.user.UserCreateInfo;
 import mjp.server.queryData.user.UserDeleteInfo;
 import mjp.server.queryData.user.UserGetInfo;
 import mjp.server.queryData.user.UserUpdateInfo;
-import mjp.server.responseData.Order.OrderCreateResponse;
-import mjp.server.responseData.Order.OrderDeleteResponse;
-import mjp.server.responseData.Order.OrderGetResponse;
-import mjp.server.responseData.Order.OrderUpdateResponse;
-import mjp.server.responseData.ResponseData;
+import mjp.server.responseData.order.OrderCreateResponse;
+import mjp.server.responseData.order.OrderDeleteResponse;
+import mjp.server.responseData.order.OrderGetResponse;
+import mjp.server.responseData.order.OrderUpdateResponse;
 import mjp.server.responseData.TableStatusResponse;
 import mjp.server.responseData.dish.DishCreateResponse;
 import mjp.server.responseData.dish.DishDeleteResponse;
 import mjp.server.responseData.dish.DishGetResponse;
-import mjp.server.responseData.dish.DishResponse;
 import mjp.server.responseData.dish.DishUpdateResponse;
+import mjp.server.responseData.orderItem.OrderItemCreateResponse;
+import mjp.server.responseData.orderItem.OrderItemDeleteResponse;
+import mjp.server.responseData.orderItem.OrderItemGetResponse;
+import mjp.server.responseData.orderItem.OrderItemUpdateResponse;
 import mjp.server.responseData.sessionService.SessionServiceCreateResponse;
 import mjp.server.responseData.sessionService.SessionServiceDeleteResponse;
 import mjp.server.responseData.sessionService.SessionServiceGetResponse;
@@ -118,6 +114,7 @@ public class Controller {
     final DishManager dishManager;
     final SessionServiceManager sessionServiceManager;
     final OrderManager orderManager;
+    final OrderItemManager orderItemManager;
     
     /**
      * Used for login purposes
@@ -131,7 +128,8 @@ public class Controller {
         UserManager userManager,
         DishManager dishManager,
         SessionServiceManager sessionServiceManager,
-        OrderManager orderManager
+        OrderManager orderManager,
+        OrderItemManager orderItemManager
     ){
 //        this.gson = new Gson();
         this.model = model;
@@ -140,6 +138,7 @@ public class Controller {
         this.dishManager = dishManager;
         this.sessionServiceManager = sessionServiceManager;
         this.orderManager = orderManager;
+        this.orderItemManager = orderItemManager;
         
     }
     
@@ -311,6 +310,34 @@ public class Controller {
     public String orderDelete(@RequestBody OrderDeleteInfo info){
         System.out.println(String.format("POST order/delete(%s)", this.gson.toJson(info)));
         OrderDeleteResponse response = this.orderManager.delete(info, UserRole.ADMIN, new OrderDeleteResponse());
+        return this.gson.toJson(response);
+    }
+         
+    @PostMapping("order-item/create")
+    public String orderCreate(@RequestBody OrderItemCreateInfo info){
+        System.out.println(String.format("POST order-item/create(%s)", this.gson.toJson(info)));
+        OrderItemCreateResponse response = this.orderItemManager.create(info, UserRole.ADMIN, new OrderItemCreateResponse());
+        return this.gson.toJson(response);
+    }
+    
+    @PostMapping("order-item/get")
+    public String orderGet(@RequestBody OrderItemGetInfo info){
+        System.out.println(String.format("POST order-item/get(%s)", this.gson.toJson(info)));
+        OrderItemGetResponse response = this.orderItemManager.get(info, new OrderItemGetResponse());
+        return this.gson.toJson(response);
+    }
+    
+    @PostMapping("order-item/update")
+    public String orderUpdate(@RequestBody OrderItemUpdateInfo info){
+        System.out.println(String.format("POST order-item/update(%s)", this.gson.toJson(info)));
+        OrderItemUpdateResponse response = this.orderItemManager.update(info, UserRole.ADMIN, new OrderItemUpdateResponse());
+        return this.gson.toJson(response);
+    }
+    
+    @PostMapping("order-item/delete")
+    public String orderDelete(@RequestBody OrderItemDeleteInfo info){
+        System.out.println(String.format("POST order-item/delete(%s)", this.gson.toJson(info)));
+        OrderItemDeleteResponse response = this.orderItemManager.delete(info, UserRole.ADMIN, new OrderItemDeleteResponse());
         return this.gson.toJson(response);
     }
     

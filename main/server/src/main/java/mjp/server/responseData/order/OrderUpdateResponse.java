@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mjp.server.responseData.Order;
+package mjp.server.responseData.order;
 
 import java.util.List;
 import mjp.server.ServerMJP.database.Order;
@@ -11,15 +11,15 @@ import mjp.server.ServerMJP.database.Order;
  *
  * @author twiki
  */
-public class OrderDeleteResponse extends OrderResponse{
+public class OrderUpdateResponse extends OrderResponse{
     
-    public OrderDeleteResponse(){}
+    public OrderUpdateResponse(){}
     
-    public OrderDeleteResponse(String messageStatus, List<Order> items) {
+    public OrderUpdateResponse(String messageStatus, List<Order> items) {
         super(messageStatus, items);
     }
       
-    public OrderDeleteResponse(OrderDeleteResponse orig) {
+    public OrderUpdateResponse(OrderUpdateResponse orig) {
         super(orig);
     }
 }
