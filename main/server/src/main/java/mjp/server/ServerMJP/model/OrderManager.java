@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * 
- * @author twiki
+ * Class for handling the requests and responses of the Order class. Just gets the deserialized request objects and generates the response objects that will be serialized and returned.
+ * @author Joan Renau Valls
  */
 @Component
 public class OrderManager extends Manager<Order, OrderRepository, OrderGetInfo>{
@@ -44,7 +44,13 @@ public class OrderManager extends Manager<Order, OrderRepository, OrderGetInfo>{
     protected OrderRepository getRepository() {
         return this.respository;
     }
-    
+        
+    /**
+     * Will be called by Manager on a get request to get the items to return.
+     * @param repository
+     * @param infoData
+     * @return 
+     */
     @Override
     public List<Order> findItems(OrderRepository repository, OrderGetInfo infoData) {
         

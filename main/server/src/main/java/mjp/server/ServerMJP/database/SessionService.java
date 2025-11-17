@@ -39,8 +39,8 @@ public class SessionService implements DatabaseEntry<Long> {
     }
     
     /**
-    * References the table to which this SessionService belongs.
-    */
+     * References the table to which this SessionService belongs.
+     */
     private Long idTable;
     /**
     * Will hold the table number when the entry is created.

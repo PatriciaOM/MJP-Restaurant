@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * 
- * @author twiki
+ * Class for handling the requests and responses of the SessionService class. Just gets the deserialized request objects and generates the response objects that will be serialized and returned.
+ * @author Joan Renau Valls
  */
 @Component
 public class SessionServiceManager extends Manager<SessionService, SessionServiceRepository, SessionServiceGetInfo>{
@@ -41,7 +41,13 @@ public class SessionServiceManager extends Manager<SessionService, SessionServic
     protected SessionServiceRepository getRepository() {
         return this.respository;
     }
-    
+        
+    /**
+     * Will be called by Manager on a get request to get the items to return.
+     * @param repository
+     * @param infoData
+     * @return 
+     */
     @Override
     public List<SessionService> findItems(SessionServiceRepository repository, SessionServiceGetInfo infoData) {
         

@@ -18,9 +18,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * 
- * @author twiki
- * @param <ItemsType>
+ * Class for handling the requests and responses for a specific Table. Just gets the deserialized request objects and generates the response objects that will be serialized and returned.
+ * @author Joan Renau Valls
+ * @param <ItemsType> The table class this Manager will be responsible for.
+ * @param <RepositoryType>
  * @param <GetInfoType>
  */
 @Component
@@ -30,30 +31,66 @@ public abstract class Manager<
             RepositoryType extends CrudRepository<ItemsType, Long>,
             GetInfoType extends InfoData & AuthorizedQueryInfo
         > {
-    
+    /** 
+     * 
+     * @return The session manager responsible of handling the logged sessions
+     */
     protected abstract SessionManager getSessionManager();
+    /**
+     * 
+     * @return The database repository that handles the queries of the database table class associated with this manager
+     */
     protected abstract RepositoryType getRepository();
         
     
 //    public abstract <InfoDataType extends InfoData> List<ItemsType> findAllItems(RepositoryType respoistory, InfoDataType infoData);
     public abstract List<ItemsType> findItems(RepositoryType respoistory, GetInfoType infoData);
     
+    /**
+     * Returns is a session token is allowed to make create requests
+     * @param sessionToken
+     * @return true if allowed
+     */
     protected boolean checkCreatePermisions(String sessionToken) {
         return this.getSessionManager().validateAdminToken(sessionToken);
     }
     
+    /**
+     * Returns is a session token is allowed to make get requests
+     * @param sessionToken
+     * @return true if allowed
+     */
     protected boolean checkGetPermisions(String sessionToken) {
         return this.getSessionManager().validateUserToken(sessionToken);
     }
     
+    /**
+     * Returns is a session token is allowed to make update requests
+     * @param sessionToken
+     * @return true if allowed
+     */
     protected boolean checkUpdatePermisions(String sessionToken) {
         return this.getSessionManager().validateAdminToken(sessionToken);
     }
     
+    /**
+     * Returns is a session token is allowed to make Delete requests
+     * @param sessionToken
+     * @return true if allowed
+     */
     protected boolean checkDeletePermisions(String sessionToken) {
         return this.getSessionManager().validateAdminToken(sessionToken);
     }
     
+    /**
+     * Handles the create requests
+     * @param <Info> Contains the request information after being deserialized
+     * @param <ReturnType> The type of the Class that will hold the returned information before being serialized
+     * @param info
+     * @param role
+     * @param response An empty resposne for this request that will be populated and returned by this function
+     * @return Contains the response information before being serialized
+     */
     public <
         Info extends InfoData & AuthorizedQueryInfo<ItemsType>,
         ReturnType extends ResponseData & CrudResponse
@@ -73,7 +110,13 @@ public abstract class Manager<
         response.setMessageData(List.of(data));
         return response;
     } 
-    
+    /**
+     * Handles the get requests
+     * @param <ReturnType> The type of the Class that will hold the returned information before being serialized
+     * @param info
+     * @param response An empty response for this request that will be populated and returned by this function
+     * @return Contains the response information before being serialized
+     */
     public <ReturnType extends ResponseData & CrudResponse>
     ReturnType get(GetInfoType info, ReturnType response){
         if (info.getSessionToken() == null)
@@ -88,6 +131,11 @@ public abstract class Manager<
         return response;
     }
     
+    /**
+     * Utility function to convert from Iterable toList
+     * @param iterable
+     * @return 
+     */
     List<ItemsType> convertIterableToList(Iterable<ItemsType> iterable) {
         List<ItemsType> ret = new ArrayList();
         for (ItemsType item : iterable){
@@ -96,6 +144,15 @@ public abstract class Manager<
         return ret;
     }
     
+    /**
+     * Handles the update requests
+     * @param <Info> The type of the request info it corresponds to a table class.
+     * @param <ReturnType> The type of the Class that will hold the returned information before being serialized.
+     * @param info The request info.
+     * @param role 
+     * @param response An empty response for this request that will be populated and returned by this function.
+     * @return Contains the response information before being serialized.
+     */
     public <
         Info extends InfoData & AuthorizedQueryInfo<ItemsType>,
         ReturnType extends ResponseData & CrudResponse
@@ -112,6 +169,15 @@ public abstract class Manager<
         return response;
     }
      
+    /**
+     * Handles the delete requests
+     * @param <Info> The type of the request info it corresponds to a table class.
+     * @param <ReturnType> The type of the Class that will hold the returned information before being serialized.
+     * @param info The request info.
+     * @param role 
+     * @param response An empty response for this request that will be populated and returned by this function.
+     * @return Contains the response information before being serialized.
+     */
     public <
         Info extends InfoData & AuthorizedQueryInfo<Long>,
         ReturnType extends ResponseData & CrudResponse
@@ -127,7 +193,5 @@ public abstract class Manager<
             throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
         response.setMessageData(List.of(info));
         return response;
-//        
-//        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
     }   
 }

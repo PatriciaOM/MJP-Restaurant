@@ -36,8 +36,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * 
- * @author twiki
+ * Class for handling the requests and responses of the Dish class. Just gets the deserialized request objects and generates the response objects that will be serialized and returned.
+ * @author Joan Renau Valls
  */
 @Component
 public class DishManager extends Manager<Dish, DishRepository, DishGetInfo>{
@@ -63,6 +63,12 @@ public class DishManager extends Manager<Dish, DishRepository, DishGetInfo>{
         return this.respository;
     }
     
+    /**
+     * Will be called by Manager on a get request to get the items to return.
+     * @param repository
+     * @param infoData
+     * @return 
+     */
     @Override
     public List<Dish> findItems(DishRepository repository, DishGetInfo infoData) {
         
