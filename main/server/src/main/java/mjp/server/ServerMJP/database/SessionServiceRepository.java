@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- *
- * @author twiki
+ * Repository for managing SessionService table
+ * @author Joan Renau Valls
  */
 public interface SessionServiceRepository extends CrudRepository<SessionService, Long>{
     SessionService findById(long id);

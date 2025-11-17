@@ -12,26 +12,40 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
-/**
- *
- * @author twiki
- */
 
+/**
+ * Class for defining the table of the Order object and holding it's entries data.
+ * @author Joan Renau Valls
+ */
 @Entity
 @Table(name = "OrderRestaurant")
 public class Order implements DatabaseEntry<Long> {
+    /**
+     * The entry id.
+     */
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id; 
     
+    /**
+     * Class for defining the status of the Order.
+     */
     public enum Status {
         OPEN,
         SENDED,
         SERVED
     }
-    
+    /**
+     * The entry id.
+     */
     private Long idSessionService;
+    /**
+     * The moment when the order is created.
+     */
     private LocalDateTime date;
+    /**
+     * The state of the order.
+     */
     private Status state;
     
     public Order(){};

@@ -5,8 +5,9 @@
 package mjp.server.ServerMJP.database;
 
 /**
- *
- * @author twiki
+ * Class that will be inherited by any class who's instances will represent entries on the database tables.
+ * @author Joan Renau Valls
+ * @param <IdType>The type of the entry id
  */
 public interface DatabaseEntry<IdType> {
     abstract IdType getId();
