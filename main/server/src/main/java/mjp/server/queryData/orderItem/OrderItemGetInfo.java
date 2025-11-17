@@ -8,14 +8,16 @@ import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
 
+
 /**
- *
- * @author twiki
+ * Class for holding the information of an OrderItem get request
+ * @author Joan Renau Valls
  */
-public class OrderItemGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
-
-
-
+public class OrderItemGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {  
+    
+    /**
+     * Represents the different search methods for this endpoint.
+     */
     public enum SearchType{
         ALL,
         BY_ID,

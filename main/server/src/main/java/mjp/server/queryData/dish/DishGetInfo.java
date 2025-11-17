@@ -4,36 +4,27 @@
  */
 package mjp.server.queryData.dish;
 
-import mjp.server.queryData.table.*;
-import mjp.server.queryData.user.*;
-import com.google.gson.Gson;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
 import mjp.server.ServerMJP.database.Dish;
-import mjp.server.ServerMJP.database.DishRepository;
-import mjp.server.ServerMJP.database.TableRestaurant;
-import mjp.server.ServerMJP.database.User;
-import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of a dish get request
+ * @author Joan Renau Valls
  */
-public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
-
-
-
+public class DishGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {  
+    /**
+     * Represents the different search methods for this endpoint.
+     */
     public enum SearchType{
         ALL,
         BY_ID,
         BY_NAME
     }
+    /**
+     * A valid session token with the required permissions.
+     */
     private String sessionToken;
     private Dish dish;
     private SearchType searchType;

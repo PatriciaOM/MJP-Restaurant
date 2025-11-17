@@ -7,8 +7,8 @@ package mjp.server.responseData.user;
 import mjp.server.ServerMJP.database.User;
 
 /**
- *
- * @author twiki
+ * Class for the User create responses.
+ * @author Joan Renau Valls
  */
 public class UserCreateResponse {
     public String message="success";

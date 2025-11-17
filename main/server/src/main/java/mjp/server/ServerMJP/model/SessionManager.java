@@ -68,12 +68,22 @@ public class SessionManager {
         return this.sessions.get(sessionToken);
     }
     
+    /**
+     * Checks if a session token has user credentials
+     * @param sessionToken The session token to be validated
+     * @return true if it has the right privileges
+     */
     public boolean validateUserToken(String sessionToken)  {
         System.out.println("Validating user for token: " + sessionToken + "<<<");
         User user = this.getUserByToken(sessionToken);
         return user != null;
     }
     
+    /**
+     * Checks if a session token has admin credentials
+     * @param sessionToken The session token to be validated
+     * @return true if it has the right privileges
+     */
     public boolean validateAdminToken(String sessionToken) {
         System.out.println("Validating admin token " + sessionToken);
         User user = this.getUserByToken(sessionToken);

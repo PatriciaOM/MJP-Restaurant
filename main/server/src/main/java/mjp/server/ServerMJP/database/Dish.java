@@ -4,7 +4,6 @@
  */
 package mjp.server.ServerMJP.database;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,13 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- *
- * @author twiki
+ * Class for defining the table of the object Dish and holding it's entries data.
+ * @author Joan Renau Valls
  */
-
 @Entity
 @Table(name = "Dish")
 public class Dish implements DatabaseEntry<Long> {
+    /**
+     * Class for defining the category of the Dish.
+     */
     public enum DishCategory {
         APPETIZER,
         MAIN,
@@ -27,18 +28,31 @@ public class Dish implements DatabaseEntry<Long> {
         OTHER
     }
     
+    /**
+     * The entry id
+     */
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id; 
     
+    /**
+     * The dish name
+     */
     private String name;
+    /**
+     * The dish price
+     */
     private float price;
+    /**
+     * The dish description
+     */
     private String description;
+    /**
+     * Determines if the dish will be available
+     */
     private boolean available;
     private DishCategory category;
-    
-    // TODO pvirave smth image;
-        
+            
     public Dish(){};
 
     public Dish(String name, float price, String description, boolean available, DishCategory category) {

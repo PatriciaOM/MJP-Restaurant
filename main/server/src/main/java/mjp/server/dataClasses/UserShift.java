@@ -5,8 +5,8 @@
 package mjp.server.dataClasses;
 
 /**
- *
- * @author twiki
+ * Class for representing the different shift options.
+ * @author Joan Renau Valls
  */
 public enum UserShift {
 

@@ -7,9 +7,10 @@ package mjp.server.queryData.table;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.user.*;
 
+
 /**
- *
- * @author twiki
+ * Class for holding the information of a Table delete request
+ * @author Joan Renau Valls
  */
 public class TableDeleteInfo implements AuthorizedQueryInfo{
     

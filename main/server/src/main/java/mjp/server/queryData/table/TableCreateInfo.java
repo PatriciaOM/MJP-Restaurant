@@ -10,9 +10,10 @@ import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 
+
 /**
- *
- * @author twiki
+ * Class for holding the information of a Table create request
+ * @author Joan Renau Valls
  */
 public class TableCreateInfo {
     private String sessionToken;

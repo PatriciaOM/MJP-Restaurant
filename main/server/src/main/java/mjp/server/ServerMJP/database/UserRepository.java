@@ -8,8 +8,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Class responsible for accessing the User table of the database.
- *
+ * Repository for managing User table
  * @author Joan Renau Valls
  */
 public interface UserRepository extends CrudRepository<User, Long>{

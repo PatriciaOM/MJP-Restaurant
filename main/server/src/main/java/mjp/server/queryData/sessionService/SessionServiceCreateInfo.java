@@ -8,8 +8,8 @@ import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.queryData.defaults.CreateInfo;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an SessionService create request
+ * @author Joan Renau Valls
  */
 public class SessionServiceCreateInfo extends CreateInfo<SessionService>{    
     

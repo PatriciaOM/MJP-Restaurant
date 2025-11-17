@@ -10,8 +10,8 @@ import mjp.server.responseData.CrudResponse;
 import mjp.server.responseData.ResponseData;
 
 /**
- *
- * @author twiki
+ * Class for the Order responses.
+ * @author Joan Renau Valls
  */
 public class OrderResponse extends ResponseData implements CrudResponse<Order> {
     String messageStatus;

@@ -10,8 +10,8 @@ import mjp.server.responseData.CrudResponse;
 import mjp.server.responseData.ResponseData;
 
 /**
- *
- * @author twiki
+ * Class for the SessionService responses.
+ * @author Joan Renau Valls
  */
 public class SessionServiceResponse extends ResponseData implements CrudResponse<SessionService> {
     String messageStatus;

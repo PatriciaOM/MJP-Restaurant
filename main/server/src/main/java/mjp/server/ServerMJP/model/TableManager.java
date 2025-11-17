@@ -27,8 +27,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * 
- * @author twiki
+ * Class for handling the requests and responses of the Table class. Just gets the deserialized request objects and generates the response objects that will be serialized and returned.
+ * @author Joan Renau Valls
  */
 @Component
 public class TableManager {
@@ -46,6 +46,11 @@ public class TableManager {
         this.sessionManager = sessionManager;
     }
     
+    /**
+     * Used to handle a create request
+     * @param info
+     * @return 
+     */
     public TableCreateResponse create(TableCreateInfo info){
         if (info.getSessionToken() == null || info.getTable() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -60,7 +65,12 @@ public class TableManager {
         return new TableCreateResponse(info.getTable());
     } 
     
-    
+    /**
+     * 
+     * Used to handle a get request
+     * @param info
+     * @return 
+     */
     public TableGetResponse get(TableGetInfo info){
         if (info.getSessionToken() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -89,14 +99,18 @@ public class TableManager {
         return response;
     }
         
-    public List<TableRestaurant> allTables() {
+    private List<TableRestaurant> allTables() {
         ArrayList<TableRestaurant> tables = new ArrayList();
         this.tableRepository.findAll().forEach(user -> {
             tables.add(user);
         });
         return tables;
       }
-    
+    /**
+     * Used to handle a delete request
+     * @param info
+     * @return 
+     */
     public TableDeleteResponse delete(TableDeleteInfo info){
         if (info.getSessionToken() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -112,6 +126,11 @@ public class TableManager {
 //        throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT);
     } 
     
+    /**
+     * Used to handle a update request
+     * @param info
+     * @return 
+     */
     public TableUpdateResponse update(TableUpdateInfo info){
         if (info.getSessionToken() == null || info.getTable() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -121,6 +140,11 @@ public class TableManager {
         return new TableUpdateResponse(table);
     } 
         
+    /** Returns the status of the tables
+     * 
+     * @param info
+     * @return 
+     */
     public TableStatusResponse status(TableStatusInfo info) {
         if (info.getTableId() != null)
             throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);

@@ -18,10 +18,16 @@ import mjp.server.queryData.InfoData;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls
  */
-public class DeleteInfo<ItemType> extends InfoData implements AuthorizedQueryInfo<ItemType> {    
+public class DeleteInfo<ItemType> extends InfoData implements AuthorizedQueryInfo<ItemType> {   
+    /**
+     * A valid session token for the endpoint being accessed
+     */
     public String sessionToken;
+    /**
+     * The id of the element to be deleted
+     */
     public ItemType id;
     
      

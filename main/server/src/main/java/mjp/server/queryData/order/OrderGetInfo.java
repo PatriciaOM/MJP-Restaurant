@@ -11,19 +11,22 @@ import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.InfoData;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an Order get request
+ * @author Joan Renau Valls
  */
 public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> {    
-
-
-
+    /**
+     * Represents the different search methods for this endpoint.
+     */
     public enum SearchType{
         ALL,
         BY_ID,
         BY_SESSION_SERVICE
     }
     
+    /**
+     * A valid session token with the required permissions.
+     */
     private String sessionToken;
     private Order order;
     private SearchType searchType;

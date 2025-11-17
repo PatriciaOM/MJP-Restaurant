@@ -7,9 +7,10 @@ package mjp.server.responseData.dish;
 import java.util.List;
 import mjp.server.ServerMJP.database.Dish;
 
+
 /**
- *
- * @author twiki
+ * Class for the Dish get responses.
+ * @author Joan Renau Valls
  */
 public class DishGetResponse extends DishResponse{
     

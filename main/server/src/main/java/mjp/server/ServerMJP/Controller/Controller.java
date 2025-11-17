@@ -167,6 +167,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
      
+    /**
+     * This endpoint handles a user creation request.
+     * 
+     * @param user contains the request information
+     * @return 
+     */
     @PostMapping("user/create")
     public String userCreate(@RequestBody UserCreateInfo user){
 //        this.log.info(String.format("POST user/create (%s)", this.gson.toJson(user)));
@@ -176,6 +182,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a user get request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("user/get")
     public String userGet(@RequestBody UserGetInfo info){
         System.out.println(String.format("POST user/get (%s)", this.gson.toJson(info)));
@@ -183,6 +195,12 @@ public class Controller {
         return this.gson.toJson(response);
     }  
     
+    /**
+     * This endpoint handles a user delete request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("user/delete")
     public String userDelete(@RequestBody UserDeleteInfo info){
         System.out.println(String.format("POST user/delete (%s)", this.gson.toJson(info)));
@@ -190,6 +208,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a user update request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("user/update")
     public String userUpdate(@RequestBody UserUpdateInfo info){
         System.out.println(String.format("POST user/update (%s)", this.gson.toJson(info)));
@@ -199,6 +223,12 @@ public class Controller {
         
     }
     
+    /**
+     * This endpoint handles a table create request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("table/create")
     public String tableCreate(@RequestBody TableCreateInfo info){
         System.out.println(String.format("POST table/create(%s)", this.gson.toJson(info)));
@@ -206,6 +236,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
      
+    /**
+     * This endpoint handles a table get request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("table/get")
     public String tableGet(@RequestBody TableGetInfo info){
         System.out.println(String.format("POST table/get(%s)", this.gson.toJson(info)));
@@ -213,6 +249,12 @@ public class Controller {
         return this.gson.toJson(response);
     } 
     
+    /**
+     * This endpoint handles a table delete request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("table/delete")
     public String tableDelete(@RequestBody TableDeleteInfo info){
         System.out.println(String.format("POST table/delete(%s)", this.gson.toJson(info)));
@@ -220,42 +262,78 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a table update request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("table/update")
     public String tableUpdate(@RequestBody TableUpdateInfo info){
         System.out.println(String.format("POST table/update(%s)", this.gson.toJson(info)));
         TableUpdateResponse response = this.tableManager.update(info);
         return this.gson.toJson(response);
     }
-    
-      
+          
+    /**
+     * This endpoint handles a dish create request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("dish/create")
     public String dishCreate(@RequestBody DishCreateInfo info){
         System.out.println(String.format("POST dish/create(%s)", this.gson.toJson(info)));
         DishCreateResponse response = this.dishManager.create(info, UserRole.ADMIN, new DishCreateResponse());
         return this.gson.toJson(response);
     }
-    
+      
+    /**
+     * This endpoint handles a dish get request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("dish/get")
     public String dishGet(@RequestBody DishGetInfo info){
         System.out.println(String.format("POST dish/get(%s)", this.gson.toJson(info)));
         DishGetResponse response = this.dishManager.get(info, new DishGetResponse());
         return this.gson.toJson(response);
     }
-    
+      
+    /**
+     * This endpoint handles a dish update request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("dish/update")
     public String dishUpdate(@RequestBody DishUpdateInfo info){
         System.out.println(String.format("POST dish/update(%s)", this.gson.toJson(info)));
         DishUpdateResponse response = this.dishManager.update(info, UserRole.ADMIN, new DishUpdateResponse());
         return this.gson.toJson(response);
     }
-    
+      
+    /**
+     * This endpoint handles a dish delete request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("dish/delete")
     public String dishDelete(@RequestBody DishDeleteInfo info){
         System.out.println(String.format("POST dish/delete(%s)", this.gson.toJson(info)));
         DishDeleteResponse response = this.dishManager.delete(info, UserRole.ADMIN, new DishDeleteResponse());
         return this.gson.toJson(response);
     }
-       
+      
+      
+    /**
+     * This endpoint handles a sessionService create request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("session-service/create")
     public String dishCreate(@RequestBody SessionServiceCreateInfo info){
         System.out.println(String.format("POST session-service/create(%s)", this.gson.toJson(info)));
@@ -263,6 +341,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a sessionService get request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("session-service/get")
     public String dishGet(@RequestBody SessionServiceGetInfo info){
         System.out.println(String.format("POST session-service/get(%s)", this.gson.toJson(info)));
@@ -270,6 +354,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a sessionService update request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("session-service/update")
     public String dishUpdate(@RequestBody SessionServiceUpdateInfo info){
         System.out.println(String.format("POST session-service/update(%s)", this.gson.toJson(info)));
@@ -277,6 +367,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a sessionService delete request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */
     @PostMapping("session-service/delete")
     public String dishDelete(@RequestBody SessionServiceDeleteInfo info){
         System.out.println(String.format("POST session-service/delete(%s)", this.gson.toJson(info)));
@@ -284,7 +380,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
-           
+    /**
+     * This endpoint handles a Order create request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */     
     @PostMapping("order/create")
     public String orderCreate(@RequestBody OrderCreateInfo info){
         System.out.println(String.format("POST order/create(%s)", this.gson.toJson(info)));
@@ -292,6 +393,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a Order get request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */     
     @PostMapping("order/get")
     public String orderGet(@RequestBody OrderGetInfo info){
         System.out.println(String.format("POST order/get(%s)", this.gson.toJson(info)));
@@ -299,6 +406,12 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a Order update request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */     
     @PostMapping("order/update")
     public String orderUpdate(@RequestBody OrderUpdateInfo info){
         System.out.println(String.format("POST order/update(%s)", this.gson.toJson(info)));
@@ -306,36 +419,66 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a Order delete request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */     
     @PostMapping("order/delete")
     public String orderDelete(@RequestBody OrderDeleteInfo info){
         System.out.println(String.format("POST order/delete(%s)", this.gson.toJson(info)));
         OrderDeleteResponse response = this.orderManager.delete(info, UserRole.ADMIN, new OrderDeleteResponse());
         return this.gson.toJson(response);
     }
-         
+        
+    /**
+     * This endpoint handles a OrderItem create request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */      
     @PostMapping("order-item/create")
-    public String orderCreate(@RequestBody OrderItemCreateInfo info){
+    public String orderItemCreate(@RequestBody OrderItemCreateInfo info){
         System.out.println(String.format("POST order-item/create(%s)", this.gson.toJson(info)));
         OrderItemCreateResponse response = this.orderItemManager.create(info, UserRole.ADMIN, new OrderItemCreateResponse());
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a OrderItem get request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */ 
     @PostMapping("order-item/get")
-    public String orderGet(@RequestBody OrderItemGetInfo info){
+    public String orderItemGet(@RequestBody OrderItemGetInfo info){
         System.out.println(String.format("POST order-item/get(%s)", this.gson.toJson(info)));
         OrderItemGetResponse response = this.orderItemManager.get(info, new OrderItemGetResponse());
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a OrderItem update request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */ 
     @PostMapping("order-item/update")
-    public String orderUpdate(@RequestBody OrderItemUpdateInfo info){
+    public String orderItemUpdate(@RequestBody OrderItemUpdateInfo info){
         System.out.println(String.format("POST order-item/update(%s)", this.gson.toJson(info)));
         OrderItemUpdateResponse response = this.orderItemManager.update(info, UserRole.ADMIN, new OrderItemUpdateResponse());
         return this.gson.toJson(response);
     }
     
+    /**
+     * This endpoint handles a OrderItem delete request.
+     * 
+     * @param info contains the request information
+     * @return 
+     */ 
     @PostMapping("order-item/delete")
-    public String orderDelete(@RequestBody OrderItemDeleteInfo info){
+    public String orderItemDelete(@RequestBody OrderItemDeleteInfo info){
         System.out.println(String.format("POST order-item/delete(%s)", this.gson.toJson(info)));
         OrderItemDeleteResponse response = this.orderItemManager.delete(info, UserRole.ADMIN, new OrderItemDeleteResponse());
         return this.gson.toJson(response);

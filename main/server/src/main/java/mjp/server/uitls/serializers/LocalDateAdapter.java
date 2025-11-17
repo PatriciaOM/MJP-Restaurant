@@ -13,8 +13,8 @@ import java.lang.reflect.Type;
 import java.time.LocalDate;
 
 /**
- *
- * @author twiki
+ * Class to allow Gson to serialize LocalDate
+ * @author Joan Renau Valls
  */
 public class LocalDateAdapter implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
     @Override

@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- *
- * @author twiki
+ * Repository for managing OrderItem table
+ * @author Joan Renau Valls
  */
 public interface OrderItemRepository extends CrudRepository<OrderItem, Long>{
     OrderItem findById(long id);

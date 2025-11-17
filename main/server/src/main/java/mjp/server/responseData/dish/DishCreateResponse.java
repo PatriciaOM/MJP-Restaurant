@@ -8,8 +8,8 @@ import java.util.List;
 import mjp.server.ServerMJP.database.Dish;
 
 /**
- *
- * @author twiki
+ * Class for the Dish create responses.
+ * @author Joan Renau Valls
  */
 public class DishCreateResponse extends DishResponse {
     

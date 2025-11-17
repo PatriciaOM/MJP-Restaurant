@@ -8,8 +8,8 @@ import java.util.List;
 import mjp.server.ServerMJP.database.User;
 
 /**
- *
- * @author twiki
+ * Class for the User delete responses.
+ * @author Joan Renau Valls
  */
 public class UserDeleteResponse {
     public String message="success";

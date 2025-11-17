@@ -4,20 +4,11 @@
  */
 package mjp.server.queryData.dish;
 
-import mjp.server.queryData.table.*;
-import mjp.server.queryData.user.*;
-import com.google.gson.Gson;
-import mjp.server.ServerMJP.database.Dish;
-import mjp.server.ServerMJP.database.TableRestaurant;
-import mjp.server.ServerMJP.database.User;
-import mjp.server.dataClasses.UserRole;
-import mjp.server.queryData.AuthorizedQueryInfo;
-import mjp.server.queryData.InfoData;
 import mjp.server.queryData.defaults.DeleteInfo;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of a dish delete request
+ * @author Joan Renau Valls
  */
 public class DishDeleteInfo extends DeleteInfo<Long> {    
    public DishDeleteInfo(){};

@@ -15,13 +15,16 @@ import mjp.server.dataClasses.UserRole;
 import mjp.server.dataClasses.UserShift;
 
 /**
- * Class that defines the User data to be stored in the database. 
- * 
+ * Class for defining the table of the User object and holding it's entries data.
  * @author Joan Renau Valls
  */
+
 @Entity
 @Table(name = "ApplicationUser")
 public class User {
+    /**
+     * The entry id.
+     */
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
@@ -39,17 +42,34 @@ public class User {
      */
     private UserRole role;
     
+    /**
+     * The user's name
+     */
     private String name;
     
+    /**
+     * The user's surname
+     */
     private String surname;
     
+    /**
+     * The user's shift
+     */
     private UserShift shift;
     
-//    private LocalDate startDate;
+    /**
+     * When the worker started on the restaurant.
+     */
     public LocalDate startDate;
     
+    /**
+     * When the worker finished on the restaurant.
+     */
     public LocalDate endDate;
     
+    /**
+     * When the worker dni.
+     */
     public String dni;
     
     

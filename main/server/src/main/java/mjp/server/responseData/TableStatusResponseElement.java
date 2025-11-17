@@ -5,12 +5,21 @@
 package mjp.server.responseData;
 
 /**
- *
- * @author twiki
+ * Used with TableStatusResponse, it will represent the information of one of the tables being returned.
+ * @author Joan Renau Valls
  */
-public class TableStatusResponseElement {
+public class TableStatusResponseElement { // TODO must return the number also
+    /**
+     * The table id
+     */
     private int     id;
+    /**
+     * The maximum amount of clients to sit on the table.
+     */
     private int     maxClients;
+    /**
+     * The current amount of clients to siting on the table.
+     */
     private int     clientsAmount;
     
     public TableStatusResponseElement(int id, int maxClients, int clientsAmount) {

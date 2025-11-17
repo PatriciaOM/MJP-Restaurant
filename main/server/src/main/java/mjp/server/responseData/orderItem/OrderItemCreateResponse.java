@@ -8,7 +8,7 @@ import java.util.List;
 import mjp.server.ServerMJP.database.OrderItem;
 
 /**
- *
+ * Class for the OrderItem create responses.
  * @author Joan Renau Valls
  */
 public class OrderItemCreateResponse extends OrderItemResponse {

@@ -4,13 +4,11 @@
  */
 package mjp.server.queryData.user;
 
-import com.google.gson.Gson;
 import mjp.server.ServerMJP.database.User;
-import mjp.server.dataClasses.UserRole;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an User create request
+ * @author Joan Renau Valls
  */
 public class UserCreateInfo extends User {
     

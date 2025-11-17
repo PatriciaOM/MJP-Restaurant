@@ -25,10 +25,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 
-
 /**
- *
- * @author twiki
+ * Class for handling the requests and responses of the User class. Just gets the deserialized request objects and generates the response objects that will be serialized and returned.
+ * @author Joan Renau Valls
  */
 @Component
 public class UserManager {
@@ -46,6 +45,11 @@ public class UserManager {
         this.mockData();
     }
     
+    /**
+     * Used to handle a create request
+     * @param info
+     * @return 
+     */
     public UserCreateResponse create(UserCreateInfo info) {
         System.out.println("Creating usere with credential sessionToken: " + info.getSessionToken());
         System.out.println("The user is: " + info.getUser());
@@ -59,6 +63,11 @@ public class UserManager {
         return new UserCreateResponse(info.getUser());
     }
     
+    /**
+     * Used to handle a get request
+     * @param info
+     * @return 
+     */
     public UserGetResponse get(UserGetInfo info){
         if (info.getSessionToken() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -84,7 +93,11 @@ public class UserManager {
         return new UserGetResponse(users);
 //        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
     }
-    
+    /**
+     * Used to handle a delete request
+     * @param info
+     * @return 
+     */
     public UserDeleteResponse delete(UserDeleteInfo info) {
         if (info.getSessionToken() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST); 
@@ -98,6 +111,11 @@ public class UserManager {
 //        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
     }
     
+    /**
+     * Used to handle a update request
+     * @param info
+     * @return 
+     */
     public UserUpdateResponse update(UserUpdateInfo info) {
         System.out.println("Updating usere with credential sessionToken: " + info.getSessionToken());
         System.out.println("The user is: " + info.getUser());
@@ -117,7 +135,7 @@ public class UserManager {
         
     }
     
-      public List<User> allUsers() {
+    private List<User> allUsers() {
         ArrayList<User> users = new ArrayList();
         this.userRepository.findAll().forEach(user -> {
             users.add(user);
@@ -125,12 +143,8 @@ public class UserManager {
         return users;
       }
 
-     // Method for handling the data of {@link mjp.server.ServerMJP.Controller.Controller#allusers} endpoint. See {@link Model}
-    /**
-     *
-     * @return
-     */
-    public String allUsersString() {
+
+    private String allUsersString() {
         ArrayList<User> users = new ArrayList();
         String result = "";
         this.userRepository.findAll().forEach(user -> {

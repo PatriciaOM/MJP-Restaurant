@@ -6,7 +6,7 @@ package mjp.server.dataClasses;
 
 /**
  * Data class used to specify the possible roles of a user.
- * @author twiki
+ * @author  Joan Renau Valls
  */
 public enum UserRole {
     USER ("user"),

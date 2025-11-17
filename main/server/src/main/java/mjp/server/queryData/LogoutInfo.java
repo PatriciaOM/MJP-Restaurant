@@ -9,6 +9,10 @@ package mjp.server.queryData;
  * @author Joan Renau Valls
  */
 public class LogoutInfo {
+    
+    /**
+     * A valid session token obtained by login
+     */
     String sessionToken;
     
     LogoutInfo(){};

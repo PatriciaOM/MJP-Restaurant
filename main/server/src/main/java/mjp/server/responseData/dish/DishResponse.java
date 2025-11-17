@@ -10,8 +10,8 @@ import mjp.server.responseData.CrudResponse;
 import mjp.server.responseData.ResponseData;
 
 /**
- *
- * @author twiki
+ * Class for the Dish responses.
+ * @author Joan Renau Valls
  */
 public class DishResponse extends ResponseData implements CrudResponse<Dish> {
     String messageStatus;

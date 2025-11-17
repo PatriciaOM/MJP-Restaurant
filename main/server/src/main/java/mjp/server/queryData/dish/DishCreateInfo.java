@@ -16,16 +16,10 @@ import mjp.server.queryData.InfoData;
 import mjp.server.queryData.defaults.CreateInfo;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of a dish create request
+ * @author Joan Renau Valls
  */
 public class DishCreateInfo extends CreateInfo<Dish>{    
-//    private String sessionToken;
-//    private Dish dish;
-//    
-//     
-//
-//   public DishCreateInfo(){};
     
     public DishCreateInfo() {
         super();
@@ -35,40 +29,4 @@ public class DishCreateInfo extends CreateInfo<Dish>{
         super(sessionToken, dish);
     }  
     
-//   
-//    public DishCreateInfo(String sessionToken, Dish dish) {
-//        this.sessionToken = sessionToken;
-//        this.dish = dish;
-//    }  
-//        
-//    public DishCreateInfo(DishCreateInfo orig) {
-//        this.sessionToken = orig.sessionToken;
-//        this.dish = orig.getDish();
-//    }
-//           
-//    public void setSessionToken(String val) {
-//        this.sessionToken = val;
-//    }
-//    
-//    public String getSessionToken() {
-//        return this.sessionToken;
-//    }
-//
-//    public Dish getDish() {
-//        return dish;
-//    }
-//
-//    public void setDish(Dish dish) {
-//        this.dish = dish;
-//    }
-//
-//    @Override
-//    public void setMessageData(Dish requestItem) {
-//        setDish(requestItem);
-//    }
-//
-//    @Override
-//    public Dish getMessageData() {
-//        return this.getDish();
-//    }
 }

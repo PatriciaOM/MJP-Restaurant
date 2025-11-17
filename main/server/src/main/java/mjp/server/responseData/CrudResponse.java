@@ -7,9 +7,9 @@ package mjp.server.responseData;
 import java.util.List;
 
 /**
- *
- * @author twiki
- * @param <DataType>
+ * This holds the data returned on a request of create get update or delete
+ * @author Joan Renau Valls
+ * @param <DataType> The type of the data being returned primarily is an instance of a class defining a database table
  */
 public interface CrudResponse <DataType>{
     public void setMessageStatus(String messageStatus);

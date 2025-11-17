@@ -6,7 +6,7 @@ package testUtils;
 
 /**
  *
- * @author twiki
+ * @author  Joan Renau Valls
  */
 public abstract class  DataEntry<IdType> {
     abstract IdType getId();

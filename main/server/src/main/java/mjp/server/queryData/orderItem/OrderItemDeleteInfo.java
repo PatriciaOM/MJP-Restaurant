@@ -7,8 +7,8 @@ package mjp.server.queryData.orderItem;
 import mjp.server.queryData.defaults.DeleteInfo;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an OrderItem delete request
+ * @author Joan Renau Valls
  */
 public class OrderItemDeleteInfo extends DeleteInfo<Long> {    
    public OrderItemDeleteInfo(){};

@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- *
- * @author twiki
+ * Repository for managing TableRestaurant table
+ * @author Joan Renau Valls
  */
 public interface TableRestaurantRepository extends CrudRepository<TableRestaurant, Long>{
     TableRestaurant findById(long id);

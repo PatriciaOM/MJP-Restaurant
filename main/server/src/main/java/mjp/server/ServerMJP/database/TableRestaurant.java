@@ -11,21 +11,32 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- *
- * @author twiki
- */
 
+/**
+ * Class for defining the table of the Dish object and holding it's entries data.
+ * Contains the information of the restaurant tables.
+ * @author Joan Renau Valls
+ */
 @Entity
 @Table(name = "RestaurantTable")
 public class TableRestaurant {
+    /**
+     * The entry id.
+     */
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     
+    /**
+     * The table number used by the waiters to identify them. Can be changed depending on the restaurant needs.
+     */
     @Column(unique = true, nullable = false)
+    
     private int num;
     
+    /**
+     * Maximum number of guests on the table.
+     */
     @Column(nullable = false)
     private int maxGuests;
     

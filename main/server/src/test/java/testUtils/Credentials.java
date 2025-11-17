@@ -6,7 +6,7 @@ package testUtils;
 
 /**
  *
- * @author twiki
+ * @author  Joan Renau Valls
  */
 public class Credentials {
     String username;

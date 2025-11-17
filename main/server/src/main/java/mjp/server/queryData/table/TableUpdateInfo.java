@@ -10,9 +10,10 @@ import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 
+
 /**
- *
- * @author twiki
+ * Class for holding the information of a Table update request
+ * @author Joan Renau Valls
  */
 public class TableUpdateInfo implements AuthorizedQueryInfo<TableRestaurant> {
     

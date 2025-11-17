@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls
  */
 public class TestUtils {
 //    private final String RESET = "\033[0m";

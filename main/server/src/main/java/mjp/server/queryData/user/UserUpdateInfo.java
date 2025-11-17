@@ -8,8 +8,8 @@ import mjp.server.ServerMJP.database.User;
 import mjp.server.dataClasses.UserRole;
 
 /**
- *
- * @author twiki
+ * Class for holding the information of an User delete request
+ * @author Joan Renau Valls
  */
 public class UserUpdateInfo extends User {
     

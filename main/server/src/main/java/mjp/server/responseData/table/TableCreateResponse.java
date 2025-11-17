@@ -9,8 +9,8 @@ import mjp.server.responseData.user.*;
 import mjp.server.ServerMJP.database.User;
 
 /**
- *
- * @author twiki
+ * Class for the table create responses.
+ * @author Joan Renau Valls
  */
 public class TableCreateResponse {
     public String message="success";
