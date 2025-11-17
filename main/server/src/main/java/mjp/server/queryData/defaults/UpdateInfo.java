@@ -10,7 +10,7 @@ import mjp.server.queryData.InfoData;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls 
  */
 public class UpdateInfo<ItemType> extends InfoData implements AuthorizedQueryInfo<ItemType> {    
     /**

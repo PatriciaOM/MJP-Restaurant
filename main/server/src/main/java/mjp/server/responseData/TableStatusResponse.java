@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 
 /**
- * returns a resume of the different the current status of the tables
+ * returns a resume of the different the current status of the tables.
  * @author Joan Renau Valls
  */
 public class TableStatusResponse {

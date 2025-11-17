@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import mjp.server.ServerMJP.database.Dish.DishCategory;
 import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.orderItem.OrderItemCreateInfo;
@@ -70,25 +71,71 @@ public class OrderItemManagerTest extends TestDefaultCrud<
     
     public String getResourceUri() {return this.resourceUri;}
     
-    static OrderItem initialSessionService = new OrderItem(
+    static OrderItem initialOrderItem = new OrderItem(
+            1L,
+            1L,
+            3,
+            5.3f,
+            "Les nostres Braves",
+            "Nomes per valents",
+            DishCategory.APPETIZER
     );
       
-    static OrderItem mockSessionService1 = new OrderItem(
+    static OrderItem mockOrderItem1 = new OrderItem(
+            1L,
+            2L,
+            1,
+            5.3f,
+            "Braves",
+            "El classic",
+            DishCategory.APPETIZER
     );    
     
-    static OrderItem mockSessionService2 = new OrderItem(
+    static OrderItem mockOrderItem2 = new OrderItem(
+            1L,
+            3L,
+            1,
+            5.3f,
+            "Les nostres Braves",
+            "Nomes per valents",
+            DishCategory.APPETIZER
+    ); 
+    
+    static OrderItem mockOrderItem3 = new OrderItem(
+            1L,
+            4L,
+            1,
+            5.3f,
+            "Arros amb llet",
+            "y canyella",
+            DishCategory.DESSERT
     );  
     
     static OrderItem mockSessionService3 = new OrderItem(
     );
     
     
-    List<OrderItem> allItems = List.of(initialSessionService, mockSessionService1, mockSessionService2, mockSessionService3);
+    List<OrderItem> allItems = List.of(initialOrderItem, mockOrderItem1, mockOrderItem2, mockOrderItem3);
     
-    static OrderItem noExsistingSessionService = new OrderItem(
+    static OrderItem noExsistingOrderItem = new OrderItem(
+            5000L,
+            1L,
+            4L,
+            1,
+            5.3f,
+            "Aigua",
+            "Wue fa la vista clara",
+            DishCategory.DRINK
     );
     
     static OrderItem updatedSessionService = new OrderItem(
+            1L,
+            1L,
+            3,
+            500.3f,
+            "Les nostres Braves",
+            "Nomes per valents",
+            DishCategory.APPETIZER
     );
         
     @Override
@@ -104,7 +151,7 @@ public class OrderItemManagerTest extends TestDefaultCrud<
 
     @Override
     protected OrderItem getInitialItem() {
-        return initialSessionService;
+        return initialOrderItem;
     }
 
     @Override
@@ -119,7 +166,7 @@ public class OrderItemManagerTest extends TestDefaultCrud<
     
     @Override
     protected OrderItem getNoExistingItem() {
-        return noExsistingSessionService;
+        return noExsistingOrderItem;
     }  
     
     @Override

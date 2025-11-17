@@ -29,7 +29,7 @@ import org.springframework.http.ResponseEntity;
 
 /**
  *
- * @author twiki
+ * @author  Joan Renau Valls
  */
 public abstract class TestDefault {
 //    protected class Credentials {

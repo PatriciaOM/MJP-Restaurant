@@ -6,7 +6,7 @@ package mjp.server.ServerMJP;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls
  */
 public class Jsonable {
     public String sdaf;

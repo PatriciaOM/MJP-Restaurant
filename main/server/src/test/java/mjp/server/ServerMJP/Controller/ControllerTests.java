@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  *
- * @author twiki
+ * @author  Joan Renau Valls
  */
 public class ControllerTests {
     	@Test

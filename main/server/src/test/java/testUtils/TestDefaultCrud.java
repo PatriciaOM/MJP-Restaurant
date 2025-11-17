@@ -24,7 +24,7 @@ import static testUtils.TestDefault.printTestName;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls
  */
 public abstract class TestDefaultCrud<
         DatabaseIdType,

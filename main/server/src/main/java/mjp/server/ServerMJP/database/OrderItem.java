@@ -32,6 +32,10 @@ public class OrderItem implements DatabaseEntry<Long> {
      */
     private Long idOrder;
     /**
+     * References the Order this item belongs to.
+     */
+    private Long idDish;
+    /**
      * The amount the client has asked for.
      */
     private int amount;
@@ -39,6 +43,10 @@ public class OrderItem implements DatabaseEntry<Long> {
     * The price that will have on unit. It is the Dish.price at the moment of creation.
     */
     private float price;
+    /**
+    * The dish name. It is the Dish.price at the moment of creation.
+    */
+    private String name;
     /**
     * The dish description. It is the Dish.price at the moment of creation.
     */
@@ -53,24 +61,36 @@ public class OrderItem implements DatabaseEntry<Long> {
     public OrderItem() {
     }
     
-    public OrderItem(Long idOrder, int amount, float price, String description, DishCategory category){
+    public OrderItem(Long idOrder, Long idDish,int amount, float price, String name, String description, DishCategory category){
         this.idOrder = idOrder;
+        this.idDish = idDish;
         this.amount = amount;
         this.price = price;
+        this.name = name;
         this.description = description;
         this.category = category;
     };
 
-    public OrderItem(Long id, Long idOrder, int amount, float price, String description, DishCategory category) {
+    public OrderItem(Long id, Long idOrder, Long idDish, int amount, float price, String name, String description, DishCategory category) {
         this.id = id;
         this.idOrder = idOrder;
+        this.idDish = idDish;
         this.amount = amount;
         this.price = price;
+        this.name = name;
         this.description = description;
         this.category = category;
     }
     
-    public OrderItem(OrderItem orig) {
+    public OrderItem(OrderItem orig) { 
+        this.id = orig.id;
+        this.idDish = orig.idDish;
+        this.idOrder = orig.idOrder;
+        this.amount = orig.amount;
+        this.price = orig.price;
+        this.name = orig.name;
+        this.description = orig.description;
+        this.category = orig.category;
     }
 
     @Override
@@ -81,6 +101,62 @@ public class OrderItem implements DatabaseEntry<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setIdOrder(Long idOrder) {
+        this.idOrder = idOrder;
+    }
+
+    public void setIdDish(Long idDish) {
+        this.idDish = idDish;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCategory(DishCategory category) {
+        this.category = category;
+    }
+
+    public Long getIdOrder() {
+        return idOrder;
+    }
+
+    public Long getIdDish() {
+        return idDish;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public DishCategory getCategory() {
+        return category;
     }
 
 

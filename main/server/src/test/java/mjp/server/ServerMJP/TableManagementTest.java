@@ -21,7 +21,6 @@ import mjp.server.responseData.table.TableGetResponse;
 import mjp.server.responseData.table.TableUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -39,7 +38,7 @@ import testUtils.TestDefault;
 
 /**
  *
- * @author twiki
+ * @author  Joan Renau Valls
  */
 
 

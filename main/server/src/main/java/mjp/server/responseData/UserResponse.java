@@ -11,7 +11,7 @@ import mjp.server.dataClasses.UserRole;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls
  */
 
 public class UserResponse {
@@ -43,31 +43,3 @@ public class UserResponse {
             
 }
 
-//public class UnknownUserResponse {
-//    public boolean logged;
-//    Gson jsonConverter;
-//    
-//    
-//    public String toJson(){
-//        java.lang.reflect.Type type = new TypeToken<UnknownUserResponse>(){}.getType();
-//        return this.jsonConverter.toJson(this, type);
-//    }
-//    
-//    public UnknownUserResponse() {
-//        this.jsonConverter = new Gson();
-//        
-//    }
-//    public UnknownUserResponse(boolean logged) {
-//        this.jsonConverter = new Gson();
-//        this.logged = logged;
-//    }
-//    
-//    public void setLogged(boolean logged){
-//        this.logged = logged;
-//    }
-//    
-//    public boolean getLogged(){
-//        return this.logged;
-//    }
-//    
-//}

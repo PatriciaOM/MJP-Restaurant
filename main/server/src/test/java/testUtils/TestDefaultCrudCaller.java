@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  *
- * @author twiki
+ * @author Joan Renau Valls
  */
 public abstract class TestDefaultCrudCaller extends TestDefaultCrud {
     
