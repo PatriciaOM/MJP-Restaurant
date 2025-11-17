@@ -1,0 +1,137 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package mjp.server.ServerMJP;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import mjp.server.ServerMJP.database.TableRestaurant;
+import mjp.server.ServerMJP.database.User;
+import mjp.server.dataClasses.UserRole;
+import mjp.server.queryData.TableStatusInfo;
+import mjp.server.queryData.table.TableCreateInfo;
+import mjp.server.queryData.table.TableDeleteInfo;
+import mjp.server.queryData.table.TableGetInfo;
+import mjp.server.queryData.table.TableUpdateInfo;
+import mjp.server.responseData.TableStatusResponse;
+import mjp.server.responseData.TableStatusResponseElement;
+import mjp.server.responseData.table.TableCreateResponse;
+import mjp.server.responseData.table.TableGetResponse;
+import mjp.server.responseData.table.TableUpdateResponse;
+import mjp.server.uitls.serializers.LocalDateAdapter;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import testUtils.TestDefault;
+
+/**
+ *
+ * @author  Joan Renau Valls
+ */
+
+
+@ExtendWith(OutputCaptureExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class TableManagementStatusTest extends TestDefault {
+    private static String userSessionToken;
+    private static String adminSessionToken;
+    private static final TableRestaurant initialTable = new TableRestaurant(10, 4);
+    private static final TableRestaurant mockTable1 = new TableRestaurant(5, 2);
+    private static final TableRestaurant mockTable2 = new TableRestaurant(4, 6);
+    private static final List<TableRestaurant> allTables = List.of(initialTable, mockTable1, mockTable2);
+    private static final TableRestaurant updatedTable = new TableRestaurant(10, 2);
+    private static final long noExistingId = 50000;
+    Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
+    
+    
+    @LocalServerPort
+    private int port;
+    public int getPort() { return this.port; }
+    
+    @Autowired
+    private TestRestTemplate restTemplate;
+    public TestRestTemplate getRestTemplate() { return this.restTemplate; }
+    
+    TableRestaurant getTableByIdFromAllTables(Long id) {
+        for(TableRestaurant table : allTables){
+            if (Objects.equals(table.getId(), id))
+                return table;
+        }
+        return null;
+    }
+    
+    @Test
+    @Order(001)
+    void setup(){
+        printTestName("setup");
+        userSessionToken = this.login("Twiki", "Tuki");
+        adminSessionToken = this.login("Ping", "Pong");
+        System.out.println("usersSessionToken=" + userSessionToken);
+        System.out.println("adminSessionToken=" + adminSessionToken);
+        User user = this.getUserBySessionToken(userSessionToken);
+        User admin = this.getUserBySessionToken(adminSessionToken);
+        System.out.println("User user to json: " + gson.toJson(user));
+        System.out.println("Admin user to json: " + gson.toJson(admin));
+        assertThat(user.getRole()).isEqualTo(UserRole.USER);
+        assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
+        
+        
+    }
+    
+    @Test
+    @Order(002)
+    void createTableTwice(){
+//        printTestName("createTable");
+//        String url = makeUrl("/table/create");
+//        for (TableRestaurant table : allTables){
+//            TableCreateInfo info = new TableCreateInfo(adminSessionToken, table);
+//
+//            ResponseEntity<String> response = makePostRequest(url, info);
+//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//            TableCreateResponse responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
+//            assertThat(responseObject.getMessage()).isEqualTo("success");
+//            TableRestaurant tableResponse = responseObject.getTable();
+//
+//            table.setId(tableResponse.getId());
+//            assertThat(gson.toJson(tableResponse)).isEqualTo(gson.toJson(table));
+//
+//            response = makePostRequest(url, info);
+//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
+//        }
+//        updatedTable.setId(initialTable.getId());
+    }
+    
+    
+    @Test
+    @Order(100)
+    void TableStatus(){
+//        printTestName("TableStatus");
+//        TableStatusInfo request = new TableStatusInfo(adminSessionToken, "0");
+//        ResponseEntity<String> response = makePostRequest("/table/status", request);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        TableStatusResponse responseObject = gson.fromJson(response.getBody(), TableStatusResponse.class);
+//        
+//        for (TableStatusResponseElement table: responseObject.getTables()){
+//            TableRestaurant origTable = getTableByIdFromAllTables(table.getId());
+//            assertThat(table.getMaxClients()).isEqualTo(origTable.getMaxGuests());
+//        }
+    }
+    
+}

@@ -8,15 +8,19 @@ package mjp.server.queryData;
  * Endpoint that returns the current status of the tables.
  * @author Joan Renau Valls
  */
-public class TableStatusInfo implements AuthorizedQueryInfo{
+public class TableStatusInfo{
     /**
      * A valid session token obtained by login
      */
-    private String sessionToken;
+    public String sessionToken;
     /**
      * The id of the table to get info for.
      */
-    private String tableId;
+    public String tableId;
+      
+    public TableStatusInfo(String sessionToken) {
+        this.sessionToken = sessionToken;
+    }
     
     public TableStatusInfo(String sessionToken, String tableId) {
         this.sessionToken = sessionToken;
@@ -39,15 +43,15 @@ public class TableStatusInfo implements AuthorizedQueryInfo{
         return this.tableId;
     }
 
-
-    @Override
-    public void setMessageData(Object requestItem) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Object getMessageData() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+//
+//    @Override
+//    public void setMessageData(Object requestItem) {
+//            this.setTableId((String) requestItem);
+//    }
+//
+//    @Override
+//    public Object getMessageData() {
+//        return this.getTableId();
+//    }
     
 }

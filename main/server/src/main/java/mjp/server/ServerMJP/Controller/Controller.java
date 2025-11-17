@@ -484,20 +484,23 @@ public class Controller {
         return this.gson.toJson(response);
     }
     
-       
-    
-    
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
     
     /**
      *  This endpoint returns a list of all users in the database. It is just for development purposes.
      * @return returns a list with all the users.
      */
     @PostMapping("table-status")
+    public String tableStatuss(@RequestBody TableStatusInfo info) { 
+        TableStatusResponse tableStatus = this.tableManager.status(info);
+        return this.gson.toJson(tableStatus);
+    }
+    
+    @PostMapping("table/status")
     public String tableStatus(@RequestBody TableStatusInfo info) { 
+        System.out.println(String.format("POST order-item/delete(%s)", this.gson.toJson(info)));
         TableStatusResponse tableStatus = this.tableManager.status(info);
         return this.gson.toJson(tableStatus);
     }

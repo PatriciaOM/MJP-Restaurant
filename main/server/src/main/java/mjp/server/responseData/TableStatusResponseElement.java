@@ -12,7 +12,7 @@ public class TableStatusResponseElement { // TODO must return the number also
     /**
      * The table id
      */
-    private int     id;
+    private Long     id;
     /**
      * The maximum amount of clients to sit on the table.
      */
@@ -22,14 +22,14 @@ public class TableStatusResponseElement { // TODO must return the number also
      */
     private int     clientsAmount;
     
-    public TableStatusResponseElement(int id, int maxClients, int clientsAmount) {
+    public TableStatusResponseElement(Long id, int maxClients, int clientsAmount) {
         this.id = id;
         this.maxClients = maxClients;
         this.clientsAmount = clientsAmount;
     }
     
-    public void setId(int value) { this.id = value; }
-    public int getId() { return this.id; }
+    public void setId(Long value) { this.id = value; }
+    public Long getId() { return this.id; }
     
     public void setMaxClients(int value) { this.maxClients = value; }  
     public int getMaxClients() { return this.maxClients; }  
