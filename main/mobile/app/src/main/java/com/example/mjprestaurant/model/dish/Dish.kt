@@ -17,7 +17,7 @@ package com.example.mjprestaurant.model.dish
  * @author Martin Muñoz Pozuelo
  */
 data class Dish(
-    val id: Int?,
+    val id: Long?,
     val name: String,
     val description: String,
     val price: Float,

@@ -50,7 +50,7 @@ fun DishListScreen(
     loginViewModel: LoginViewModel,
     esAdmin: Boolean = false,
     onNewDish: () -> Unit = {},
-    onEditDish: (Int) -> Unit = {},
+    onEditDish: (Long) -> Unit = {},
     onGoBack: () -> Unit = {}
 ) {
     // Estats observats del ViewModel
@@ -217,8 +217,8 @@ private fun FiltersSection(
 private fun DishesListSection(
     dishes: List<Dish>,
     isAdmin: Boolean,
-    onEditDish: (Int) -> Unit,
-    onDeleteDish: (Int) -> Unit,
+    onEditDish: (Long) -> Unit,
+    onDeleteDish: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var dishToDelete by remember { mutableStateOf<Dish?>(null) }
@@ -234,7 +234,7 @@ private fun DishesListSection(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        dishToDelete?.id?.let { onDeleteDish(it) }
+                        dishToDelete?.id?.let { onDeleteDish(it) }  // it és Long
                         dishToDelete = null
                     }
                 ) {

@@ -1,5 +1,6 @@
 package com.example.mjprestaurant.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,9 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mjprestaurant.model.table.TableStatus
 import com.example.mjprestaurant.viewmodel.LoginViewModel
 import com.example.mjprestaurant.viewmodel.TablesViewModel
@@ -25,7 +24,7 @@ import com.example.mjprestaurant.viewmodel.TablesViewModel
  * Aquesta pantalla permet als cambrers:
  * - Veure totes les taules i el seu estat (lliure/ocupada)
  * - Veure la capacitat i comensals actuals de cada taula
- * - Seleccionar taules lliures per a obrir-ne sessió
+ * - Seleccionar una taula per veure'n el detall i gestionar la sessió
  * - Actualitzar manualment l'estat de les taules
  * - Accedir a la gestió de plats (només administradors)
  *
@@ -33,9 +32,11 @@ import com.example.mjprestaurant.viewmodel.TablesViewModel
  * @param loginViewModel ViewModel d'autenticació per a obtenir el token i rol
  * @param onLogout Callback executat quan l'usuari tanca sessió
  * @param onGestioPlats Callback executat quan es vol accedir a la gestió de plats
+ * @param onTableClick Callback executat quan es selecciona una taula específica (passant el seu ID)
  *
  * @see TablesViewModel
  * @see LoginViewModel
+ * @see TableStatus
  *
  * @author Martin Muñoz Pozuelo
  */
@@ -45,7 +46,8 @@ fun TablesScreen(
     tablesViewModel: TablesViewModel,
     loginViewModel: LoginViewModel,
     onLogout: () -> Unit = {},
-    onGestioPlats: () -> Unit = {}
+    onGestioPlats: () -> Unit = {},
+    onTableClick: (Long) -> Unit = {}
 ) {
     val taules by tablesViewModel.taules
     val isLoading by tablesViewModel.isLoading
@@ -125,7 +127,10 @@ fun TablesScreen(
                 else -> {
                     LazyColumn {
                         items(taules) { taula ->
-                            TaulaItemSimple(taula = taula)
+                            TaulaItemSimple(
+                                taula = taula,
+                                onClick = { onTableClick(taula.id) }
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
@@ -139,13 +144,19 @@ fun TablesScreen(
  * Targeta que mostra la informació d'una taula individual.
  *
  * @param taula Estat de la taula a mostrar
+ * @param onClick Callback executat al prèmer la taula
  *
  * @see TableStatus
  */
 @Composable
-fun TaulaItemSimple(taula: TableStatus) {
+fun TaulaItemSimple(
+    taula: TableStatus,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick), // Fem la targeta clicable
         colors = CardDefaults.cardColors(
             containerColor = if (taula.estaOcupada()) {
                 MaterialTheme.colorScheme.errorContainer

@@ -64,57 +64,91 @@ sealed class Screen(val route: String) {
      * - Editar plats existents
      * - Validar les dades abans de desar
      *
+     * Utilitza dues rutes separades per a una navegació més clara:
+     * - Ruta sense arguments per a crear nous plats
+     * - Ruta amb argument dishId per a editar plats existents
+     *
      * @see DishFormScreen
      */
     object DishForm : Screen("dish_form") {
 
         /**
-         * Argument per identificar el plat a editar
-         * -1 indica que es vol crear un nou plat
+         * Nom de l'argument per identificar el plat a editar
+         * S'utilitza a la ruta d'edició per a passar l'ID del plat
          */
         const val dishIdArg = "dishId"
 
         /**
-         * Ruta base amb argument per a la navegació
+         * Ruta per crear nous plats
+         * No requereix arguments, s'utilitza quan es vol afegir un plat nou
          */
-        val routeWithArgs = "${route}/{$dishIdArg}"
+        val routeCreate = route
 
         /**
-         * Llista d'arguments per a la navegació
-         * Defineix el tipus i valors per defecte dels paràmetres
+         * Ruta per editar plats existents
+         * Inclou l'argument dishId com a paràmetre de ruta
+         */
+        val routeEdit = "${route}/{$dishIdArg}"
+
+        /**
+         * Llista d'arguments per a la navegació d'edició
+         * Defineix el tipus i valors per defecte del paràmetre dishId
          */
         val arguments = listOf(
             navArgument(dishIdArg) {
-                type = NavType.IntType
+                type = NavType.LongType
                 nullable = false
-                defaultValue = -1  // Utilitzem -1 per indicar "nou plat"
+                defaultValue = 0L
             }
         )
 
         /**
-         * Crea la ruta amb l'ID del plat
+         * Crea la ruta per a crear un nou plat
          *
-         * @param dishId ID del plat a editar (null o -1 per crear nou)
-         * @return Ruta completa amb l'argument
+         * @return Ruta sense arguments per a la creació de plats
          */
-        fun createRoute(dishId: Int?): String {
-            return if (dishId != null && dishId != -1) {
-                "${route}/$dishId"
-            } else {
-                route
-            }
-        }
+        fun createRoute(): String = routeCreate
+
+        /**
+         * Crea la ruta per a editar un plat existent
+         *
+         * @param dishId ID del plat a editar
+         * @return Ruta amb l'argument dishId per a l'edició
+         */
+        fun editRoute(dishId: Long): String = "${route}/$dishId"
 
         /**
          * Extrau l'ID del plat des de la ruta de navegació
          *
-         * @param dishIdString ID del plat com a string
-         * @return ID del plat o null si és un plat nou
+         * @param navBackStackEntry Entrada de la pila de navegació
+         * @return ID del plat o null si no s'ha proporcionat (cas de creació)
          */
-        fun getDishId(dishIdString: String?): Int? {
-            val id = dishIdString?.toIntOrNull()
-            return if (id == -1) null else id
+        fun getDishId(navBackStackEntry: androidx.navigation.NavBackStackEntry): Long? {
+            return navBackStackEntry.arguments?.getLong(dishIdArg)?.takeIf { it != 0L }
         }
+    }
+
+    /**
+     * Pantalla de detall d'una taula específica.
+     *
+     * Permet:
+     * - Obrir taula (crear sessió) si està lliure.
+     * - Veure la comanda actual si està ocupada.
+     * - Afegir plats a la comanda.
+     */
+    object TableDetail : Screen("table_detail") {
+        const val tableIdArg = "tableId"
+
+        val routeWithArgs = "$route/{$tableIdArg}"
+
+        val arguments = listOf(
+            navArgument(tableIdArg) {
+                type = NavType.LongType
+                nullable = false
+            }
+        )
+
+        fun createRoute(tableId: Long): String = "$route/$tableId"
     }
 
     /**

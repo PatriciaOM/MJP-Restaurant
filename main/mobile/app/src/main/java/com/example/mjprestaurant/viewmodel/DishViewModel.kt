@@ -76,13 +76,13 @@ class DishViewModel(
     // Operacions CRUD
 
     /**
-     * Crea un nou dish al menú.
+     * Crea un nou plat al menú.
      */
-    fun createDish(token: String, dishRequest: DishRequest): Boolean {
+    fun createDish(token: String, dishRequest: DishRequest) {
         val validation = dishRequest.validate()
         if (validation is DishRequest.ValidationResult.Error) {
             errorMessage.value = validation.message
-            return false
+            return
         }
 
         viewModelScope.launch {
@@ -92,11 +92,11 @@ class DishViewModel(
             try {
                 // Convertir DishRequest a Dish per al servidor
                 val newDish = Dish(
-                    id = null,  // ← ENVIAR NULL para nuevos platos
+                    id = null,
                     name = dishRequest.name,
                     description = dishRequest.description,
                     price = dishRequest.price,
-                    category = dishRequest.dishCategory,  // Usar dishCategory del request
+                    category = dishRequest.dishCategory,
                     available = dishRequest.available
                 )
 
@@ -105,7 +105,7 @@ class DishViewModel(
                 if (response.isSuccessful) {
                     val dishResponse = response.body()
                     if (dishResponse != null && dishResponse.messageStatus.equals("success", ignoreCase = true)) {
-                        // Recarregar tots els plats per obtenir l'actualització
+                        // SOLUCIÓ: Recarregar tots els plats per assegurar consistència
                         loadDishes(token)
                     } else {
                         errorMessage.value = "Error creant plat: ${dishResponse?.messageStatus}"
@@ -119,19 +119,16 @@ class DishViewModel(
                 isLoading.value = false
             }
         }
-
-        return true
     }
 
-
     /**
-     * Actualitza un dish existent.
+     * Actualitza un plat existent.
      */
-    fun updateDish(token: String, dishId: Int, dishRequest: DishRequest): Boolean {
+    fun updateDish(token: String, dishId: Long, dishRequest: DishRequest) {
         val validation = dishRequest.validate()
         if (validation is DishRequest.ValidationResult.Error) {
             errorMessage.value = validation.message
-            return false
+            return
         }
 
         viewModelScope.launch {
@@ -141,11 +138,11 @@ class DishViewModel(
             try {
                 // Convertir DishRequest a Dish per al servidor
                 val updatedDish = Dish(
-                    id = dishId,  // Para actualizar, usar el ID existente
+                    id = dishId,
                     name = dishRequest.name,
                     description = dishRequest.description,
                     price = dishRequest.price,
-                    category = dishRequest.dishCategory,  // Usar dishCategory del request
+                    category = dishRequest.dishCategory,
                     available = dishRequest.available
                 )
 
@@ -169,20 +166,18 @@ class DishViewModel(
                 isLoading.value = false
             }
         }
-
-        return true
     }
 
     /**
-     * Elimina un dish del menú.
+     * Elimina un plat del menú.
      */
-    fun deleteDish(token: String, dishId: Int) {
+    fun deleteDish(token: String, dishId: Long) {
         viewModelScope.launch {
             isLoading.value = true
             errorMessage.value = null
 
             try {
-                val response = repository.deleteDish(token, dishId.toLong())
+                val response = repository.deleteDish(token, dishId)
 
                 if (response.isSuccessful) {
                     val dishResponse = response.body()
@@ -204,11 +199,10 @@ class DishViewModel(
         }
     }
 
-
     // Gestió de filtres i cerca
 
     /**
-     * Canvia la dishCategory del filtre actual.
+     * Canvia la categoria del filtre actual.
      */
     fun changeCategoryFilter(category: DishCategory?) {
         categoryFilter.value = category
@@ -249,14 +243,14 @@ class DishViewModel(
     // Gestió de selecció
 
     /**
-     * Selecciona un dish per a operacions d'edició o eliminació.
+     * Selecciona un plat per a operacions d'edició o eliminació.
      */
     fun selectDish(dish: Dish) {
         selectedDish.value = dish
     }
 
     /**
-     * Neteja la selecció actual de dish.
+     * Neteja la selecció actual de plat.
      */
     fun clearSelection() {
         selectedDish.value = null
