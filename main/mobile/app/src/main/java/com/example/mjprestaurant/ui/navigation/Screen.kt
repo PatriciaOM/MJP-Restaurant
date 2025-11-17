@@ -162,4 +162,17 @@ sealed class Screen(val route: String) {
      * @see PlaceholderScreen
      */
     object Placeholder : Screen("placeholder")
+
+    /**
+     * Pantalla de comanda (TPV visual).
+     */
+    object Order : Screen("order_screen") {
+        const val tableIdArg = "tableId"
+        val routeWithArgs = "$route/{$tableIdArg}"
+
+        // Arguments igual que TableDetail
+        val arguments = TableDetail.arguments // Reutilitzem perquè és el mateix argument
+
+        fun createRoute(tableId: Long): String = "$route/$tableId"
+    }
 }

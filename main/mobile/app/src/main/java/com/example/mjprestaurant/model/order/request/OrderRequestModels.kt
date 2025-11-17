@@ -4,6 +4,7 @@ import com.example.mjprestaurant.model.order.Order
 
 /**
  * Petició per crear una nova comanda.
+ * Replica l'estructura de OrderCreateInfo del servidor.
  */
 data class OrderCreateInfo(
     val sessionToken: String,
@@ -12,7 +13,9 @@ data class OrderCreateInfo(
 
 /**
  * Petició per obtenir comandes.
- * Inclou BY_SESSION_SERVICE per trobar la comanda d'una taula.
+ * Replica l'estructura de OrderGetInfo del servidor.
+ *
+ * IMPORTANT: Utilitzarem BY_SESSION_SERVICE per obtenir la comanda d'una taula.
  */
 data class OrderGetInfo(
     val sessionToken: String,
@@ -22,12 +25,15 @@ data class OrderGetInfo(
     enum class SearchType {
         ALL,
         BY_ID,
-        BY_SESSION_SERVICE
+        BY_SESSION_SERVICE // Cerca per ID de sessió
     }
 }
 
 /**
- * Petició per actualitzar una comanda.
+ * Petició per actualitzar una comanda (capçalera).
+ * Replica l'estructura de OrderUpdateInfo del servidor.
+ * * @property sessionToken Token de sessió.
+ * @property item L'objecte Order amb les dades actualitzades.
  */
 data class OrderUpdateInfo(
     val sessionToken: String,
@@ -36,6 +42,10 @@ data class OrderUpdateInfo(
 
 /**
  * Petició per eliminar una comanda.
+ * Replica l'estructura de OrderDeleteInfo del servidor.
+ *
+ * @property sessionToken Token de sessió.
+ * @property id ID de la comanda a eliminar.
  */
 data class OrderDeleteInfo(
     val sessionToken: String,

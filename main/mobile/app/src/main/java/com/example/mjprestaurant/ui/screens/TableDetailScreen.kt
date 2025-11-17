@@ -2,7 +2,6 @@ package com.example.mjprestaurant.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -12,64 +11,60 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.mjprestaurant.model.order.Order
-import com.example.mjprestaurant.model.session.SessionService
 import com.example.mjprestaurant.viewmodel.LoginViewModel
 import com.example.mjprestaurant.viewmodel.TableSessionViewModel
+import com.example.mjprestaurant.viewmodel.TablesViewModel
 
 /**
- * Pantalla de detall d'una taula.
- *
- * Gestiona dos estats principals:
- * 1. Taula Lliure: Permet seleccionar comensals i obrir sessió.
- * 2. Taula Ocupada: Mostra la comanda actual i permet afegir plats.
- *
- * @param tableId ID de la taula seleccionada.
- * @param tableSessionViewModel ViewModel per a la lògica de sessió/comanda.
- * @param loginViewModel ViewModel per al token d'usuari.
- * @param onBack Callback per tornar enrere.
- * @param onAddDish Callback per anar a la selecció de plats.
- *
- * @author Martin Muñoz Pozuelo
+ * Pantalla per a gestionar l'obertura d'una taula (Crear Sessió).
+ * Corregit per evitar que es quedi penjat a "Obrint comanda...".
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TableDetailScreen(
     tableId: Long,
     tableSessionViewModel: TableSessionViewModel,
+    tablesViewModel: TablesViewModel,
     loginViewModel: LoginViewModel,
     onBack: () -> Unit,
-    onAddDish: () -> Unit = {}
+    onTableOpened: () -> Unit
 ) {
     val token by loginViewModel.token
     val currentSession by tableSessionViewModel.currentSession
+    // També observem l'ordre per assegurar que tot està llest
     val currentOrder by tableSessionViewModel.currentOrder
     val isLoading by tableSessionViewModel.isLoading
     val errorMessage by tableSessionViewModel.errorMessage
+
+    // Obtenir capacitat màxima de la taula actual
+    val tableInfo = tablesViewModel.taules.value.find { it.id == tableId }
+    val maxCapacity = tableInfo?.maxClients ?: 4
 
     // Carregar dades al entrar
     LaunchedEffect(tableId) {
         token?.let { tableSessionViewModel.loadTableSession(it, tableId) }
     }
 
+    // OBSERVADOR D'ESTAT CORREGIT:
+    // Ara vigilem currentSession, currentOrder i isLoading.
+    // Així quan isLoading passa a false, això es torna a executar i navega.
+    LaunchedEffect(currentSession, currentOrder, isLoading) {
+        // Si tenim sessió, tenim ordre (o l'intent ha acabat) i ja no carreguem...
+        if (currentSession != null && currentOrder != null && !isLoading) {
+            onTableOpened()
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Taula $tableId") },
+                title = { Text("Obrir Taula $tableId") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, "Tornar")
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            // Només mostrem el botó d'afegir si la taula està oberta
-            if (currentSession != null && !isLoading) {
-                FloatingActionButton(onClick = onAddDish) {
-                    Icon(Icons.Default.Add, "Afegir Plat")
-                }
-            }
         }
     ) { padding ->
         Box(
@@ -83,7 +78,6 @@ fun TableDetailScreen(
             } else {
                 Column(modifier = Modifier.fillMaxSize()) {
 
-                    // Mostrar errors si n'hi ha
                     if (errorMessage != null) {
                         Card(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
@@ -97,20 +91,23 @@ fun TableDetailScreen(
                         }
                     }
 
-                    // Lògica principal: Lliure vs Ocupada
+                    // Si no tenim sessió creada, mostrem el formulari
                     if (currentSession == null) {
-                        // VISTA TAULA LLIURE
                         EmptyTableContent(
+                            maxCapacity = maxCapacity,
                             onOpenTable = { diners ->
                                 token?.let { tableSessionViewModel.openTable(it, tableId, diners) }
                             }
                         )
                     } else {
-                        // VISTA TAULA OCUPADA
-                        ActiveSessionContent(
-                            session = currentSession!!,
-                            order = currentOrder
-                        )
+                        // Si tenim sessió però estem esperant l'ordre o la navegació
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator()
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text("Sessió creada. Inicialitzant comanda...", style = MaterialTheme.typography.titleMedium)
+                            }
+                        }
                     }
                 }
             }
@@ -118,13 +115,13 @@ fun TableDetailScreen(
     }
 }
 
-/**
- * Contingut quan la taula està lliure.
- * Mostra selector de comensals i botó per obrir.
- */
 @Composable
-private fun EmptyTableContent(onOpenTable: (Int) -> Unit) {
+private fun EmptyTableContent(
+    maxCapacity: Int,
+    onOpenTable: (Int) -> Unit
+) {
     var diners by remember { mutableStateOf(2) }
+    val isOverCapacity = diners > maxCapacity
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -139,18 +136,28 @@ private fun EmptyTableContent(onOpenTable: (Int) -> Unit) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "Taula Lliure",
-            style = MaterialTheme.typography.headlineMedium
+            "Nova Sessió",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            "Capacitat màxima: $maxCapacity",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray
         )
         Spacer(modifier = Modifier.height(32.dp))
 
         Text("Nombre de comensals: $diners", style = MaterialTheme.typography.titleLarge)
 
+        if (isOverCapacity) {
+            Text("⚠️ Atenció: Supera la capacitat", color = MaterialTheme.colorScheme.error)
+        }
+
         Slider(
             value = diners.toFloat(),
             onValueChange = { diners = it.toInt() },
-            valueRange = 1f..10f,
-            steps = 9,
+            valueRange = 1f..12f,
+            steps = 10,
             modifier = Modifier.padding(horizontal = 32.dp)
         )
 
@@ -158,61 +165,12 @@ private fun EmptyTableContent(onOpenTable: (Int) -> Unit) {
 
         Button(
             onClick = { onOpenTable(diners) },
-            modifier = Modifier.fillMaxWidth().height(50.dp)
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isOverCapacity) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            )
         ) {
-            Text("Obrir Taula")
-        }
-    }
-}
-
-/**
- * Contingut quan la taula està ocupada.
- * Mostra info de la sessió i la comanda.
- */
-@Composable
-private fun ActiveSessionContent(
-    session: SessionService,
-    order: Order?
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        // Info Sessió
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Sessió Activa", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Comensals: ${session.clients}")
-                Text("Inici: ${session.startDate ?: "Desconegut"}")
-                Text("Cambrer ID: ${session.waiterId}")
-            }
-        }
-
-        // Info Comanda
-        Text("Comanda", style = MaterialTheme.typography.titleLarge)
-
-        if (order != null) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                        Text("Ordre #${order.id}", fontWeight = FontWeight.Bold)
-                        Text(order.state.toString(), color = MaterialTheme.colorScheme.primary)
-                    }
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    // TODO: Aquí anirà la llista de plats quan el backend suporti OrderItems
-                    Box(modifier = Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
-                        Text(
-                            "Llista de plats buida (Pendent d'implementació al backend)",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
-                        )
-                    }
-                }
-            }
-        } else {
-            Text("Creant comanda...", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+            Text(if (isOverCapacity) "Obrir (Sobrecàrrega)" else "Obrir Taula", style = MaterialTheme.typography.titleMedium)
         }
     }
 }

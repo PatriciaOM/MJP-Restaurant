@@ -22,7 +22,8 @@ data class Dish(
     val description: String,
     val price: Float,
     val category: DishCategory,
-    val available: Boolean
+    val available: Boolean,
+    val imageUrl: String? = null
 ) {
     /**
      * Verifica si el dish està disponible per a ser modificat/eliminat.
@@ -42,4 +43,8 @@ data class Dish(
      * @return String amb el preu formatat.
      */
     fun getPriceFormatted(): String = "%.2f €".format(price)
+
+    fun getValidImageUrl(): String {
+        return imageUrl ?: "https://ui-avatars.com/api/?name=${name.replace(" ", "+")}&background=random"
+    }
 }

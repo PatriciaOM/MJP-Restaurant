@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation("androidx.navigation:navigation-compose:2.7.3")
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     // ✅ VIEWMODEL + COROUTINES
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")

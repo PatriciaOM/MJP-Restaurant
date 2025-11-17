@@ -1,13 +1,21 @@
 package com.example.mjprestaurant.network
 
-import com.example.mjprestaurant.model.session.SessionService
-import com.example.mjprestaurant.model.session.request.SessionServiceCreateInfo
-import com.example.mjprestaurant.model.session.request.SessionServiceGetInfo
-import com.example.mjprestaurant.model.session.response.SessionServiceResponse
+import com.example.mjprestaurant.model.dish.Dish
 import com.example.mjprestaurant.model.order.Order
+import com.example.mjprestaurant.model.order.OrderItem
 import com.example.mjprestaurant.model.order.request.OrderCreateInfo
 import com.example.mjprestaurant.model.order.request.OrderGetInfo
+import com.example.mjprestaurant.model.order.request.OrderItemCreateInfo
+import com.example.mjprestaurant.model.order.request.OrderUpdateInfo
+import com.example.mjprestaurant.model.order.request.OrderDeleteInfo
+import com.example.mjprestaurant.model.order.response.OrderItemResponse
 import com.example.mjprestaurant.model.order.response.OrderResponse
+import com.example.mjprestaurant.model.session.SessionService
+import com.example.mjprestaurant.model.session.request.SessionServiceCreateInfo
+import com.example.mjprestaurant.model.session.request.SessionServiceDeleteInfo
+import com.example.mjprestaurant.model.session.request.SessionServiceGetInfo
+import com.example.mjprestaurant.model.session.request.SessionServiceUpdateInfo
+import com.example.mjprestaurant.model.session.response.SessionServiceResponse
 import retrofit2.Response
 
 /**
@@ -15,17 +23,22 @@ import retrofit2.Response
  *
  * Aquesta classe gestiona:
  * - La creació i recuperació de sessions (Obrir/Veure taula).
- * - La gestió de les comandes associades a una sessió.
+ * - La gestió de les comandes (Orders) associades a una sessió.
+ * - L'addició de línies de comanda (OrderItems) amb els plats demanats.
  *
- * Separem aquesta lògica de l'AuthRepository per mantenir el codi net.
+ * Separem aquesta lògica de l'AuthRepository per mantenir el codi net i modular.
  *
  * @see ApiService
  * @see RetrofitInstance
+ * @see SessionService
+ * @see Order
+ * @see OrderItem
  *
  * @author Martin Muñoz Pozuelo
  */
 class TableRepository {
 
+    // --- GESTIÓ DE SESSIONS (OBRIR/TANCAR TAULES) ---
 
     /**
      * Obre una nova taula (Crea una sessió).
@@ -41,14 +54,12 @@ class TableRepository {
 
     /**
      * Obté totes les sessions actives.
-     *
      * S'utilitza per saber quina sessió correspon a una taula ocupada.
      *
      * @param token Token de sessió de l'usuari.
      * @return Response amb la llista de sessions.
      */
     suspend fun getSessions(token: String): Response<SessionServiceResponse> {
-        // Demanem totes (ALL) i filtrarem al ViewModel per trobar la de la taula específica
         val request = SessionServiceGetInfo(
             sessionToken = token,
             searchType = SessionServiceGetInfo.SearchType.ALL
@@ -56,10 +67,27 @@ class TableRepository {
         return RetrofitInstance.api.getSessions(request)
     }
 
-    // --- GESTIÓ DE COMANDES ---
+    /**
+     * Actualitza una sessió existent.
+     */
+    suspend fun updateSession(token: String, sessionService: SessionService): Response<SessionServiceResponse> {
+        val request = SessionServiceUpdateInfo(sessionToken = token, item = sessionService)
+        return RetrofitInstance.api.updateSession(request)
+    }
 
     /**
-     * Crea una nova comanda per a una sessió.
+     * Elimina o tanca una sessió.
+     */
+    suspend fun deleteSession(token: String, sessionId: Long): Response<SessionServiceResponse> {
+        val request = SessionServiceDeleteInfo(sessionToken = token, id = sessionId)
+        return RetrofitInstance.api.deleteSession(request)
+    }
+
+
+    // --- GESTIÓ DE COMANDES (ORDERS) ---
+
+    /**
+     * Crea una nova comanda per a una sessió (Capçalera).
      *
      * @param token Token de sessió de l'usuari.
      * @param order Objecte comanda a crear.
@@ -72,7 +100,6 @@ class TableRepository {
 
     /**
      * Obté la comanda associada a una sessió específica.
-     *
      * Utilitza el tipus de cerca BY_SESSION_SERVICE definit al backend.
      *
      * @param token Token de sessió de l'usuari.
@@ -86,5 +113,33 @@ class TableRepository {
             id = sessionId
         )
         return RetrofitInstance.api.getOrders(request)
+    }
+
+
+    // --- GESTIÓ DE LÍNIES DE COMANDA (ORDER ITEMS) ---
+
+    /**
+     * Afegeix un plat a la comanda actual.
+     *
+     * Construeix l'objecte OrderItem amb tota la informació del plat (preu, nom, categoria)
+     * tal com requereix el servidor, ja que guarda una còpia de les dades.
+     *
+     * @param token Token de sessió de l'usuari.
+     * @param orderId ID de la comanda on afegir el plat.
+     * @param dish Objecte Dish complet per extreure'n preu i descripció.
+     * @param quantity Quantitat a demanar.
+     * @return Response amb la línia creada.
+     */
+    suspend fun addDishToOrder(token: String, orderId: Long, dish: Dish, quantity: Int): Response<OrderItemResponse> {
+        val newItem = OrderItem(
+            idOrder = orderId,
+            amount = quantity,
+            price = dish.price,
+            description = dish.name, // El servidor espera el nom al camp description
+            category = dish.category
+        )
+
+        val request = OrderItemCreateInfo(sessionToken = token, newEntry = newItem)
+        return RetrofitInstance.api.addOrderItem(request)
     }
 }

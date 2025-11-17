@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
  * Aquesta classe s'encarrega de:
  * - Carregar la llista de taules des del servidor
  * - Gestionar l'estat de càrrega i errors
- * - Mantenir la llista actual de taules
+ * - Mantenir la llista actual de taules per a que altres pantalles (com TableDetail)
+ * puguin consultar informació estàtica (ex: capacitat).
  *
  * @see TableStatus
  * @see AuthRepository
@@ -26,31 +27,22 @@ class TablesViewModel(
 
     /**
      * Llista observable de totes les taules del restaurant.
-     * Es carrega automàticament quan es crida a loadTables().
+     * Inicialitzada buida per evitar mostrar dades falses.
      */
     val taules = mutableStateOf<List<TableStatus>>(emptyList())
 
     /**
      * Indica si hi ha una petició de càrrega de taules en curs.
-     * Quan és true, es mostra un spinner a la interfície.
      */
     val isLoading = mutableStateOf(false)
 
     /**
-     * Missatge d'error a mostrar a l'usuari en cas de fallada en carregar les taules.
-     * És null quan no hi ha error.
+     * Missatge d'error a mostrar a l'usuari.
      */
     val errorMessage = mutableStateOf<String?>(null)
 
     /**
      * Carrega la llista de taules des del servidor.
-     *
-     * Realitza les següents accions:
-     * 1. Inicia l'estat de càrrega
-     * 2. Neteja qualsevol error previ
-     * 3. Crida al repositori per obtenir les taules
-     * 4. Actualitza l'estat amb el resultat
-     * 5. Maneja errors de xarxa o servidor
      *
      * @param token Token de sessió de l'usuari autenticat
      */
@@ -65,12 +57,12 @@ class TablesViewModel(
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body != null) {
+                        // Actualitzem la llista amb les dades reals del servidor
                         taules.value = body.tables ?: emptyList()
                     } else {
                         errorMessage.value = "Resposta del servidor buida"
                     }
                 } else {
-                    // Maneig d'errors HTTP
                     when (response.code()) {
                         401 -> errorMessage.value = "Sessió expirada. Torna a iniciar sessió"
                         500 -> errorMessage.value = "Error intern del servidor"
@@ -87,17 +79,17 @@ class TablesViewModel(
 
     /**
      * Actualitza manualment la llista de taules.
-     * Útil per a proves o quan es vol forçar una actualització.
+     * Buida la llista visualment abans de carregar per donar feedback de refresc.
      *
      * @param token Token de sessió de l'usuari autenticat
      */
     fun refreshTables(token: String) {
+        taules.value = emptyList()
         loadTables(token)
     }
 
     /**
      * Neteja el missatge d'error actual.
-     * Útil quan l'usuari vol tornar a intentar després d'un error.
      */
     fun clearError() {
         errorMessage.value = null
