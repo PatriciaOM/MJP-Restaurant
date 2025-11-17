@@ -121,21 +121,24 @@ class TableRepository {
     /**
      * Afegeix un plat a la comanda actual.
      *
-     * Construeix l'objecte OrderItem amb tota la informació del plat (preu, nom, categoria)
-     * tal com requereix el servidor, ja que guarda una còpia de les dades.
+     * Construeix l'objecte OrderItem amb tota la informació del plat (preu, nom, categoria, descripció, idDish)
+     * tal com requereix el servidor.
      *
      * @param token Token de sessió de l'usuari.
      * @param orderId ID de la comanda on afegir el plat.
-     * @param dish Objecte Dish complet per extreure'n preu i descripció.
+     * @param dish Objecte Dish complet.
      * @param quantity Quantitat a demanar.
      * @return Response amb la línia creada.
      */
     suspend fun addDishToOrder(token: String, orderId: Long, dish: Dish, quantity: Int): Response<OrderItemResponse> {
+        // Creem l'objecte segons els nous camps del servidor Java
         val newItem = OrderItem(
             idOrder = orderId,
+            idDish = dish.id ?: 0L, // Necessitem l'ID del plat
             amount = quantity,
             price = dish.price,
-            description = dish.name, // El servidor espera el nom al camp description
+            name = dish.name,      // El nom va al camp 'name'
+            description = dish.description, // La descripció al camp 'description'
             category = dish.category
         )
 
