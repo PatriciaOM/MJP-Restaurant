@@ -58,24 +58,47 @@
                     <!--<scope>runtime</scope>-->  
 <!--                    <scope>runtime</scope>  Optional, usually runtime -->
                 </dependency>
+                <dependency>
+                    <groupId>org.junit.platform</groupId>
+                    <artifactId>junit-platform-suite</artifactId>
+                    <version>1.12.2</version>
+                    <scope>test</scope>
+                </dependency>
+                
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                    <version>5.10.2</version>
+                    <scope>test</scope>
+                </dependency>
                 
 	</dependencies>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-                        <plugin>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-javadoc-plugin</artifactId>
-                                <version>3.12.0</version>
-                                <configuration>
-                                        <show>private</show>
-                                        <nohelp>true</nohelp>
-                                </configuration>
-                        </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.12.0</version>
+                        <configuration>
+                                <show>private</show>
+                                <nohelp>true</nohelp>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.2.5</version>
+                        <configuration>
+                            <!-- This enables JUnit Platform (JUnit 5) -->
+                            <useModulePath>false</useModulePath>
+                        </configuration>
+                    </plugin>
 		</plugins>
 	</build>
         

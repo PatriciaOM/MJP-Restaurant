@@ -16,13 +16,21 @@ public class TableStatusInfo{
     /**
      * The id of the table to get info for.
      */
-    public String tableId;
+    public Long tableId;
+     
+    public TableStatusInfo() {}
       
     public TableStatusInfo(String sessionToken) {
         this.sessionToken = sessionToken;
     }
     
-    public TableStatusInfo(String sessionToken, String tableId) {
+//    
+//    public TableStatusInfo(String sessionToken, String tableId) {
+//        this.sessionToken = sessionToken;
+//        this.tableId = Long.parseLong(tableId);
+//    }
+    
+    public TableStatusInfo(String sessionToken, Long tableId) {
         this.sessionToken = sessionToken;
         this.tableId = tableId;
     }
@@ -35,11 +43,11 @@ public class TableStatusInfo{
         return this.sessionToken;
     }
     
-    public void setTableId(String value){
+    public void setTableId(Long value){
         this.tableId = value;
     }
     
-    public String getTableId() {
+    public Long getTableId() {
         return this.tableId;
     }
 

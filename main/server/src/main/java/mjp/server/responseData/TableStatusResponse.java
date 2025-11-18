@@ -16,6 +16,9 @@ public class TableStatusResponse {
     
     public ArrayList<TableStatusResponseElement> getTables() { return this.tables; }
     
+    public TableStatusResponse(){}
+    
+    
     public void addTable(TableStatusResponseElement table) {
         this.tables.add(table);
     }

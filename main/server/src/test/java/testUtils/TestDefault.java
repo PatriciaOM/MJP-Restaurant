@@ -8,12 +8,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.User;
+import mjp.server.TestData;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.LoginInfo;
+import mjp.server.queryData.table.TableCreateInfo;
+import mjp.server.queryData.table.TableGetInfo;
 import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.LoginResponse;
+import mjp.server.responseData.table.TableCreateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,32 +37,8 @@ import org.springframework.http.ResponseEntity;
  * @author  Joan Renau Valls
  */
 public abstract class TestDefault {
-//    protected class Credentials {
-//        String username;
-//        String password;
-//        String sessionToken;
-//
-//        public Credentials(String username, String password, String sessionToken) {
-//            this.username = username;
-//            this.password = password;
-//            this.sessionToken = sessionToken;
-//        }
-//
-//        public String getUsername() {return username;}
-//
-//        public String getPassword() {return password;}
-//
-//        public String getSessionToken() {return sessionToken;}
-//
-//        public void setUsername(String username) {this.username = username;}
-//
-//        public void setPassword(String password) {this.password = password;}
-//
-//        public void setSessionToken(String sessionToken) {this.sessionToken = sessionToken;}
-//        
-//        
-//    }
-    
+
+    public static TestData defaultData = new TestData();
     private static final String RESET = "\033[0m";
     private static final String CYAN = "\033[36m";
     
@@ -166,25 +147,41 @@ public abstract class TestDefault {
         }
     }
     
-//    protected abstract Credentials getUserCredentials();
-//    protected abstract Credentials getAdminCredentials();
-//    
-//    
-//    
-//    protected void basicSetup(String testname){
-//        printTestName(testname);
-//        Credentials userCred = getUserCredentials();
-//        Credentials adminCred = getAdminCredentials();
-//
-//        getUserCredentials().setSessionToken(this.login(userCred.getUsername(), userCred.getPassword()));
-//        getAdminCredentials().setSessionToken(this.login(adminCred.getUsername(), adminCred.getPassword()));
-//        System.out.println("usersSessionToken=" + userCred.getSessionToken());
-//        System.out.println("adminSessionToken=" + adminCred.getSessionToken());
-//        User user = this.getUserBySessionToken(userCred.getSessionToken());
-//        User admin = this.getUserBySessionToken(adminCred.getSessionToken());
-//        System.out.println("User user to json: " + gson.toJson(user));
-//        System.out.println("Admin user to json: " + gson.toJson(admin));
-//        assertThat(user.getRole()).isEqualTo(UserRole.USER);
-//        assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
-//    }
+    public void setDefaulttDataLogins() {
+        Credentials user = defaultData.userCredentials;
+        user.setSessionToken(this.login(user.getUsername(), user.getPassword()));
+        Credentials admin = defaultData.adminCredentials;
+        admin.setSessionToken(this.login(admin.getUsername(), admin.getPassword()));
+    }
+    
+    public void refreshDefaultDataTables() {
+        for (int i = 0; i < defaultData.allTables.size(); i++) {
+            TableRestaurant table = defaultData.allTables.get(i);
+            TableGetInfo info = new TableGetInfo(defaultData.adminCredentials.getSessionToken(), table.getId());
+            ResponseEntity<String> response = makePostRequest("table/get", info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            TableRestaurant newTable = gson.fromJson(response.getBody(), TableRestaurant.class);
+            defaultData.allTables.set(i, table);
+        }
+    }
+    
+    public void createDefaultDataTables() {
+        String url = makeUrl("/table/create");
+        for (int i = 0; i < defaultData.allTables.size(); i++) {
+            TableRestaurant table = defaultData.allTables.get(i);
+            String sessionToken = defaultData.adminCredentials.getSessionToken();
+            assertNotNull(sessionToken);
+            assertNotNull(table);
+            TableCreateInfo info = new TableCreateInfo(sessionToken, table);
+
+            ResponseEntity<String> response = makePostRequest(url, info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            TableCreateResponse responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
+            TableRestaurant createdTable = responseObject.getTable();
+            assertNotNull(createdTable.getId());
+            defaultData.allTables.set(i, createdTable);
+        }
+        assertNotNull(defaultData.allTables.get(0).getId());
+    }
+
 }

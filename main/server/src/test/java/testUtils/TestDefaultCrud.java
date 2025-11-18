@@ -241,4 +241,6 @@ public abstract class TestDefaultCrud<
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+        
+   
 }

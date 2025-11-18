@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.User;
+import mjp.server.TestData;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
@@ -48,10 +49,10 @@ import testUtils.TestDefault;
 public class TableManagementTest extends TestDefault {
     private static String userSessionToken;
     private static String adminSessionToken;
-    private static final TableRestaurant initialTable = new TableRestaurant(10, 4);
-    private static final TableRestaurant updatedTable = new TableRestaurant(10, 2);
-    private static final TableRestaurant mockTable1 = new TableRestaurant(5, 2);
-    private static final TableRestaurant mockTable2 = new TableRestaurant(4, 6);
+    private static final TableRestaurant initialTable = TestDefault.defaultData.initialTable;
+    private static final TableRestaurant updatedTable = TestDefault.defaultData.updatedTable;
+    private static final TableRestaurant mockTable1 = TestDefault.defaultData.mockTable1;
+    private static final TableRestaurant mockTable2 = TestDefault.defaultData.mockTable2;
     private static final long noExistingId = 50000;
     Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
     

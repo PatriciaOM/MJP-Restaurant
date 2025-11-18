@@ -55,7 +55,7 @@ public class TableManagementStatusTest extends TestDefault {
     private static final TableRestaurant initialTable = new TableRestaurant(10, 4);
     private static final TableRestaurant mockTable1 = new TableRestaurant(5, 2);
     private static final TableRestaurant mockTable2 = new TableRestaurant(4, 6);
-    private static final List<TableRestaurant> allTables = List.of(initialTable, mockTable1, mockTable2);
+//    private static final List<TableRestaurant> allTables = List.of(initialTable, mockTable1, mockTable2);
     private static final TableRestaurant updatedTable = new TableRestaurant(10, 2);
     private static final long noExistingId = 50000;
     Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
@@ -70,7 +70,7 @@ public class TableManagementStatusTest extends TestDefault {
     public TestRestTemplate getRestTemplate() { return this.restTemplate; }
     
     TableRestaurant getTableByIdFromAllTables(Long id) {
-        for(TableRestaurant table : allTables){
+        for(TableRestaurant table : defaultData.allTables){
             if (Objects.equals(table.getId(), id))
                 return table;
         }
@@ -79,25 +79,20 @@ public class TableManagementStatusTest extends TestDefault {
     
     @Test
     @Order(001)
-    void setup(){
-        printTestName("setup");
-        userSessionToken = this.login("Twiki", "Tuki");
-        adminSessionToken = this.login("Ping", "Pong");
-        System.out.println("usersSessionToken=" + userSessionToken);
-        System.out.println("adminSessionToken=" + adminSessionToken);
-        User user = this.getUserBySessionToken(userSessionToken);
-        User admin = this.getUserBySessionToken(adminSessionToken);
-        System.out.println("User user to json: " + gson.toJson(user));
-        System.out.println("Admin user to json: " + gson.toJson(admin));
-        assertThat(user.getRole()).isEqualTo(UserRole.USER);
-        assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
-        
-        
+    void setup(){   
+        setDefaulttDataLogins();     
+        createDefaultDataTables();
+//        refreshDefaultDataTables();
+        userSessionToken = defaultData.userCredentials.getSessionToken();
+        adminSessionToken = defaultData.adminCredentials.getSessionToken();
+        assertNotNull(userSessionToken);
+        assertNotNull(adminSessionToken);
+        assertNotNull(defaultData.allTables.get(0).getId());
     }
     
-    @Test
-    @Order(002)
-    void createTableTwice(){
+//    @Test
+//    @Order(002)
+//    void createTableTwice(){
 //        printTestName("createTable");
 //        String url = makeUrl("/table/create");
 //        for (TableRestaurant table : allTables){
@@ -112,26 +107,29 @@ public class TableManagementStatusTest extends TestDefault {
 //            table.setId(tableResponse.getId());
 //            assertThat(gson.toJson(tableResponse)).isEqualTo(gson.toJson(table));
 //
-//            response = makePostRequest(url, info);
-//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
+////            response = makePostRequest(url, info);
+////            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
 //        }
 //        updatedTable.setId(initialTable.getId());
-    }
+//    }
     
     
     @Test
     @Order(100)
     void TableStatus(){
-//        printTestName("TableStatus");
-//        TableStatusInfo request = new TableStatusInfo(adminSessionToken, "0");
-//        ResponseEntity<String> response = makePostRequest("/table/status", request);
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        TableStatusResponse responseObject = gson.fromJson(response.getBody(), TableStatusResponse.class);
-//        
-//        for (TableStatusResponseElement table: responseObject.getTables()){
-//            TableRestaurant origTable = getTableByIdFromAllTables(table.getId());
-//            assertThat(table.getMaxClients()).isEqualTo(origTable.getMaxGuests());
-//        }
+        printTestName("TableStatus");
+        assertNotNull(userSessionToken);
+        TableStatusInfo request = new TableStatusInfo(userSessionToken, null);
+        ResponseEntity<String> response = makePostRequest("/table/status", request);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        System.out.println("Received tables status: " + response.getBody());
+        TableStatusResponse responseObject = gson.fromJson(response.getBody(), TableStatusResponse.class);
+        
+        for (TableStatusResponseElement table: responseObject.getTables()){
+            TableRestaurant origTable = getTableByIdFromAllTables(table.getId());
+            assertNotNull(origTable);
+            assertThat(table.getMaxClients()).isEqualTo(origTable.getMaxGuests());
+        }
     }
     
 }
