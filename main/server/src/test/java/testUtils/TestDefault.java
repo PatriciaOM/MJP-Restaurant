@@ -23,6 +23,7 @@ import mjp.server.uitls.serializers.LocalDateAdapter;
 import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -155,10 +156,13 @@ public abstract class TestDefault {
     }
     
     public void refreshDefaultDataTables() {
+        defaultData.initTablesData();
         for (int i = 0; i < defaultData.allTables.size(); i++) {
             TableRestaurant table = defaultData.allTables.get(i);
+            assertNotNull(table.getId());
             TableGetInfo info = new TableGetInfo(defaultData.adminCredentials.getSessionToken(), table.getId());
-            ResponseEntity<String> response = makePostRequest("table/get", info);
+            ResponseEntity<String> response = makePostRequest("/table/get", info);
+            System.out.println(String.format("%s: Asked for table %s, and got %s", i, table.getId(), response.getBody()));
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             TableRestaurant newTable = gson.fromJson(response.getBody(), TableRestaurant.class);
             defaultData.allTables.set(i, table);
@@ -166,20 +170,25 @@ public abstract class TestDefault {
     }
     
     public void createDefaultDataTables() {
+        defaultData.initTablesData();
         String url = makeUrl("/table/create");
         for (int i = 0; i < defaultData.allTables.size(); i++) {
             TableRestaurant table = defaultData.allTables.get(i);
             String sessionToken = defaultData.adminCredentials.getSessionToken();
             assertNotNull(sessionToken);
             assertNotNull(table);
+            table.setId(null);
+            assertNull(table.getId());
             TableCreateInfo info = new TableCreateInfo(sessionToken, table);
 
             ResponseEntity<String> response = makePostRequest(url, info);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            TableCreateResponse responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
-            TableRestaurant createdTable = responseObject.getTable();
-            assertNotNull(createdTable.getId());
-            defaultData.allTables.set(i, createdTable);
+//            if (response.getStatusCode() == HttpStatus.OK) {
+                TableCreateResponse responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
+                TableRestaurant createdTable = responseObject.getTable();
+                assertNotNull(createdTable.getId());
+                defaultData.allTables.set(i, createdTable);
+//            }
         }
         assertNotNull(defaultData.allTables.get(0).getId());
     }

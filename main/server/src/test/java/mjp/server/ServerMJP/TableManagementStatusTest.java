@@ -7,22 +7,11 @@ package mjp.server.ServerMJP;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import mjp.server.ServerMJP.database.TableRestaurant;
-import mjp.server.ServerMJP.database.User;
-import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.TableStatusInfo;
-import mjp.server.queryData.table.TableCreateInfo;
-import mjp.server.queryData.table.TableDeleteInfo;
-import mjp.server.queryData.table.TableGetInfo;
-import mjp.server.queryData.table.TableUpdateInfo;
 import mjp.server.responseData.TableStatusResponse;
 import mjp.server.responseData.TableStatusResponseElement;
-import mjp.server.responseData.table.TableCreateResponse;
-import mjp.server.responseData.table.TableGetResponse;
-import mjp.server.responseData.table.TableUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,6 +27,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import testUtils.TestDefault;
 
 /**
@@ -49,6 +39,7 @@ import testUtils.TestDefault;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class TableManagementStatusTest extends TestDefault {
     private static String userSessionToken;
     private static String adminSessionToken;

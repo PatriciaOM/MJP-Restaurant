@@ -18,14 +18,24 @@ import testUtils.Credentials;
  * @author twiki
  */
 public class TestData {
-    public Credentials userCredentials = new Credentials("Twiki", "Tuki", null);
+//    public Credentials userCredentials;
+//    public Credentials adminCredentials;
+    public Credentials  userCredentials = new Credentials("Twiki", "Tuki", null);
     public Credentials adminCredentials = new Credentials("Ping", "Pong", null);
-    public TableRestaurant initialTable = new TableRestaurant(10, 4);
-    public TableRestaurant updatedTable = new TableRestaurant(10, 2);
-    public TableRestaurant mockTable1 = new TableRestaurant(5, 2);
-    public TableRestaurant mockTable2 = new TableRestaurant(4, 6);
-    public List<TableRestaurant> allTables = new ArrayList<>(List.of(initialTable, mockTable1, mockTable2));
+    public TableRestaurant initialTable;
+    public TableRestaurant updatedTable;
+    public TableRestaurant mockTable1;
+    public TableRestaurant mockTable2;
+    public List<TableRestaurant> allTables;
     
+    
+    public void initTablesData() {
+        initialTable = new TableRestaurant(10, 4);
+        updatedTable = new TableRestaurant(10, 2);
+        mockTable1 = new TableRestaurant(5, 2);
+        mockTable2 = new TableRestaurant(4, 6);
+        allTables = new ArrayList<>(List.of(initialTable, mockTable1, mockTable2));
+    }
     public void logins() {
         
     }
