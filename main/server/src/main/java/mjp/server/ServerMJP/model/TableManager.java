@@ -4,9 +4,16 @@
  */
 package mjp.server.ServerMJP.model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import mjp.server.ServerMJP.database.SessionService;
+import mjp.server.ServerMJP.database.SessionService.SessionServiceStatus;
+import mjp.server.ServerMJP.database.SessionServiceRepository;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.TableRestaurantRepository;
 import mjp.server.ServerMJP.database.UserRepository;
@@ -22,6 +29,9 @@ import mjp.server.responseData.table.TableDeleteResponse;
 import mjp.server.responseData.table.TableGetResponse;
 import mjp.server.responseData.table.TableUpdateResponse;
 import mjp.server.responseData.user.UserCreateResponse;
+import mjp.server.uitls.Utils;
+import mjp.server.uitls.serializers.LocalDateAdapter;
+import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -35,15 +45,18 @@ public class TableManager {
 
     private SessionManager sessionManager;
     TableRestaurantRepository tableRepository;
+    SessionServiceRepository sessionServiceRepository;
     
         
     
     public TableManager(
         TableRestaurantRepository tableRepository,
-        SessionManager sessionManager
+        SessionManager sessionManager,
+        SessionServiceRepository sessionServiceRepository
     ){
         this.tableRepository = tableRepository;
         this.sessionManager = sessionManager;
+        this.sessionServiceRepository = sessionServiceRepository;
     }
     
     /**
@@ -149,11 +162,34 @@ public class TableManager {
         if (info.getTableId() != null)
             throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
         TableStatusResponse response = new TableStatusResponse();
+        Iterable<SessionService> servicesssItter = sessionServiceRepository.findAll();// tables.get(0).getId());
+        List<SessionService> servicesss = Utils.staticConvertIterableToList(servicesssItter);
+        System.out.println("Session services recived: " + servicesss.size());
+        
+        
+        Gson gson = (new GsonBuilder())
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
+        for (SessionService service : servicesss){
+                System.out.println(String.format("Session service: %s", gson.toJson(service)));
+            }
+        System.out.println("========================");
         List<TableRestaurant> tables = allTables();
         for (TableRestaurant table : tables) {
-            response.addTable(new TableStatusResponseElement(table.getId(), table.getMaxGuests(), 0));
+            List<SessionService> services = sessionServiceRepository.findByStatusAndIdTable(SessionServiceStatus.OPEN, table.getId());// tables.get(0).getId());
+            System.out.println("Queryied sessionServices with id table = " +  table.getId());
+            System.out.println("Session services recived: " + services.size());
+            for (SessionService service : services){
+                System.out.println(String.format("Session service: %s", service));
+            }
+            int clientsAmmount = 0;
+            if (services.size() > 0)
+                clientsAmmount = services.get(0).getClients();
+            response.addTable(new TableStatusResponseElement(table.getId(), table.getMaxGuests(), clientsAmmount));
+            
+            System.out.println("--------------------");
         }
         return response;
     }
-    
 }

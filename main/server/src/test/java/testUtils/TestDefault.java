@@ -8,16 +8,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.TestData;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.LoginInfo;
+import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableGetInfo;
 import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.LoginResponse;
+import mjp.server.responseData.sessionService.SessionServiceCreateResponse;
 import mjp.server.responseData.table.TableCreateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import mjp.server.uitls.serializers.LocalDateTimeAdapter;
@@ -148,29 +152,29 @@ public abstract class TestDefault {
         }
     }
     
-    public void setDefaulttDataLogins() {
+    public void setDefaultDataLogins() {
         Credentials user = defaultData.userCredentials;
         user.setSessionToken(this.login(user.getUsername(), user.getPassword()));
         Credentials admin = defaultData.adminCredentials;
         admin.setSessionToken(this.login(admin.getUsername(), admin.getPassword()));
     }
     
-    public void refreshDefaultDataTables() {
-        defaultData.initTablesData();
-        for (int i = 0; i < defaultData.allTables.size(); i++) {
-            TableRestaurant table = defaultData.allTables.get(i);
-            assertNotNull(table.getId());
-            TableGetInfo info = new TableGetInfo(defaultData.adminCredentials.getSessionToken(), table.getId());
-            ResponseEntity<String> response = makePostRequest("/table/get", info);
-            System.out.println(String.format("%s: Asked for table %s, and got %s", i, table.getId(), response.getBody()));
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            TableRestaurant newTable = gson.fromJson(response.getBody(), TableRestaurant.class);
-            defaultData.allTables.set(i, table);
-        }
-    }
+//    public void refreshDefaultDataTables() {
+//        defaultData.initTablesData();
+//        for (int i = 0; i < defaultData.allTables.size(); i++) {
+//            TableRestaurant table = defaultData.allTables.get(i);
+//            assertNotNull(table.getId());
+//            TableGetInfo info = new TableGetInfo(defaultData.adminCredentials.getSessionToken(), table.getId());
+//            ResponseEntity<String> response = makePostRequest("/table/get", info);
+//            System.out.println(String.format("%s: Asked for table %s, and got %s", i, table.getId(), response.getBody()));
+//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//            TableRestaurant newTable = gson.fromJson(response.getBody(), TableRestaurant.class);
+//            defaultData.allTables.set(i, table);
+//        }
+//    }
     
     public void createDefaultDataTables() {
-        defaultData.initTablesData();
+//        defaultData.initTablesData();
         String url = makeUrl("/table/create");
         for (int i = 0; i < defaultData.allTables.size(); i++) {
             TableRestaurant table = defaultData.allTables.get(i);
@@ -184,13 +188,43 @@ public abstract class TestDefault {
             ResponseEntity<String> response = makePostRequest(url, info);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 //            if (response.getStatusCode() == HttpStatus.OK) {
-                TableCreateResponse responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
-                TableRestaurant createdTable = responseObject.getTable();
-                assertNotNull(createdTable.getId());
-                defaultData.allTables.set(i, createdTable);
+            TableCreateResponse responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
+            TableRestaurant createdTable = responseObject.getTable();
+            assertNotNull(createdTable.getId());
+            defaultData.allTables.set(i, createdTable);
 //            }
         }
+        defaultData.refreshTables();
         assertNotNull(defaultData.allTables.get(0).getId());
     }
+    
+    public void creteDefaultDataSessionService(){
+        assertNotNull(defaultData.allTables.get(0).getId());
+        assertNotNull(defaultData.initialTable.getId());
+//        defaultData.initTablesData();
+        String url = makeUrl("/session-service/create");
+            System.out.println("Creating sessionService::::::::::::::: " );
+        for (int i = 0; i < defaultData.allSessionService.size(); i++) {
+            System.out.println("Creating sessionService: " + i);
+            SessionService sessionService = defaultData.allSessionService.get(i);
+            String sessionToken = defaultData.adminCredentials.getSessionToken();
+            assertNotNull(sessionToken);
+            assertNotNull(sessionService);
+//            sessionService.setId(null);   //This should be redundant
+            assertNull(sessionService.getId()); // Get shulre the line above is redundant
+            assertNotNull(sessionService.getIdTable()); 
+            SessionServiceCreateInfo info = new SessionServiceCreateInfo(sessionToken, sessionService);
+            ResponseEntity<String> response = makePostRequest(url, info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            SessionServiceCreateResponse responseObject = gson.fromJson(response.getBody(), SessionServiceCreateResponse.class);
+            List<SessionService> createdSessionServcie = responseObject.getMessageData();
+            assertThat(createdSessionServcie.size()).isEqualTo(1);
+            assertNotNull(createdSessionServcie.get(0).getId());
+            defaultData.allSessionService.set(i, createdSessionServcie.get(0));
+        }
+        defaultData.refreshSessionService();
+    }
+    
+   
 
 }

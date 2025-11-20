@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 import mjp.server.ServerMJP.database.SessionService;
+import mjp.server.ServerMJP.database.SessionService.SessionServiceStatus;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
 import mjp.server.queryData.sessionService.SessionServiceDeleteInfo;
@@ -19,9 +20,11 @@ import mjp.server.queryData.sessionService.SessionServiceUpdateInfo;
 import mjp.server.responseData.sessionService.SessionServiceCreateResponse;
 import mjp.server.responseData.sessionService.SessionServiceDeleteResponse;
 import mjp.server.responseData.sessionService.SessionServiceGetResponse;
+import mjp.server.responseData.sessionService.SessionServiceResponse;
 import mjp.server.responseData.sessionService.SessionServiceUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import mjp.server.uitls.serializers.LocalDateTimeAdapter;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -33,6 +36,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import testUtils.Credentials;
 import testUtils.TestDefaultCrud;
 
@@ -40,6 +46,7 @@ import testUtils.TestDefaultCrud;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class SessionServiceManagerTest extends TestDefaultCrud<
         Long,
         SessionService,
@@ -70,89 +77,7 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     public TestRestTemplate getRestTemplate() { return this.restTemplate; }
     
     public String getResourceUri() {return this.resourceUri;}
-    
-    static SessionService initialSessionService = new SessionService(
-        1L,
-        0,
-        4,
-        1,
-        2,
-        LocalDateTime.of(2020, Month.DECEMBER, 12, 20, 15, 3),
-        LocalDateTime.of(2020, Month.DECEMBER, 12, 20, 15, 3),
-        SessionService.SessionServiceStatus.CLOSED,
-        5,
-            ""
-    );
-      
-    static SessionService mockSessionService1 = new SessionService(
-        1L,
-        1,
-        4,
-        1,
-        2,
-        LocalDateTime.of(2020, Month.DECEMBER, 13, 20, 15, 3),
-        LocalDateTime.of(2020, Month.DECEMBER, 13, 20, 15, 3),
-        SessionService.SessionServiceStatus.OPEN,
-        5,
-        "Very Nice place"
-    );    
-    
-    static SessionService mockSessionService2 = new SessionService(
-        1L,
-        1,
-        4,
-        1,
-        2,
-        LocalDateTime.of(2020, Month.DECEMBER, 14, 20, 15, 3),
-        LocalDateTime.of(2020, Month.DECEMBER, 14, 20, 15, 3),
-        SessionService.SessionServiceStatus.PAID,
-        5,
-        "Very Nicer place"
-    );  
-    
-    static SessionService mockSessionService3 = new SessionService(
-        1L,
-        1,
-        4,
-        1,
-        2,
-        LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
-        LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
-        SessionService.SessionServiceStatus.OPEN,
-        5,
-        "Very Nicer placer"
-    );
-    
-    
-    List<SessionService> allItems = List.of(initialSessionService, mockSessionService1, mockSessionService2, mockSessionService3);
-    
-    static SessionService noExsistingSessionService = new SessionService(
-        500000L, 
-        5L, 
-        3,
-        4,
-        1,
-        2,
-        LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
-        LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
-        SessionService.SessionServiceStatus.PAID,
-        5,
-        "Very Nicer placer"
-    );
-    
-    static SessionService updatedSessionService = new SessionService(
-        1L,
-        0,
-        4,
-        1,
-        2,
-        LocalDateTime.of(2020, Month.DECEMBER, 12, 20, 15, 3),
-        LocalDateTime.of(2020, Month.DECEMBER, 12, 20, 15, 3),
-        SessionService.SessionServiceStatus.PAID,
-        5,
-        "Nice Place"
-    );
-        
+            
     @Override
     protected Credentials getUserCredentials() {
         return this.user;
@@ -163,25 +88,24 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
         return this.admin;
     }
  
-
     @Override
     protected SessionService getInitialItem() {
-        return initialSessionService;
+        return defaultData.initialSessionService;
     }
 
     @Override
     protected SessionService getUpdatedItem() {
-        return updatedSessionService;
+        return defaultData.updatedSessionService;
     }
 
     @Override
     protected List<SessionService> getAllTestItems() {
-        return this.allItems;
+        return defaultData.allSessionService;
     }
     
     @Override
     protected SessionService getNoExistingItem() {
-        return noExsistingSessionService;
+        return defaultData.noExsistingSessionService;
     }  
     
     @Override
@@ -254,6 +178,15 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     @Order(001)
     void setup(){
         basicSetup("setup");
+        
+        setDefaultDataLogins();  
+        
+        defaultData.initTablesData();
+        createDefaultDataTables();
+        defaultData.initSessionServicesData();        
+//        creteDefaultDataSessionService();
+        
+        
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
         assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
         userSessionToken = this.getUserCredentials().getSessionToken(); // TODO delete
@@ -326,6 +259,65 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     void getDeletedSessionServcie(){
         getDeletedItem("getDeleted" + getClassName());
     }
-
-     
+    
+    
+    /** OTHER TESTS **/
+    
+    @Test
+    @Order(2000)
+    void CreateTwoUnpaidSessionServiceOnTheSameTable() {
+        getDeletedItem("CreateTwoUnpaidSessionServiceOnTheSameTable" + getClassName());
+        SessionServiceCreateInfo info;
+        ResponseEntity<String> response;
+        
+        SessionService sessionService = new SessionService(defaultData.initialSessionService);
+        sessionService.setStatus(SessionService.SessionServiceStatus.OPEN);
+        sessionService.setId(null);
+        sessionService.setIdTable(defaultData.mockTable2.getId());
+        
+        assertNotNull(defaultData.userCredentials.getSessionToken());
+        assertNotNull(sessionService);
+        info = new SessionServiceCreateInfo(defaultData.userCredentials.getSessionToken(), sessionService);
+        response = makePostRequest("/session-service/create", info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        
+        sessionService.setStatus(SessionService.SessionServiceStatus.CLOSED);
+        info = new SessionServiceCreateInfo(defaultData.userCredentials.getSessionToken(), sessionService);
+        response = makePostRequest("/session-service/create", info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
+    }
+    
+        @Test
+    @Order(2000)
+    void UpdateToTwoUnpaidSessoinServiceOnTheSameTable() {
+        getDeletedItem("UpdateToTwoUnpaidSessoinServiceOnTheSameTable" + getClassName());
+        
+        SessionServiceCreateInfo info;
+        ResponseEntity<String> response;
+        
+        SessionService sessionService = new SessionService(defaultData.initialSessionService);
+        sessionService.setStatus(SessionService.SessionServiceStatus.PAID);
+        sessionService.setId(null);
+        sessionService.setIdTable(defaultData.mockTable2.getId());
+        
+        assertNotNull(defaultData.userCredentials.getSessionToken());
+        assertNotNull(sessionService);
+        info = new SessionServiceCreateInfo(defaultData.userCredentials.getSessionToken(), sessionService);
+        response = makePostRequest("/session-service/create", info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        SessionServiceResponse responseObject = gson.fromJson(response.getBody(), SessionServiceResponse.class);
+        
+        sessionService.setId(responseObject.getSessionServices().get(0).getId());
+        sessionService.setStatus(SessionServiceStatus.CLOSED);
+        SessionServiceUpdateInfo infoUpdate = new SessionServiceUpdateInfo(defaultData.userCredentials.getSessionToken(), sessionService);
+        response = makePostRequest("/session-service/update", infoUpdate);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
+//        SessionServiceResponse responseObject = gson.fromJson(response.getBody(), SessionServiceResponse.class);
+        
+        
+//        sessionService.setStatus(SessionService.SessionServiceStatus.CLOSED);
+//        info = new SessionServiceUpdateInfo(defaultData.userCredentials.getSessionToken(), sessionService);
+//        response = makePostRequest("/session-service/create", info);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
+    }
 }

@@ -5,6 +5,7 @@
 package mjp.server.ServerMJP.database;
 
 import java.util.List;
+import mjp.server.ServerMJP.database.SessionService.SessionServiceStatus;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -13,4 +14,6 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface SessionServiceRepository extends CrudRepository<SessionService, Long>{
     SessionService findById(long id);
+    List<SessionService> findByStatusAndIdTable(SessionServiceStatus status, Long idTable);
+    List<SessionService> findByIdTable(Long idTable);
 }

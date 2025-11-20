@@ -71,9 +71,13 @@ public class TableManagementStatusTest extends TestDefault {
     @Test
     @Order(001)
     void setup(){   
-        setDefaulttDataLogins();     
+        setDefaultDataLogins();  
+        
+        defaultData.initTablesData();
         createDefaultDataTables();
-//        refreshDefaultDataTables();
+        defaultData.initSessionServicesData();        
+        creteDefaultDataSessionService();
+        
         userSessionToken = defaultData.userCredentials.getSessionToken();
         adminSessionToken = defaultData.adminCredentials.getSessionToken();
         assertNotNull(userSessionToken);
@@ -115,11 +119,12 @@ public class TableManagementStatusTest extends TestDefault {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         System.out.println("Received tables status: " + response.getBody());
         TableStatusResponse responseObject = gson.fromJson(response.getBody(), TableStatusResponse.class);
-        
         for (TableStatusResponseElement table: responseObject.getTables()){
             TableRestaurant origTable = getTableByIdFromAllTables(table.getId());
             assertNotNull(origTable);
             assertThat(table.getMaxClients()).isEqualTo(origTable.getMaxGuests());
+            if (Objects.equals(table.getId(), defaultData.initialSessionService.getId()))
+                assertThat(table.getClientsAmount()).isEqualTo(defaultData.initialSessionService.getClients());
         }
     }
     
