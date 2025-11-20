@@ -17,6 +17,8 @@ public class TableStatusInfo{
      * The id of the table to get info for.
      */
     public Long tableId;
+    
+    public Long sessionServiceId;
      
     public TableStatusInfo() {}
       
@@ -51,15 +53,13 @@ public class TableStatusInfo{
         return this.tableId;
     }
 
-//
-//    @Override
-//    public void setMessageData(Object requestItem) {
-//            this.setTableId((String) requestItem);
-//    }
-//
-//    @Override
-//    public Object getMessageData() {
-//        return this.getTableId();
-//    }
+    public void setSessionServiceId(Long sessionServiceId) {
+        this.sessionServiceId = sessionServiceId;
+    }
+
+    public Long getSessionServiceId() {
+        return sessionServiceId;
+    }
+
     
 }

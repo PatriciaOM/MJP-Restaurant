@@ -184,8 +184,12 @@ public class TableManager {
                 System.out.println(String.format("Session service: %s", service));
             }
             int clientsAmmount = 0;
-            if (services.size() > 0)
+            Long SessionServciceId = -1L;
+            if (services.size() > 0){
                 clientsAmmount = services.get(0).getClients();
+                SessionServciceId = services.get(0).getId();
+                
+            }
             response.addTable(new TableStatusResponseElement(table.getId(), table.getMaxGuests(), clientsAmmount));
             
             System.out.println("--------------------");
