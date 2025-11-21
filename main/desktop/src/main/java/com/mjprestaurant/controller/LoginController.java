@@ -3,13 +3,19 @@ package com.mjprestaurant.controller;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
+import javax.swing.JOptionPane;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjprestaurant.view.LoginFrame;
+import com.mjprestaurant.view.TableFrame;
 import com.mjprestaurant.view.WaiterFrame;
 import com.mjprestaurant.view.AdminFrame;
 import com.mjprestaurant.model.*;
+import com.mjprestaurant.model.table.TableRestaurant;
+import com.mjprestaurant.model.table.TableStatusResponse;
+import com.mjprestaurant.model.table.TableStatusResponseElement;
 import com.mjprestaurant.model.user.User;
 import com.mjprestaurant.model.user.UserRole;
 
@@ -84,12 +90,8 @@ public class LoginController {
                     new AdminController(admin, login, this);
 
                 } else if (responseUser.role.equals(UserRole.USER.getRole())) {
-                    waiter = new WaiterFrame(username);
-                    waiter.setLocationRelativeTo(null);
-                    waiter.setVisible(true);
-
-                    // Creamos LogoutController
-                    new LogoutController(waiter, login);
+                    // Creamos el WaiterController con token y loginFrame
+                    WaiterController waiterController = new WaiterController(responseUser.getToken(), login);
                 }
 
             } else if (conn.getResponseCode() == 401) {

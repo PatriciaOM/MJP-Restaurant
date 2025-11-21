@@ -1,0 +1,8 @@
+com.mjprestaurant.app
+com.mjprestaurant.controller
+com.mjprestaurant.model
+com.mjprestaurant.model.dish
+com.mjprestaurant.model.table
+com.mjprestaurant.model.user
+com.mjprestaurant.utils
+com.mjprestaurant.view

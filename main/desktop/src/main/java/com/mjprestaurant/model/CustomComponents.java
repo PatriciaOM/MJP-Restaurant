@@ -368,4 +368,67 @@ public class CustomComponents {
         return currentFrame;
     }
 
+    /**
+     * Crea un JPanel con borde redondeado de color y grosor definidos
+     * @param color color del borde
+     * @param thickness grosor en píxeles
+     * @param radius radio de las esquinas
+     * @param width tamaño preferido ancho
+     * @param height tamaño preferido alto
+     * @return JPanel con borde redondeado
+     */
+    public JPanel createRoundBorderPanel(Color color, int thickness, int radius, int width, int height) {
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                // Opcional: fondo transparente
+                setOpaque(false);
+            }
+        };
+        panel.setOpaque(false);
+        panel.setBorder(new RoundBorder(color, thickness, radius));
+        panel.setPreferredSize(new Dimension(width, height));
+        panel.setLayout(new BorderLayout());
+        return panel;
+    }
+
+    /**
+     * Clase interna para borde redondeado
+     */
+    public static class RoundBorder implements javax.swing.border.Border {
+
+        private final Color color;
+        private final int thickness;
+        private final int radius;
+
+        public RoundBorder(Color color, int thickness, int radius) {
+            this.color = color;
+            this.thickness = thickness;
+            this.radius = radius;
+        }
+
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(color);
+            g2.setStroke(new BasicStroke(thickness));
+            g2.drawRoundRect(x + thickness/2, y + thickness/2,
+                            width - thickness, height - thickness, radius, radius);
+        }
+
+        @Override
+        public Insets getBorderInsets(Component c) {
+            return new Insets(thickness, thickness, thickness, thickness);
+        }
+
+        @Override
+        public boolean isBorderOpaque() {
+            return false;
+        }
+    }
+
 }
