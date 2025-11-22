@@ -1,5 +1,6 @@
 package com.example.mjprestaurant.model
 
+import com.example.mjprestaurant.model.user.User
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -8,7 +9,7 @@ import org.junit.Test
  *
  * Verifica la correcta creació i comportament del model User.
  *
- * @see User
+ * @see com.example.mjprestaurant.model.user.User
  */
 class UserTest {
 

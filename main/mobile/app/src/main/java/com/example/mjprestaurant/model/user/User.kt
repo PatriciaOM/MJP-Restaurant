@@ -1,4 +1,4 @@
-package com.example.mjprestaurant.model
+package com.example.mjprestaurant.model.user
 
 /**
  *Model de dades que representa un usuari a l'aplicació.
@@ -11,7 +11,7 @@ package com.example.mjprestaurant.model
  *  @property username nom únic identificador d'usuari
  *  @property role rol de l'usuari que determina permisos ("user", "admin")
  *
- *  @see LoginResponse
+ *  @see com.example.mjprestaurant.model.auth.LoginResponse
  *  @see LoginViewModel
  *
  *  @author Martin Muñoz Pozuelo

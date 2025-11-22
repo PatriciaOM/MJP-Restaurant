@@ -1,4 +1,4 @@
-package com.example.mjprestaurant.model
+package com.example.mjprestaurant.model.auth
 
 /**
  * Resposta del servidor per a peticions de login exitoses.
