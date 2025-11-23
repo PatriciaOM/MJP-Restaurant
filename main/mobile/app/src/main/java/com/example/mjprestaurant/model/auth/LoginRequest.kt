@@ -1,4 +1,4 @@
-package com.example.mjprestaurant.model
+package com.example.mjprestaurant.model.auth
 
 /**
  * Petició d'autenticació d'usuari.

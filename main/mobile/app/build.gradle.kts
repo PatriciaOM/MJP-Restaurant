@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.dokka") version "1.9.10"
 }
 
 android {
@@ -41,13 +42,25 @@ android {
         compose = true
     }
 
-    // ✅ CONFIGURACIÓN CORREGIDA PARA TESTING
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
         }
     }
+}
+
+// ✅ DOKKA FUERA DE DEPENDENCIES
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    outputDirectory.set(file("$buildDir/dokka"))
+    moduleName.set("MJPRestaurant")
+}
+
+// ✅ TAREA CORREGIDA FUERA DE DEPENDENCIES
+tasks.register("generateDocs") {
+    group = "documentation"
+    description = "Genera documentación con Dokka"
+    dependsOn(tasks.named("dokkaHtml"))
 }
 
 dependencies {
@@ -61,6 +74,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation("androidx.navigation:navigation-compose:2.7.3")
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     // ✅ VIEWMODEL + COROUTINES
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
@@ -71,34 +85,22 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.androidx.tools.core)
+    implementation(libs.androidx.compose.foundation)
 
-    // ✅✅✅ DEPENDENCIAS DE TESTING UNITARIO - SIMPLIFICADAS Y FUNCIONALES
-
-    // JUnit básico (ESENCIAL)
+    // ✅ TESTING UNITARIO
     testImplementation("junit:junit:4.13.2")
-
-    // Kotlin test para JUnit
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
-
-    // Coroutines testing (IMPORTANTE)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
-
-    // AndroidX Test para ViewModel/LiveData
     testImplementation("androidx.arch.core:core-testing:2.2.0")
-
-    // Truth para assertions
     testImplementation("com.google.truth:truth:1.1.3")
-
-    // MockK (mejor que Mockito para Kotlin)
     testImplementation("io.mockk:mockk:1.13.5")
 
-    // ✅✅✅ DEPENDENCIAS DE ANDROID TEST
+    // ✅ ANDROID TEST
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-
-    // Android Test con corrutinas
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 
     // ✅ DEBUG
