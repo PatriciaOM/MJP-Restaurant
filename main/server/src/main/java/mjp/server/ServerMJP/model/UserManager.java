@@ -41,8 +41,11 @@ public class UserManager {
     ){
         this.userRepository = userRepository;
         this.sessionManager = sessionManager;
+        try {
+         this.mockData();
+        } catch (Exception e) {
+        }
         
-        this.mockData();
     }
     
     /**
