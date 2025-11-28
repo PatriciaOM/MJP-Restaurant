@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import mjp.server.ServerMJP.database.Order;
 import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.queryData.table.TableGetInfo;
@@ -22,7 +20,7 @@ import testUtils.Credentials;
  *
  * @author twiki
  */
-public class TestData {
+public class TestDataSessionService {
 //    public Credentials userCredentials;
 //    public Credentials adminCredentials;
     public Credentials  userCredentials = new Credentials("Twiki", "Tuki", null);
@@ -43,16 +41,6 @@ public class TestData {
     public List<SessionService> allSessionService;
     public SessionService updatedSessionService;
     public SessionService noExsistingSessionService;
-    
-    
-    public Order initialOrder;
-    public Order mockOrder1;    
-    public Order mockOrder2;  
-    public Order mockOrder3;
-    public Order openOrder;
-    public List<Order> allOrder;
-    public Order updatedOrder;
-    public Order noExsistingOrder;
         
     /**************************************************************************/
     /*** TableRestaurant                                                    ***/
@@ -63,6 +51,7 @@ public class TestData {
         mockTable1 = allTables.get(1);
         mockTable2 = allTables.get(2);
     }
+    
     public void initTablesData() {
         initialTable = new TableRestaurant(10, 4);
         updatedTable = new TableRestaurant(10, 2);
@@ -70,6 +59,7 @@ public class TestData {
         mockTable2 = new TableRestaurant(4, 6);
         allTables = new ArrayList<>(List.of(initialTable, mockTable1, mockTable2));
     }
+    
     public void logins() {
         
     }
@@ -190,79 +180,5 @@ public class TestData {
 
     public void dummyInitSessionServices() {
         
-    }
-     
-    /**************************************************************************/
-    /*** SessionService                                                     ***/
-    /**************************************************************************/
-    public void refreshOrder() {
-        initialOrder = allOrder.get(0);
-        updatedOrder.setId(initialOrder.getId());
-        mockOrder1 = allOrder.get(1);
-        mockOrder2 = allOrder.get(2);
-        mockOrder3 = allOrder.get(3);
-        openOrder = allOrder.get(4);
-    }
-    public void initOrderData() {
-//        initTablesData();
-        dummyOrderServices();
-        
-        
-        initialOrder = new Order(
-            initialSessionService.getId(),
-            LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
-            Order.Status.OPEN
-        );
-
-        mockOrder1 = new Order(
-            initialSessionService.getId(),
-            LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 16, 3),
-            Order.Status.OPEN
-        );    
-
-        mockOrder2 = new Order(
-            initialSessionService.getId(),
-            LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 17, 3),
-            Order.Status.OPEN
-        );  
-
-        mockOrder3 = new Order(
-            initialSessionService.getId(),
-            LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 18, 3),
-            Order.Status.OPEN
-        );
-        
-        openOrder = new Order(
-            initialSessionService.getId(),
-            LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 19, 3),
-            Order.Status.OPEN
-        );
-
-        allOrder = new ArrayList(List.of(initialOrder, mockOrder1, mockOrder2, mockOrder3, openOrder));
-
-        noExsistingOrder = new Order(
-            5000L,
-            initialSessionService.getId(),
-            LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 19, 3),
-            Order.Status.SENDED
-        );
-
-        updatedOrder = new Order(
-            initialSessionService.getId(),
-            LocalDateTime.of(2020, Month.DECEMBER, 15, 20, 15, 3),
-            Order.Status.OPEN
-        );
-    }
-    
-    public Order getOrderByIdFromAllOrders(Long id) {
-        for (Order order : allOrder){
-            if (Objects.equals(order.getId(), id))
-                return order;
-        }
-        return null;
-    }
-    
-    public void dummyOrderServices() {
-
     }
 }

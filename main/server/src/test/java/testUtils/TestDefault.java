@@ -11,16 +11,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.TableRestaurant;
+import mjp.server.ServerMJP.database.Order;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.TestData;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.LoginInfo;
+import mjp.server.queryData.order.OrderCreateInfo;
 import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableGetInfo;
 import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.LoginResponse;
+import mjp.server.responseData.order.OrderCreateResponse;
 import mjp.server.responseData.sessionService.SessionServiceCreateResponse;
 import mjp.server.responseData.table.TableCreateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
@@ -28,7 +31,6 @@ import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -198,12 +200,11 @@ public abstract class TestDefault {
         assertNotNull(defaultData.allTables.get(0).getId());
     }
     
-    public void creteDefaultDataSessionService(){
+    public void createDefaultDataSessionService(){
         assertNotNull(defaultData.allTables.get(0).getId());
         assertNotNull(defaultData.initialTable.getId());
 //        defaultData.initTablesData();
         String url = makeUrl("/session-service/create");
-            System.out.println("Creating sessionService::::::::::::::: " );
         for (int i = 0; i < defaultData.allSessionService.size(); i++) {
             System.out.println("Creating sessionService: " + i);
             SessionService sessionService = defaultData.allSessionService.get(i);
@@ -224,6 +225,35 @@ public abstract class TestDefault {
         }
         defaultData.refreshSessionService();
     }
+    
+    public void createDefaultDataOrder(){
+        assertNotNull(defaultData.allSessionService.get(0).getId());
+        assertNotNull(defaultData.initialSessionService.getId());
+//        defaultData.initTablesData();
+        String url = makeUrl("/order/create");
+            System.out.println("Creating order::::::::::::::: " );
+        for (int i = 0; i < defaultData.allOrder.size(); i++) {
+            System.out.println("Creating Order: " + i);
+            Order order = defaultData.allOrder.get(i);
+            String sessionToken = defaultData.adminCredentials.getSessionToken();
+            assertNotNull(sessionToken);
+            assertNotNull(order);
+//            order.setId(null);   //This should be redundant
+            assertNull(order.getId()); // Get shulre the line above is redundant
+            assertNotNull(order.getIdSessionService()); 
+            OrderCreateInfo info = new OrderCreateInfo(sessionToken, order);
+            ResponseEntity<String> response = makePostRequest(url, info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            OrderCreateResponse responseObject = gson.fromJson(response.getBody(), OrderCreateResponse.class);
+            List<Order> createdorder = responseObject.getMessageData();
+            assertThat(createdorder.size()).isEqualTo(1);
+            assertNotNull(createdorder.get(0).getId());
+            defaultData.allOrder.set(i, createdorder.get(0));
+        }
+        defaultData.refreshOrder();
+    }
+    
+    
     
    
 

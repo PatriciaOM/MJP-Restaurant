@@ -202,8 +202,8 @@ public class SessionServiceManagerTest extends TestDefaultCrud<
     @Test
     @Order(300)
     void createAllSessionService(){
-        assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
-        assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
+        assertNotNull(this.getUserCredentials().getSessionToken()); 
+        assertNotNull(this.getAdminCredentials().getSessionToken());
         this.createAllItems("createAll" + getClassName());
     }
     

@@ -13,6 +13,7 @@ import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.SessionServiceRepository;
 import mjp.server.queryData.sessionService.SessionServiceGetInfo;
 import mjp.server.queryData.order.OrderGetInfo;
+import static mjp.server.queryData.order.OrderGetInfo.SearchType.BY_ID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -63,16 +64,18 @@ public class OrderManager extends Manager<Order, OrderRepository, OrderGetInfo>{
                 assert infoData.getId() != null;
                 System.out.println("Getting Order with id" + infoData.getId());
                 itemResult = repository.findById(infoData.getId());
-                if (itemResult.isEmpty())
-                    ret = new ArrayList<>();
-                else
-                    ret = List.of(itemResult.get());
+                if (itemResult.isEmpty()) 
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                ret = List.of(itemResult.get());
+                break;
+            case BY_SESSION_SERVICE_ID:
+                assert infoData.getSessionServiceId() != null;
+                System.out.println("Getting Order with id" + infoData.getId());
+                ret = repository.findByIdSessionService(infoData.getSessionServiceId());
                 break;
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if (ret.size() != 1)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return ret;
     }
     

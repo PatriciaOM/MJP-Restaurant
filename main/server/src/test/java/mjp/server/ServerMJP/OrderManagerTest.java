@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 import mjp.server.ServerMJP.database.Order;
+import mjp.server.TestData;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.order.OrderCreateInfo;
 import mjp.server.queryData.order.OrderDeleteInfo;
@@ -22,6 +23,7 @@ import mjp.server.responseData.order.OrderGetResponse;
 import mjp.server.responseData.order.OrderUpdateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import mjp.server.uitls.serializers.LocalDateTimeAdapter;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -32,7 +34,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import testUtils.Credentials;
 import testUtils.TestDefaultCrud;
 
@@ -41,6 +46,7 @@ import testUtils.TestDefaultCrud;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@ActiveProfiles("test")
 public class OrderManagerTest extends TestDefaultCrud<
         Long,
         Order,
@@ -73,45 +79,45 @@ public class OrderManagerTest extends TestDefaultCrud<
     
     public String getResourceUri() {return this.resourceUri;}
     
-    static Order initialItem = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.DECEMBER, 13, 20, 20),
-        Order.Status.OPEN
-    );
-      
-    static Order mockItem1 = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.APRIL, 13, 13, 20, 20),
-        Order.Status.OPEN
-    );    
-    
-    static Order mockItem2 = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.DECEMBER, 12, 13, 20, 20),
-        Order.Status.OPEN
-    );  
-    
-    static Order mockItem3 = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.NOVEMBER, 13, 13, 20, 20),
-        Order.Status.OPEN
-    );
-    
-    
-    List<Order> allItems = List.of(initialItem, mockItem1, mockItem2, mockItem3);
-    
-    static Order noExsistingItem = new Order(
-        5000L,
-        1L,
-        LocalDateTime.of(2020, Month.NOVEMBER, 13, 13, 20, 20),
-        Order.Status.OPEN
-    );
-    
-    static Order updatedItem = new Order(
-        1L,
-        LocalDateTime.of(2020, Month.DECEMBER, 13, 13, 20, 20),
-        Order.Status.SERVED
-    );
+//    static Order initialItem = new Order(
+//        1L,
+//        LocalDateTime.of(2020, Month.DECEMBER, 13, 20, 20),
+//        Order.Status.OPEN
+//    );
+//      
+//    static Order mockItem1 = new Order(
+//        1L,
+//        LocalDateTime.of(2020, Month.APRIL, 13, 13, 20, 20),
+//        Order.Status.OPEN
+//    );    
+//    
+//    static Order mockItem2 = new Order(
+//        1L,
+//        LocalDateTime.of(2020, Month.DECEMBER, 12, 13, 20, 20),
+//        Order.Status.OPEN
+//    );  
+//    
+//    static Order mockItem3 = new Order(
+//        1L,
+//        LocalDateTime.of(2020, Month.NOVEMBER, 13, 13, 20, 20),
+//        Order.Status.OPEN
+//    );
+//    
+//    
+//    List<Order> allItems = List.of(initialItem, mockItem1, mockItem2, mockItem3);
+//    
+//    static Order noExsistingItem = new Order(
+//        5000L,
+//        1L,
+//        LocalDateTime.of(2020, Month.NOVEMBER, 13, 13, 20, 20),
+//        Order.Status.OPEN
+//    );
+//    
+//    static Order updatedItem = new Order(
+//        1L,
+//        LocalDateTime.of(2020, Month.DECEMBER, 13, 13, 20, 20),
+//        Order.Status.SERVED
+//    );
         
     @Override
     protected Credentials getUserCredentials() {
@@ -126,22 +132,24 @@ public class OrderManagerTest extends TestDefaultCrud<
 
     @Override
     protected Order getInitialItem() {
-        return initialItem;
+        return this.defaultData.initialOrder;
     }
 
     @Override
     protected Order getUpdatedItem() {
-        return updatedItem;
-    }
+        return this.defaultData.updatedOrder;
+        
+    }   
+      
 
     @Override
     protected List<Order> getAllTestItems() {
-        return this.allItems;
+        return this.defaultData.allOrder;
     }
     
     @Override
     protected Order getNoExistingItem() {
-        return noExsistingItem;
+        return this.defaultData.noExsistingOrder;
     }  
     
     @Override
@@ -213,6 +221,22 @@ public class OrderManagerTest extends TestDefaultCrud<
     @Test
     @org.junit.jupiter.api.Order(001)
     void setup(){
+        basicSetup("Order tests setup");
+        
+        setDefaultDataLogins();  
+        
+        defaultData.initTablesData();
+        createDefaultDataTables();
+        defaultData.initSessionServicesData();        
+        createDefaultDataSessionService();
+        defaultData.initOrderData();  
+        
+        assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
+        assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
+        userSessionToken = this.getUserCredentials().getSessionToken(); // TODO delete
+        adminSessionToken = this.getAdminCredentials().getSessionToken(); // TODO delete
+        
+        
         basicSetup("setup");
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
         assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
@@ -269,7 +293,8 @@ public class OrderManagerTest extends TestDefaultCrud<
     void deleteOrderBasicTests(){
         deleteItemBasicTests("delete" + getClassName() + "BasicTests", getAdminCredentials().getSessionToken());
     }
-     @Test
+    
+    @Test
     @org.junit.jupiter.api.Order(850)
     void getToDeletOrder(){
         getItemToDelete("getToDele" + getClassName());
@@ -286,6 +311,7 @@ public class OrderManagerTest extends TestDefaultCrud<
     void getDeletedOrder(){
         getDeletedItem("getDeleted" + getClassName());
     }
+  
 
      
 }

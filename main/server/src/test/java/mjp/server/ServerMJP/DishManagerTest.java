@@ -41,6 +41,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import testUtils.Credentials;
 import testUtils.DataEntry;
 import testUtils.TestDefaultCrud;
@@ -51,6 +52,7 @@ import testUtils.TestDefault;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@ActiveProfiles("test")
 public class DishManagerTest extends TestDefaultCrud<
         Long,
         Dish,

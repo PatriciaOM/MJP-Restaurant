@@ -430,8 +430,8 @@ public class Controller {
         System.out.println(String.format("POST order/delete(%s)", this.gson.toJson(info)));
         OrderDeleteResponse response = this.orderManager.delete(info, UserRole.ADMIN, new OrderDeleteResponse());
         return this.gson.toJson(response);
-    }
-        
+    }  
+    
     /**
      * This endpoint handles a OrderItem create request.
      * 

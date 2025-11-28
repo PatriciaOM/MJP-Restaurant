@@ -76,7 +76,7 @@ public class TableManagementStatusTest extends TestDefault {
         defaultData.initTablesData();
         createDefaultDataTables();
         defaultData.initSessionServicesData();        
-        creteDefaultDataSessionService();
+        createDefaultDataSessionService();
         
         userSessionToken = defaultData.userCredentials.getSessionToken();
         adminSessionToken = defaultData.adminCredentials.getSessionToken();

@@ -137,11 +137,10 @@ public abstract class Manager<
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (!checkGetPermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        List<Dish> dishes = info.findAllItems(this.getRepository());
-        List<ItemsType> dishes = this.findItems(this.getRepository(), info);
+        List<ItemsType> items = this.findItems(this.getRepository(), info);
 
         response.setMessageStatus("Success");
-        response.setMessageData(dishes);
+        response.setMessageData(items);
         return response;
     }
     
