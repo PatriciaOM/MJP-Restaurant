@@ -23,7 +23,7 @@ public class WaiterController {
         this.token = token;
 
         // Creamos la ventana de camarero y le pasamos la acción para obtener las mesas con estado
-        waiterFrame = new WaiterFrame("Finestra cambrers", this::fetchTablesWithStatus);
+        waiterFrame = new WaiterFrame(login, token, "Finestra cambrers", this::fetchTablesWithStatus);
         waiterFrame.setLocationRelativeTo(null);
         waiterFrame.refresh();
         waiterFrame.setVisible(true);

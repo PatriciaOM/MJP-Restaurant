@@ -24,6 +24,9 @@ public class TableStatusResponseElement { // TODO must return the number also
         this.clientsAmount = clientsAmount;
     }
     
+    public TableStatusResponseElement() {
+    }
+
     public void setId(Long value) { this.id = value; }
     public Long getId() { return this.id; }
     

@@ -94,7 +94,6 @@ public class WorkerFrame extends AbstractFrame {
 
     @Override
     protected void createMenuBar() {
-        // Llama al método original para crear el menú base
         super.createMenuBar();
 
         CustomComponents customComponent = new CustomComponents();
@@ -104,7 +103,6 @@ public class WorkerFrame extends AbstractFrame {
             customComponent.setCustomButton("Enrere");
             btnBack = customComponent.getCustomButton();
 
-            // Insertamos el botón antes del de logout
             menuBar.add(btnBack, 0);
             menuBar.revalidate();
             menuBar.repaint();

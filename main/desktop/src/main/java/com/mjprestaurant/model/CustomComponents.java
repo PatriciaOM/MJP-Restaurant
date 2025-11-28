@@ -369,13 +369,13 @@ public class CustomComponents {
     }
 
     /**
-     * Crea un JPanel con borde redondeado de color y grosor definidos
-     * @param color color del borde
-     * @param thickness grosor en píxeles
-     * @param radius radio de las esquinas
-     * @param width tamaño preferido ancho
-     * @param height tamaño preferido alto
-     * @return JPanel con borde redondeado
+     * Crea un JPanel amb borde arrodonit de color y grossor predefinits
+     * @param color color
+     * @param thickness grossor en píxeles
+     * @param radius arrodoniment 
+     * @param width tamany preferit ample
+     * @param height tamany preferit alçada
+     * @return JPanel amb el border arrodonit
      */
     public JPanel createRoundBorderPanel(Color color, int thickness, int radius, int width, int height) {
         JPanel panel = new JPanel() {
@@ -384,7 +384,6 @@ public class CustomComponents {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // Opcional: fondo transparente
                 setOpaque(false);
             }
         };
@@ -396,7 +395,7 @@ public class CustomComponents {
     }
 
     /**
-     * Clase interna para borde redondeado
+     * Classe interna pel border arrodonit
      */
     public static class RoundBorder implements javax.swing.border.Border {
 

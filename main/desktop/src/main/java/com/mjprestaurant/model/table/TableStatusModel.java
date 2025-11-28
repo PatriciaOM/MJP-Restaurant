@@ -6,7 +6,7 @@ import java.util.List;
 public class TableStatusModel extends AbstractTableModel {
 
     private final String[] columnNames = {"Taula", "Ocupació"};
-        private List<TableStatusResponseElement> data;
+    private List<TableStatusResponseElement> data;
 
     public TableStatusModel(List<TableStatusResponseElement> data) {
         this.data = data;
