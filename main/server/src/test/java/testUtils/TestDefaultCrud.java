@@ -69,6 +69,7 @@ public abstract class TestDefaultCrud<
     }
     
     protected void createItemBasicTests(String testname, String sessionToken) {
+        assertNotNull(getInitialItem());
         AuthorizedQueryInfo createInfo =  generateCreateRequest(getAdminCredentials().getSessionToken(), getInitialItem());
         this.basicRequestTests(
             "create" + getClassName(),
@@ -241,4 +242,6 @@ public abstract class TestDefaultCrud<
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+        
+   
 }

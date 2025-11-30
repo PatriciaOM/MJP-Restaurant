@@ -8,8 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import mjp.server.ServerMJP.database.SessionService;
+import mjp.server.ServerMJP.database.SessionService.SessionServiceStatus;
 import mjp.server.ServerMJP.database.SessionServiceRepository;
+import mjp.server.queryData.AuthorizedQueryInfo;
+import mjp.server.queryData.InfoData;
+import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
 import mjp.server.queryData.sessionService.SessionServiceGetInfo;
+import mjp.server.uitls.Utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -88,5 +93,51 @@ public class SessionServiceManager extends Manager<SessionService, SessionServic
     @Override
     protected boolean checkDeletePermisions(String sessionToken) {
         return this.getSessionManager().validateUserToken(sessionToken);
+    }
+    
+    @Override
+    protected <Info extends InfoData & AuthorizedQueryInfo<SessionService>> boolean createValidations(Info info) {
+        SessionService sessionService = info.getMessageData();
+        Long tableId = sessionService.getIdTable();
+
+        // Get shure that there will be just one unapid entry.
+
+        //If it is gettign updated as PAID it will be ok
+        if(sessionService.getStatus() == SessionServiceStatus.PAID)
+            return true;
+
+        // If it is going to chagne form PAID to anoder status need to check that ther is no unpaid entry already in the DB.
+        List<SessionService> tableAllServices = Utils.staticConvertIterableToList(this.getRepository().findByIdTable(tableId));
+        List<SessionService> tablePaidServices = Utils.staticConvertIterableToList(this.getRepository().findByStatusAndIdTable(SessionService.SessionServiceStatus.PAID, tableId));
+        if (tableAllServices.size() != tablePaidServices.size())
+            throw new ResponseStatusException(HttpStatus.LOCKED);
+        return true;
+    }
+    
+    @Override
+    protected <Info extends InfoData & AuthorizedQueryInfo<SessionService>> boolean updateValidations(Info info) {
+        SessionService sessionService = info.getMessageData();
+        Long tableId = sessionService.getIdTable();
+        
+        // Get shure that there will be just one unapid entry.
+        
+        //If it is gettign updated as PAID it will be ok
+        if(sessionService.getStatus() == SessionServiceStatus.PAID)
+            return true;
+        
+        //If it is already as unpaid in the DB there is no possible error.
+        Optional<SessionService> dbStatus = this.getRepository().findById(sessionService.getId());
+        if(dbStatus.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        SessionService sessionServiceDb = dbStatus.get();
+        if(sessionServiceDb.getStatus() != SessionServiceStatus.PAID)
+            return true;
+        
+        // If it is going to chagne form PAID to anoder status need to check that ther is no unpaid entry already in the DB.
+        List<SessionService> tableAllServices = Utils.staticConvertIterableToList(this.getRepository().findByIdTable(tableId));
+        List<SessionService> tablePaidServices = Utils.staticConvertIterableToList(this.getRepository().findByStatusAndIdTable(SessionService.SessionServiceStatus.PAID, tableId));
+        if (tableAllServices.size() != tablePaidServices.size())
+            throw new ResponseStatusException(HttpStatus.LOCKED);
+        return true;
     }
 }

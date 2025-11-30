@@ -72,7 +72,6 @@ public class Dish implements DatabaseEntry<Long> {
         this.category = category;
     }
     
-    
     public Dish(Dish orig) {
         this.id = orig.id;
         this.name = orig.name;
@@ -81,8 +80,6 @@ public class Dish implements DatabaseEntry<Long> {
         this.available = orig.available;
         this.category = orig.category;
     }
-    
-    
     
     @Override
     public Long getId(){ return this.id; }
@@ -128,7 +125,4 @@ public class Dish implements DatabaseEntry<Long> {
     public DishCategory getCategory() {
         return category;
     }
-    
-    
-    
 }

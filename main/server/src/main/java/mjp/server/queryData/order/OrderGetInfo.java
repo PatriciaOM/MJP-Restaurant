@@ -21,9 +21,9 @@ public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> 
     public enum SearchType{
         ALL,
         BY_ID,
-        BY_SESSION_SERVICE
+        BY_SESSION_SERVICE_ID
     }
-    
+      
     /**
      * A valid session token with the required permissions.
      */
@@ -31,9 +31,26 @@ public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> 
     private Order order;
     private SearchType searchType;
     private Long id;
+    private Long sessionServiceId;
+    
+    
+    public OrderGetInfo(String sessionToken, Long searchVal, SearchType searchType) {
+        this.sessionToken = sessionToken;
+        this.searchType = searchType;
+        switch (searchType){
+            case BY_ID:
+                this.id = searchVal;
+                break;
+            case BY_SESSION_SERVICE_ID:
+                this.sessionServiceId = searchVal;
+                break;
+            default: 
+                throw new IllegalArgumentException(String.format("Search type %s not suprted for Long type ", searchType));
+        }
+    }
      
 
-   public OrderGetInfo(){}
+    public OrderGetInfo(){}
    
      /**
      * Constructor for getting an Order by Id. I takes two parameters the session token and the Id.
@@ -43,7 +60,6 @@ public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> 
         this.sessionToken = sessionToken;
         this.searchType = SearchType.ALL;
     }
-   
    
      /**
      * Constructor for getting an Order by Id. I takes two parameters the session token and the Id.
@@ -84,21 +100,32 @@ public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> 
         return order;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public void setMessageData(Long requestItem) {
-        setId(requestItem);
+    public void setSearchType(SearchType searchType) {
+        this.searchType = searchType;
     }
 
     public SearchType getSearchType() {
         return searchType;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
     public Long getId() {
         return id;
+    }
+
+    public void setSessionServiceId(Long sessionServiceId) {
+        this.sessionServiceId = sessionServiceId;
+    }
+
+    public Long getSessionServiceId() {
+        return sessionServiceId;
+    }
+    
+    @Override
+    public void setMessageData(Long requestItem) {
+        setId(requestItem);
     }
     
     @Override
