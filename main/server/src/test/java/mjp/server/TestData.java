@@ -5,7 +5,9 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import mjp.server.ServerMJP.database.Dish;
 import mjp.server.ServerMJP.database.Order;
+import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.queryData.table.TableGetInfo;
@@ -53,6 +55,15 @@ public class TestData {
     public List<Order> allOrder;
     public Order updatedOrder;
     public Order noExsistingOrder;
+    
+    public OrderItem initialOrderItem;
+    public OrderItem mockOrderItem1;    
+    public OrderItem mockOrderItem2;  
+    public OrderItem mockOrderItem3;
+    public OrderItem openOrderItem;
+    public List<OrderItem> allOrderItem;
+    public OrderItem updatedOrderItem;
+    public OrderItem noExsistingOrderItem;
         
     /**************************************************************************/
     /*** TableRestaurant                                                    ***/
@@ -193,7 +204,7 @@ public class TestData {
     }
      
     /**************************************************************************/
-    /*** SessionService                                                     ***/
+    /*** Order                                                     ***/
     /**************************************************************************/
     public void refreshOrder() {
         initialOrder = allOrder.get(0);
@@ -205,7 +216,6 @@ public class TestData {
     }
     public void initOrderData() {
 //        initTablesData();
-        dummyOrderServices();
         
         
         initialOrder = new Order(
@@ -262,7 +272,92 @@ public class TestData {
         return null;
     }
     
-    public void dummyOrderServices() {
-
+    
+    
+    /**************************************************************************/
+    /*** OrderItem                                                          ***/
+    /**************************************************************************/
+    public void refreshOrderItem() {
+        initialOrderItem = allOrderItem.get(0);
+        updatedOrderItem.setId(initialOrderItem.getId());
+        mockOrderItem1 = allOrderItem.get(1);
+        mockOrderItem2 = allOrderItem.get(2);
+        mockOrderItem3 = allOrderItem.get(3);
+        openOrderItem = allOrderItem.get(4);
     }
+    public void initOrderItemData() {
+        System.out.println("Initializing OrderItemData");
+        initialOrderItem = new OrderItem(
+            initialOrder.getId(),
+            5000L,
+            2,
+            2.5f,
+            "Patates",
+            "Braves",
+            Dish.DishCategory.APPETIZER
+        );
+
+        mockOrderItem1 = new OrderItem(
+            initialOrder.getId(),
+            5001L,
+            2,
+            2.6f,
+            "Patates",
+            "Rellenes",
+            Dish.DishCategory.APPETIZER
+        );    
+
+        mockOrderItem2 = new OrderItem(
+            initialOrder.getId(),
+            5002L,
+            2,
+            2.6f,
+            "Patates",
+            "Allioli",
+            Dish.DishCategory.APPETIZER
+        );  
+
+        mockOrderItem3 = new OrderItem(
+            initialOrder.getId(),
+            5003L,
+            2,
+            2.6f,
+            "Patates",
+            "estofades",
+            Dish.DishCategory.APPETIZER
+        );
+        
+        allOrderItem = new ArrayList<OrderItem>(List.of(initialOrderItem, mockOrderItem1, mockOrderItem2, mockOrderItem3));
+
+        noExsistingOrderItem = new OrderItem(
+            5000L,
+            5000L,
+            5004L,
+            2,
+            2.6f,
+            "Patates",
+            "estofades",
+            Dish.DishCategory.APPETIZER
+        );
+
+        updatedOrderItem = new OrderItem(
+            initialOrderItem.getId(),
+            5000L,
+            2,
+            2.6f,
+            "Patates",
+            "estofadetes",
+            Dish.DishCategory.APPETIZER
+        );
+    }
+    
+    public OrderItem getOrderItemByIdFromAllOrders(Long id) {
+        for (OrderItem orderItem : allOrderItem){
+            if (Objects.equals(orderItem.getId(), id))
+                return orderItem;
+        }
+        return null;
+    }
+    
+    
 }

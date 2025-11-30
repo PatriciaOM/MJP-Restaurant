@@ -34,20 +34,7 @@ public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> 
     private Long sessionServiceId;
     
     
-    public OrderGetInfo(String sessionToken, Long searchVal, SearchType searchType) {
-        this.sessionToken = sessionToken;
-        this.searchType = searchType;
-        switch (searchType){
-            case BY_ID:
-                this.id = searchVal;
-                break;
-            case BY_SESSION_SERVICE_ID:
-                this.sessionServiceId = searchVal;
-                break;
-            default: 
-                throw new IllegalArgumentException(String.format("Search type %s not suprted for Long type ", searchType));
-        }
-    }
+
      
 
     public OrderGetInfo(){}
@@ -71,6 +58,21 @@ public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> 
         this.id = id;
         this.searchType = SearchType.BY_ID;
     }
+    
+    public OrderGetInfo(String sessionToken, Long searchVal, SearchType searchType) {
+        this.sessionToken = sessionToken;
+        this.searchType = searchType;
+        switch (searchType){
+            case BY_ID:
+                this.id = searchVal;
+                break;
+            case BY_SESSION_SERVICE_ID:
+                this.sessionServiceId = searchVal;
+                break;
+            default: 
+                throw new IllegalArgumentException(String.format("Search type %s not suprted for Long type ", searchType));
+        }
+    }
        
     public OrderGetInfo(String sessionToken, Order order, SearchType searchType, Long id) {
         this.sessionToken = sessionToken;
@@ -78,7 +80,11 @@ public class OrderGetInfo extends InfoData implements AuthorizedQueryInfo<Long> 
         this.searchType = searchType;
         this.id = id;
     }  
-        
+       
+    /**
+     * Copy constructor
+     * @param orig original Order
+     */
     public OrderGetInfo(OrderGetInfo orig) {
         this.sessionToken = orig.sessionToken;
         this.order = orig.getOrder();

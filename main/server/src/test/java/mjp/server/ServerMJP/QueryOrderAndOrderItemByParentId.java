@@ -9,8 +9,11 @@ import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import mjp.server.ServerMJP.database.Order;
+import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.queryData.order.OrderGetInfo;
+import mjp.server.queryData.orderItem.OrderItemGetInfo;
 import mjp.server.responseData.order.OrderGetResponse;
+import mjp.server.responseData.orderItem.OrderItemGetResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +50,16 @@ public class QueryOrderAndOrderItemByParentId extends TestDefault{
         .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
         .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
         .create();
+
+    @LocalServerPort
+    private int port;
+    @Override
+    public int getPort() { return this.port; }
+    
+    @Autowired
+    private TestRestTemplate restTemplate;
+    @Override
+    public TestRestTemplate getRestTemplate() { return this.restTemplate; }
     
     
     @Test
@@ -63,18 +76,6 @@ public class QueryOrderAndOrderItemByParentId extends TestDefault{
         defaultData.initOrderData();        
         createDefaultDataOrder(); 
         assertNotNull(defaultData.initialOrder.getId());
-        
-//        assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
-//        assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
-//        userSessionToken = this.getUserCredentials().getSessionToken(); // TODO delete
-//        adminSessionToken = this.getAdminCredentials().getSessionToken(); // TODO delete
-        
-        
-//        basicSetup("setup");
-//        assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
-//        assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
-//        userSessionToken = this.getUserCredentials().getSessionToken(); // TODO delete
-//        adminSessionToken = this.getAdminCredentials().getSessionToken(); // TODO delete
     }
       
     @Test
@@ -85,6 +86,7 @@ public class QueryOrderAndOrderItemByParentId extends TestDefault{
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         System.out.println("::::::::::::::::: RESPONSE TO GET ORDERS BY SESSION ID");
+        System.out.println(response.getBody());
         OrderGetResponse responseObject = gson.fromJson(response.getBody(), OrderGetResponse.class);
         System.out.println("Returnded: " + responseObject.getItems().size() + " items");
         for (Order order : responseObject.getItems()) {
@@ -94,15 +96,23 @@ public class QueryOrderAndOrderItemByParentId extends TestDefault{
             assertThat(respOrder).isEqualTo(orderFormOriginalList);
         }
     }
-
-    @LocalServerPort
-    private int port;
-    @Override
-    public int getPort() { return this.port; }
-    
-    @Autowired
-    private TestRestTemplate restTemplate;
-    @Override
-    public TestRestTemplate getRestTemplate() { return this.restTemplate; }
-    
+          
+    @Test
+    @org.junit.jupiter.api.Order(1100)
+    void getOrderItemsByOrderId(){
+        String url = "/order-item/get";
+        OrderItemGetInfo info = new OrderItemGetInfo(defaultData.adminCredentials.getSessionToken(), defaultData.initialOrder.getId(), OrderItemGetInfo.SearchType.BY_ORDER_ID);
+        ResponseEntity<String> response = makePostRequest(url, info);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        System.out.println("::::::::::::::::: RESPONSE TO GET ORDER ITEMS BY SESSION ID");
+        System.out.println(response.getBody());
+        OrderItemGetResponse responseObject = gson.fromJson(response.getBody(), OrderItemGetResponse.class);
+        System.out.println("Returnded: " + responseObject.getItems().size() + " items");
+        for (OrderItem order : responseObject.getItems()) {
+            System.out.println("order item: " + gson.toJson(order));
+            String respOrder = gson.toJson(order);
+            String orderFormOriginalList = gson.toJson(defaultData.getOrderByIdFromAllOrders(order.getId()));
+            assertThat(respOrder).isEqualTo(orderFormOriginalList);
+        }
+    }
 }
