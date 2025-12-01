@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mjprestaurant.model.dish.Dish
 import com.example.mjprestaurant.model.order.Order
+import com.example.mjprestaurant.model.order.OrderItem
 import com.example.mjprestaurant.model.order.OrderStatus
 import com.example.mjprestaurant.model.session.SessionService
 import com.example.mjprestaurant.model.session.SessionStatus
@@ -36,6 +37,7 @@ class TableSessionViewModel(
 
     // --- CARRET DE COMANDA (LOCAL) ---
     val cartItems = mutableStateListOf<Dish>()
+    val sentItems = mutableStateListOf<OrderItem>()
 
     // --- ESTATS DE UI ---
     val isLoading = mutableStateOf(false)
@@ -57,6 +59,7 @@ class TableSessionViewModel(
         viewModelScope.launch {
             isLoading.value = true
             errorMessage.value = null
+            sentItems.clear()
 
             try {
                 val response = repository.getSessions(token)
@@ -103,9 +106,9 @@ class TableSessionViewModel(
                     status = SessionStatus.OPEN
                 )
                 val response = repository.createSession(token, newSession)
-                val body = response.body()
 
                 // Validem si la creació ha estat exitosa
+                val body = response.body()
                 val isSuccess = response.isSuccessful &&
                         (body?.messageStatus?.equals("success", ignoreCase = true) == true ||
                                 !body?.sessionServices.isNullOrEmpty())
@@ -124,6 +127,32 @@ class TableSessionViewModel(
                 }
             } catch (e: Exception) {
                 errorMessage.value = "Error: ${e.message}"
+                isLoading.value = false
+            }
+        }
+    }
+    // --- Tancar Taula (Cobrar) ---
+    fun closeTable(token: String, onSuccess: () -> Unit) {
+        val session = currentSession.value ?: return
+
+        viewModelScope.launch {
+            isLoading.value = true
+            try {
+                // Canviem estat a PAID i posem data fi
+                val closedSession = session.copy(
+                    status = SessionStatus.PAID,
+                    endDate = getCurrentTimestamp()
+                )
+                val response = repository.updateSession(token, closedSession)
+
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    errorMessage.value = "Error al tancar: ${response.code()}"
+                }
+            } catch (e: Exception) {
+                errorMessage.value = "Error xarxa: ${e.message}"
+            } finally {
                 isLoading.value = false
             }
         }
@@ -168,14 +197,13 @@ class TableSessionViewModel(
             itemsToSend.forEach { dish ->
                 try {
                     val response = repository.addDishToOrder(token, orderId!!, dish, 1)
-                    if (!response.isSuccessful) {
-                        errors++
-                    }
+                    if (!response.isSuccessful) errors++
                 } catch (e: Exception) {
                     errors++
-                    e.printStackTrace()
                 }
             }
+
+            loadSentItems(token, orderId!!)
 
             isLoading.value = false
 
@@ -204,6 +232,21 @@ class TableSessionViewModel(
                     createInitialOrder(token, sessionId)
                 }
             } catch (e: Exception) {
+                isLoading.value = false
+            }
+        }
+    }
+
+    private fun loadSentItems(token: String, orderId: Long) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getOrderItems(token, orderId)
+                if (response.isSuccessful) {
+                    val items = response.body()?.items ?: emptyList()
+                    sentItems.clear()
+                    sentItems.addAll(items)
+                }
+            } catch (e: Exception) { } finally {
                 isLoading.value = false
             }
         }

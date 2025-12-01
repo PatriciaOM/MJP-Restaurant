@@ -20,12 +20,13 @@ data class OrderCreateInfo(
 data class OrderGetInfo(
     val sessionToken: String,
     val searchType: SearchType,
-    val id: Long? = null
+    val id: Long? = null,
+    val sessionServiceId: Long? = null
 ) {
     enum class SearchType {
         ALL,
         BY_ID,
-        BY_SESSION_SERVICE // Cerca per ID de sessió
+        BY_SESSION_SERVICE_ID // Cerca per ID de sessió
     }
 }
 

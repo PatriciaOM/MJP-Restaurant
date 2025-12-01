@@ -11,6 +11,6 @@ import com.google.gson.annotations.SerializedName
  */
 data class OrderResponse(
     val messageStatus: String,
-    @SerializedName("Items")
+    @SerializedName("items")
     val items: List<Order>
 )

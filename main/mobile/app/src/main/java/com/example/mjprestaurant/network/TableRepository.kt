@@ -6,6 +6,7 @@ import com.example.mjprestaurant.model.order.OrderItem
 import com.example.mjprestaurant.model.order.request.OrderCreateInfo
 import com.example.mjprestaurant.model.order.request.OrderGetInfo
 import com.example.mjprestaurant.model.order.request.OrderItemCreateInfo
+import com.example.mjprestaurant.model.order.request.OrderItemGetInfo
 import com.example.mjprestaurant.model.order.request.OrderUpdateInfo
 import com.example.mjprestaurant.model.order.request.OrderDeleteInfo
 import com.example.mjprestaurant.model.order.response.OrderItemResponse
@@ -47,7 +48,10 @@ class TableRepository {
      * @param sessionService Objecte amb les dades inicials de la sessió (taula, cambrer, etc.).
      * @return Response amb la sessió creada.
      */
-    suspend fun createSession(token: String, sessionService: SessionService): Response<SessionServiceResponse> {
+    suspend fun createSession(
+        token: String,
+        sessionService: SessionService
+    ): Response<SessionServiceResponse> {
         val request = SessionServiceCreateInfo(sessionToken = token, newEntry = sessionService)
         return RetrofitInstance.api.createSession(request)
     }
@@ -70,7 +74,10 @@ class TableRepository {
     /**
      * Actualitza una sessió existent.
      */
-    suspend fun updateSession(token: String, sessionService: SessionService): Response<SessionServiceResponse> {
+    suspend fun updateSession(
+        token: String,
+        sessionService: SessionService
+    ): Response<SessionServiceResponse> {
         val request = SessionServiceUpdateInfo(sessionToken = token, item = sessionService)
         return RetrofitInstance.api.updateSession(request)
     }
@@ -109,8 +116,8 @@ class TableRepository {
     suspend fun getOrderBySession(token: String, sessionId: Long): Response<OrderResponse> {
         val request = OrderGetInfo(
             sessionToken = token,
-            searchType = OrderGetInfo.SearchType.BY_SESSION_SERVICE,
-            id = sessionId
+            searchType = OrderGetInfo.SearchType.BY_SESSION_SERVICE_ID,
+            sessionServiceId = sessionId
         )
         return RetrofitInstance.api.getOrders(request)
     }
@@ -131,18 +138,26 @@ class TableRepository {
      * @return Response amb la línia creada.
      */
     suspend fun addDishToOrder(token: String, orderId: Long, dish: Dish, quantity: Int): Response<OrderItemResponse> {
-        // Creem l'objecte segons els nous camps del servidor Java
         val newItem = OrderItem(
             idOrder = orderId,
-            idDish = dish.id ?: 0L, // Necessitem l'ID del plat
+            idDish = dish.id ?: 0L,
             amount = quantity,
             price = dish.price,
-            name = dish.name,      // El nom va al camp 'name'
-            description = dish.description, // La descripció al camp 'description'
+            name = dish.name,
+            description = dish.description,
             category = dish.category
         )
-
         val request = OrderItemCreateInfo(sessionToken = token, newEntry = newItem)
         return RetrofitInstance.api.addOrderItem(request)
+    }
+
+    suspend fun getOrderItems(token: String, orderId: Long): Response<OrderItemResponse> {
+        val request = OrderItemGetInfo(
+            sessionToken = token,
+            searchType = OrderItemGetInfo.SearchType.BY_ORDER_ID,
+            orderId = orderId,
+            id = null
+        )
+        return RetrofitInstance.api.getOrderItems(request)
     }
 }
