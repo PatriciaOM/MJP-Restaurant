@@ -4,6 +4,10 @@
  */
 package mjp.server.ServerMJP.model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +17,8 @@ import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.SessionServiceRepository;
 import mjp.server.queryData.orderItem.OrderItemGetInfo;
 import mjp.server.queryData.sessionService.SessionServiceGetInfo;
+import mjp.server.uitls.serializers.LocalDateAdapter;
+import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -56,22 +62,35 @@ public class OrderItemManager extends Manager<OrderItem, OrderItemRepository, Or
     public List<OrderItem> findItems(OrderItemRepository repository, OrderItemGetInfo infoData) {
         
         List<OrderItem> ret = new ArrayList();
-        Optional<OrderItem> dishResult;
+        Optional<OrderItem> orderItemResult;
+        
+        Gson gson = (new GsonBuilder())
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
+    
+        System.out.println("Finding orderItems with info data: " + gson.toJson(infoData));
         switch (infoData.getSearchType()) {
             case ALL:
                 return this.convertIterableToList(repository.findAll());
             case BY_ID:
-                dishResult = repository.findById(infoData.getId());
-                if (dishResult.isEmpty())
-                    ret = new ArrayList<>();
-                else
-                    ret = List.of(dishResult.get());
+                orderItemResult = repository.findById(infoData.getId());
+                if (orderItemResult.isEmpty())
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                ret = List.of(orderItemResult.get());
+                break;
+            case BY_ORDER_ID:
+                System.out.println("It is on the right palce");
+                assert infoData.getOrderId() != null;
+                ret = repository.findByIdOrder(infoData.getOrderId());
                 break;
             default:
+                System.out.println("Throwing BAD_REQUEST");
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if (ret.size() != 1)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        System.out.println("returning: " + gson.toJson(ret));
+//        if (ret.size() != 1)
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         return ret;
     }
     

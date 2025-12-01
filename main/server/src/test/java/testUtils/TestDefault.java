@@ -12,18 +12,21 @@ import java.util.List;
 import mjp.server.ServerMJP.database.SessionService;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.Order;
+import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.ServerMJP.database.User;
 import mjp.server.TestData;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.LoginInfo;
 import mjp.server.queryData.order.OrderCreateInfo;
+import mjp.server.queryData.orderItem.OrderItemCreateInfo;
 import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableGetInfo;
 import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.LoginResponse;
 import mjp.server.responseData.order.OrderCreateResponse;
+import mjp.server.responseData.orderItem.OrderItemCreateResponse;
 import mjp.server.responseData.sessionService.SessionServiceCreateResponse;
 import mjp.server.responseData.table.TableCreateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
@@ -251,6 +254,33 @@ public abstract class TestDefault {
             defaultData.allOrder.set(i, createdorder.get(0));
         }
         defaultData.refreshOrder();
+    }   
+    
+    public void createDefaultDataOrderItem(){
+        assertNotNull(defaultData.allOrder.get(0).getId());
+        assertNotNull(defaultData.initialOrder.getId());
+//        defaultData.initTablesData();
+        String url = makeUrl("/order-item/create");
+        System.out.println("Creating order item::::::::::::::: " );
+        for (int i = 0; i < defaultData.allOrderItem.size(); i++) {
+            System.out.println("Creating OrderItem: " + i);
+            OrderItem orderItem = defaultData.allOrderItem.get(i);
+            String sessionToken = defaultData.adminCredentials.getSessionToken();
+            assertNotNull(sessionToken);
+            assertNotNull(orderItem);
+//            order.setId(null);   //This should be redundant
+            assertNull(orderItem.getId()); // Get shulre the line above is redundant
+            assertNotNull(orderItem.getIdOrder()); 
+            OrderItemCreateInfo info = new OrderItemCreateInfo(sessionToken, orderItem);
+            ResponseEntity<String> response = makePostRequest(url, info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            OrderItemCreateResponse responseObject = gson.fromJson(response.getBody(), OrderItemCreateResponse.class);
+            List<OrderItem> createdOrderItem = responseObject.getMessageData();
+            assertThat(createdOrderItem.size()).isEqualTo(1);
+            assertNotNull(createdOrderItem.get(0).getId());
+            defaultData.allOrderItem.set(i, createdOrderItem.get(0));
+        }
+        defaultData.refreshOrderItem();
     }
     
     

@@ -138,6 +138,9 @@ public abstract class TestDefaultCrud<
         AuthorizedQueryInfo info;
         
         for (ItemType item : allItems){
+            System.out.println("::::::::::::::::::::::::: sdaf");
+            System.out.println("Creating item: " + gson.toJson(item));
+            System.out.println("::::::::::::::::::::::::: fasd");
             assertNotNull(getCreateCredentials().getSessionToken());
             info = generateCreateRequest(getCreateCredentials().getSessionToken(), item);
             ResponseEntity<String> response = makePostRequest(url, info);
