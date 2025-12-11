@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
+import mjp.server.uitls.Utils;
 
 /**
  * Class for handling the requests and responses of the User class. Just gets the deserialized request objects and generates the response objects that will be serialized and returned.
@@ -62,6 +63,7 @@ public class UserManager {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED );
         if (!this.userRepository.findByUsername(info.getUser().getUsername()).isEmpty())
             throw new ResponseStatusException(HttpStatus.LOCKED);
+        info.getUser().setPassword(Utils.encrypt(info.getUser().getPassword()));
         this.userRepository.save(info.getUser());
         return new UserCreateResponse(info.getUser());
     }
@@ -164,9 +166,9 @@ public class UserManager {
      */
     public void mockData() {
         User user;
-        user = new User("Twiki", "Tuki", UserRole.USER, "Twiki", "Tuki", UserShift.MORNING, LocalDate.of(2017, Month.JANUARY, 9), LocalDate.of(2017, Month.MAY, 4), "46257891I");
+        user = new User("Twiki", Utils.encrypt("Tuki"), UserRole.USER, "Twiki", "Tuki", UserShift.MORNING, LocalDate.of(2017, Month.JANUARY, 9), LocalDate.of(2017, Month.MAY, 4), "46257891I");
         this.userRepository.save(user);
-        user = new User("Ping", "Pong", UserRole.ADMIN, "Bota", "Rebota", UserShift.AFTERNOON, LocalDate.of(2017, Month.JANUARY, 9), LocalDate.of(2017, Month.OCTOBER, 4),"86657911I");
+        user = new User("Ping",  Utils.encrypt("Pong"), UserRole.ADMIN, "Bota", "Rebota", UserShift.AFTERNOON, LocalDate.of(2017, Month.JANUARY, 9), LocalDate.of(2017, Month.OCTOBER, 4),"86657911I");
         this.userRepository.save(user);
     }
 
