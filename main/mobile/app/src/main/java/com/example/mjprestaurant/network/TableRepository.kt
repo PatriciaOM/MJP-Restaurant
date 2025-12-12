@@ -122,6 +122,15 @@ class TableRepository {
         return RetrofitInstance.api.getOrders(request)
     }
 
+    /**
+     * Actualitza una comanda existent (per exemple, per canviar l'estat a SENDED).
+     * Aquesta funció faltava i causava l'error al ViewModel.
+     */
+    suspend fun updateOrder(token: String, order: Order): Response<OrderResponse> {
+        val request = OrderUpdateInfo(sessionToken = token, item = order)
+        return RetrofitInstance.api.updateOrder(request)
+    }
+
 
     // --- GESTIÓ DE LÍNIES DE COMANDA (ORDER ITEMS) ---
 

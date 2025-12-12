@@ -203,6 +203,23 @@ class TableSessionViewModel(
                 }
             }
 
+            if (errors == 0) {
+                try {
+                    // Creem una còpia de l'ordre amb l'estat canviat
+                    val updatedOrder = currentOrder.value!!.copy(state = OrderStatus.SENDED)
+                    val updateResponse = repository.updateOrder(token, updatedOrder)
+
+                    if (updateResponse.isSuccessful) {
+                        currentOrder.value = updatedOrder
+                        println("Ordre marcada com a SENDED")
+                    } else {
+                        println("Plats enviats, però error actualitzant estat Order: ${updateResponse.code()}")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
             loadSentItems(token, orderId!!)
 
             isLoading.value = false
