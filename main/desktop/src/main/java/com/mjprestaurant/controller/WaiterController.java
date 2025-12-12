@@ -3,6 +3,9 @@ package com.mjprestaurant.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mjprestaurant.model.ControllerException;
+import com.mjprestaurant.model.session.SessionService;
+import com.mjprestaurant.model.session.SessionServiceGetInfo;
+import com.mjprestaurant.model.session.SessionServiceGetResponse;
 import com.mjprestaurant.model.table.*;
 import com.mjprestaurant.view.LoginFrame;
 import com.mjprestaurant.view.WaiterFrame;
@@ -104,6 +107,89 @@ public class WaiterController {
         } catch (Exception e) {
             e.printStackTrace();
             throw new ControllerException("Error de conexión al servidor.");
+        }
+    }
+
+    public SessionService getSessionById(Long sessionId) throws ControllerException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+            URL url = new URL("http://localhost:8080/session/get");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            String json = mapper.writeValueAsString(
+                new SessionServiceGetInfo(
+                    token,
+                    sessionId
+                )
+            );
+
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(json.getBytes(StandardCharsets.UTF_8));
+                os.flush();
+            }
+
+            if (conn.getResponseCode() == 200) {
+                SessionServiceGetResponse response =
+                    mapper.readValue(conn.getInputStream(), SessionServiceGetResponse.class);
+
+                conn.disconnect();
+
+                if (response.getSessionServices() != null &&
+                    !response.getSessionServices().isEmpty()) {
+
+                    return response.getSessionServices().get(0);
+                }
+
+                return null;
+            } else {
+                conn.disconnect();
+                throw new ControllerException(
+                    "Error servidor: " + conn.getResponseCode()
+                );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ControllerException("Error obtenint la sessió.");
+        }
+    }
+
+    public void markSessionAsPaid(SessionService session) throws ControllerException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            URL url = new URL("http://localhost:8080/session/update");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            session.setStatus(SessionService.SessionServiceStatus.PAID);
+
+            String json = mapper.writeValueAsString(session);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(json.getBytes(StandardCharsets.UTF_8));
+                os.flush();
+            }
+
+            if (conn.getResponseCode() != 200) {
+                conn.disconnect();
+                throw new ControllerException("No s'ha pogut actualitzar la sessió.");
+            }
+
+            conn.disconnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ControllerException("Error actualitzant la sessió.");
         }
     }
 
