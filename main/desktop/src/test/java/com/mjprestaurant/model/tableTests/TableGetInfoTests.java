@@ -1,4 +1,4 @@
-package com.mjprestaurant.model;
+package com.mjprestaurant.model.tableTests;
 
 import com.mjprestaurant.model.table.TableGetInfo;
 import com.mjprestaurant.model.table.TableGetInfo.SearchType;

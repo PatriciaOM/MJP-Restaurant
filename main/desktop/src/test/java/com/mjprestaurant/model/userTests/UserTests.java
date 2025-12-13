@@ -1,4 +1,4 @@
-package com.mjprestaurant.model;
+package com.mjprestaurant.model.userTests;
 
 import com.mjprestaurant.model.user.User;
 import com.mjprestaurant.model.user.UserShift;

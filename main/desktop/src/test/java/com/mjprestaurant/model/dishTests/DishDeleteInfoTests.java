@@ -1,4 +1,4 @@
-package com.mjprestaurant.model;
+package com.mjprestaurant.model.dishTests;
 
 import com.mjprestaurant.model.dish.DishDeleteInfo;
 import org.junit.jupiter.api.Test;

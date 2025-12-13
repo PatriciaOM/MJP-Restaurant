@@ -12,14 +12,14 @@ public class SessionServiceResponse {
     List<SessionService> sessionServices;
     
     /** Constructor per defecte */
-    SessionServiceResponse(){};
+    public SessionServiceResponse(){};
     
     /**
      * Constructor amb tots els atributs.
      * @param messageStatus estat del missatge
      * @param sessionServices llista de sessions de servei
      */
-    SessionServiceResponse(String messageStatus, List<SessionService> sessionServices) {
+    public SessionServiceResponse(String messageStatus, List<SessionService> sessionServices) {
         this.messageStatus = messageStatus;
         this.sessionServices = sessionServices;
     }
@@ -28,7 +28,7 @@ public class SessionServiceResponse {
      * Constructor de còpia.
      * @param orig objecte original a copiar
      */
-    SessionServiceResponse(SessionServiceResponse orig) {
+    public SessionServiceResponse(SessionServiceResponse orig) {
         this.messageStatus = orig.messageStatus;
         this.sessionServices = orig.sessionServices;
     }

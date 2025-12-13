@@ -13,14 +13,14 @@ public class OrderResponse {
     /**
      * Constructor per defecte
      */
-    OrderResponse(){};
+    public OrderResponse(){};
     
     /**
      * Constructor que rep el missatge i la llista de comandes
      * @param messageStatus missatge d'èxit
      * @param items llistat de comandes
      */
-    OrderResponse(String messageStatus, List<Order> items) {
+    public OrderResponse(String messageStatus, List<Order> items) {
         this.messageStatus = messageStatus;
         this.items = items;
     }
@@ -29,7 +29,7 @@ public class OrderResponse {
      * Constructor que rep l'objecte
      * @param orig objecte orderResponse
      */
-    OrderResponse(OrderResponse orig) {
+    public OrderResponse(OrderResponse orig) {
         this.messageStatus = orig.messageStatus;
         this.items = orig.items;
     }

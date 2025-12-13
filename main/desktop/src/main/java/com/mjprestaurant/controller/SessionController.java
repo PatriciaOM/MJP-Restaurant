@@ -25,7 +25,7 @@ public class SessionController {
      * @return SessionService si existeix, null si no hi ha sessió
      * @throws ControllerException Error llençat
      */
-    public static SessionService getSessionByTableId(String token, Long tableId) throws ControllerException {
+    public SessionService getSessionByTableId(String token, Long tableId) throws ControllerException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
@@ -71,7 +71,7 @@ public class SessionController {
      * @return retorna la llista de sessions
      * @throws ControllerException error llençat
      */
-    public static List<SessionService> getSessionsByTableId(String token, Long tableId) throws ControllerException {
+    public List<SessionService> getSessionsByTableId(String token, Long tableId) throws ControllerException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
@@ -119,7 +119,7 @@ public class SessionController {
      * @param session SessionService a actualitzar
      * @throws ControllerException error llençat
      */
-    public static void updateSession(String token, SessionService session) throws ControllerException {
+    public void updateSession(String token, SessionService session) throws ControllerException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());

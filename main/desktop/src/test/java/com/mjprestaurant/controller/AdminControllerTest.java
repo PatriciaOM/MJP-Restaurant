@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AdminControllerTests {
+public class AdminControllerTest {
 
     private AdminFrame adminFrame;
     private LoginFrame loginFrame;

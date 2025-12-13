@@ -25,7 +25,7 @@ public class OrderController {
      * @return Comanda si existeix, null si no hi ha ordre
      * @throws ControllerException Error llençat
      */
-    public static Order getOrderByTableId(String token, Long tableId) throws ControllerException {
+    public Order getOrderByTableId(String token, Long tableId) throws ControllerException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
@@ -65,7 +65,7 @@ public class OrderController {
         }
     }
 
-    public static List<Order> getOrdersByTableId(String token, Long tableId) throws ControllerException {
+    public List<Order> getOrdersByTableId(String token, Long tableId) throws ControllerException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
@@ -114,7 +114,7 @@ public class OrderController {
      * @param order Ordre a actualitzar
      * @throws ControllerException error llençat
      */
-    public static void updateOrder(String token, Order order) throws ControllerException {
+    public void updateOrder(String token, Order order) throws ControllerException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());

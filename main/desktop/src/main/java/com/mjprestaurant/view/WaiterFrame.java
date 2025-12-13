@@ -195,8 +195,10 @@ public class WaiterFrame extends AbstractFrame {
      */
     private void handleTableClick(Long tableId) {
         try {
-            List<Order> orders = OrderController.getOrdersByTableId(token, tableId);
-            SessionService service = SessionController.getSessionByTableId(token, tableId);
+            OrderController orderController = new OrderController();
+            SessionController sessionController = new SessionController();
+            List<Order> orders = orderController.getOrdersByTableId(token, tableId);
+            SessionService service = sessionController.getSessionByTableId(token, tableId);
 
             if (service == null) {
                 JOptionPane.showMessageDialog(this, "No hay sesión activa para esta mesa.");
@@ -220,7 +222,7 @@ public class WaiterFrame extends AbstractFrame {
 
                     if (response == JOptionPane.YES_OPTION) {
                         o.setState(Order.Status.SERVED);
-                        OrderController.updateOrder(token, o);
+                        orderController.updateOrder(token, o);
                         JOptionPane.showMessageDialog(this, "Ordre servida.");
                         refresh();
                     }
@@ -242,7 +244,7 @@ public class WaiterFrame extends AbstractFrame {
 
                 if (sessionResponse == JOptionPane.YES_OPTION) {
                     service.setStatus(SessionServiceStatus.PAID);
-                    SessionController.updateSession(token, service);
+                    sessionController.updateSession(token, service);
                     JOptionPane.showMessageDialog(this, "Sessió actualitzada a PAGADA.");
                     refresh();
                 }

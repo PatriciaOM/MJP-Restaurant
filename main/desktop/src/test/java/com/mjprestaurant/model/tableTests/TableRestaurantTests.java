@@ -1,4 +1,4 @@
-package com.mjprestaurant.model;
+package com.mjprestaurant.model.tableTests;
 
 import com.mjprestaurant.model.table.TableRestaurant;
 import org.junit.jupiter.api.Test;
