@@ -1,21 +1,15 @@
 package com.mjprestaurant.controller;
 
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 
-import javax.swing.JOptionPane;
+import javax.net.ssl.HttpsURLConnection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjprestaurant.view.LoginFrame;
-import com.mjprestaurant.view.TableFrame;
 import com.mjprestaurant.view.WaiterFrame;
 import com.mjprestaurant.view.AdminFrame;
 import com.mjprestaurant.model.*;
-import com.mjprestaurant.model.table.TableRestaurant;
-import com.mjprestaurant.model.table.TableStatusResponse;
-import com.mjprestaurant.model.table.TableStatusResponseElement;
 import com.mjprestaurant.model.user.User;
 import com.mjprestaurant.model.user.UserRole;
 
@@ -67,7 +61,7 @@ public class LoginController {
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(userToSend);
 
-            HttpURLConnection conn = (HttpURLConnection) new URL("http://localhost:8080/login").openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://localhost:8080/login").openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);

@@ -10,10 +10,11 @@ import com.mjprestaurant.model.order.OrderGetResponse;
 import com.mjprestaurant.model.order.OrderUpdateInfo;
 
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class OrderController {
 
@@ -30,8 +31,8 @@ public class OrderController {
             mapper.registerModule(new JavaTimeModule());
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            URL url = new URL("http://localhost:8080/order/get");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("https://localhost:8080/order/get");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
@@ -70,8 +71,8 @@ public class OrderController {
             mapper.registerModule(new JavaTimeModule());
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            URL url = new URL("http://localhost:8080/order/get");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("https://localhost:8080/order/get");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
@@ -120,8 +121,8 @@ public class OrderController {
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
 
-            URL url = new URL("http://localhost:8080/order/update");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("https://localhost:8080/order/update");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);

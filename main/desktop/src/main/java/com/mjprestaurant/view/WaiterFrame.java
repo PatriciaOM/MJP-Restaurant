@@ -1,10 +1,6 @@
 package com.mjprestaurant.view;
 
 import java.awt.*;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -18,10 +14,7 @@ import com.mjprestaurant.controller.SessionController;
 import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.CustomComponents;
 import com.mjprestaurant.model.order.Order;
-import com.mjprestaurant.model.order.OrderUpdateInfo;
 import com.mjprestaurant.model.session.SessionService;
-import com.mjprestaurant.model.session.SessionServiceGetInfo;
-import com.mjprestaurant.model.session.SessionServiceGetResponse;
 import com.mjprestaurant.model.session.SessionService.SessionServiceStatus;
 import com.mjprestaurant.model.table.TableStatusResponseElement;
 
@@ -37,7 +30,6 @@ public class WaiterFrame extends AbstractFrame {
     private LoginFrame login;
     private String token;
 
-    // ✅ ObjectMapper global con JavaTimeModule para LocalDateTime
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -195,60 +187,12 @@ public class WaiterFrame extends AbstractFrame {
         return card;
     }
 
-    /*public void handleTableClick(Long tableId, String token) {
-        try {
-            // 1. Obtener sesión de la mesa
-           SessionService session = SessionController.getSessionByTableId(token, tableId);
-            if (session == null) {
-                System.out.println("No hay sesión activa para esta mesa.");
-                return;
-            }
-            // 2. Comprobar si hay alguna orden SENDED
-            Order order = OrderController.getOrderByTableId(token, tableId);
-            if (order != null && order.getState() == Order.Status.SENDED) {
-                int response = JOptionPane.showConfirmDialog(
-                        this,
-                        "Existeix una comanda oberta, ¿ha sortit de la cuina?",
-                        "Confirmar",
-                        JOptionPane.YES_NO_OPTION
-                );
-
-                if (response == JOptionPane.YES_OPTION) {
-                    order.setState(Order.Status.SERVED);
-                    OrderController.updateOrder(token, order);
-                    JOptionPane.showMessageDialog(this, "Ordre servida.");
-                    refresh(); // refrescar la vista
-                }
-
-                return; // salir del método, no se comprueba sesión aún
-            }
-
-            // 3. Si no hay órdenes SENDED, comprobar todas las órdenes y la sesión
-           List<Order> orders = OrderController.getOrdersByTableId(token, tableId);
-            boolean allServed = orders.stream().allMatch(o -> o.getState() == Order.Status.SERVED);
-            boolean sessionClosed = session.getStatus() == SessionService.SessionServiceStatus.CLOSED;
-
-            if (allServed && sessionClosed) {
-                int option = JOptionPane.showConfirmDialog(
-                        this,
-                        "Sesión cerrada, ¿está pagada?",
-                        "Confirmación de pago",
-                        JOptionPane.YES_NO_OPTION
-                );
-
-                if (option == JOptionPane.YES_OPTION) {
-                    session.setStatus(SessionService.SessionServiceStatus.PAID);
-                    SessionController.updateSession(token, session);
-                    JOptionPane.showMessageDialog(this, "Sesión actualizada a PAGADA.");
-                    refresh(); // refrescar la vista
-                }
-            }
-
-        } catch (ControllerException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al obtener sesión u órdenes: " + e.getMessage());
-        }
-    }*/
+    /**
+     * Mètode que controla el clic a les cards de les taules. Quan es clica, aquest mètode recull l'id de la taula, comprova si n'hi han comandes i, en cas de que existeixin,
+     * comprova si estàn enviades a cuina o no. En cas afirmatiu, demana si es estan servides ja. En cas de que totes les comandes de la taula estiguin servides i la sessió
+     * estigui tancada, demana si es vol pagar
+     * @param tableId id de la taula
+     */
     private void handleTableClick(Long tableId) {
         try {
             List<Order> orders = OrderController.getOrdersByTableId(token, tableId);
@@ -264,7 +208,7 @@ public class WaiterFrame extends AbstractFrame {
                 return;
             }
 
-            // 1. Procesar cualquier orden SENDED
+            // Processar qualsevol ordre SENDED
             for (Order o : orders) {
                 if (o.getState() == Order.Status.SENDED) {
                     int response = JOptionPane.showConfirmDialog(
@@ -280,14 +224,14 @@ public class WaiterFrame extends AbstractFrame {
                         JOptionPane.showMessageDialog(this, "Ordre servida.");
                         refresh();
                     }
-                    return; // Si hay SENDED, no seguimos con la sesión
+                    return; // Si hi ha SENDED, no seguim amb la sessió
                 }
             }
 
-            // 2. Comprobar si todas las órdenes están SERVED
+            // Comprovar si totes les ordres estan SERVED
             boolean allServed = orders.stream().allMatch(o -> o.getState() == Order.Status.SERVED);
 
-            // 3. Si todas están SERVED y la sesión está CLOSED, preguntar por PAID
+            // Si totes estan SERVED i la sessió està CLOSED, preguntar per PAID
             if (allServed && service.getStatus() == SessionServiceStatus.CLOSED) {
                 int sessionResponse = JOptionPane.showConfirmDialog(
                         this,
@@ -306,7 +250,7 @@ public class WaiterFrame extends AbstractFrame {
 
         } catch (ControllerException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al consultar la sesión u órdenes: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al consultar la sessió o les ordres: " + e.getMessage());
         }
     }
 

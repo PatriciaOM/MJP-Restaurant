@@ -10,19 +10,20 @@ import com.mjprestaurant.model.session.SessionServiceGetResponse;
 import com.mjprestaurant.model.session.SessionServiceUpdateInfo;
 
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class SessionController {
 
     /**
-     * Obtiene la sesión actual de una mesa usando el token y el id de la mesa
-     * @param token Token de sesión
-     * @param tableId ID de la mesa
-     * @return SessionService si existe, null si no hay sesión
-     * @throws ControllerException Error lanzado
+     * Retorna la sessió de la taula consultada
+     * @param token Token de sessió
+     * @param tableId ID de la taula
+     * @return SessionService si existeix, null si no hi ha sessió
+     * @throws ControllerException Error llençat
      */
     public static SessionService getSessionByTableId(String token, Long tableId) throws ControllerException {
         try {
@@ -30,8 +31,8 @@ public class SessionController {
             mapper.registerModule(new JavaTimeModule());
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            URL url = new URL("http://localhost:8080/session-service/get");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("https://localhost:8080/session-service/get");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
@@ -63,14 +64,21 @@ public class SessionController {
         }
     }
 
+    /**
+     * Retorna les sessions d'una taula
+     * @param token token de sessió
+     * @param tableId id de la taula
+     * @return retorna la llista de sessions
+     * @throws ControllerException error llençat
+     */
     public static List<SessionService> getSessionsByTableId(String token, Long tableId) throws ControllerException {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            URL url = new URL("http://localhost:8080/session-service/get");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("https://localhost:8080/session-service/get");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
@@ -106,10 +114,10 @@ public class SessionController {
     }
 
     /**
-     * Actualiza una sesión en el servidor
-     * @param token Token de sesión
-     * @param session SessionService a actualizar
-     * @throws ControllerException error lanzado
+     * Actualitza una sessió al servidor
+     * @param token Token de sessió
+     * @param session SessionService a actualitzar
+     * @throws ControllerException error llençat
      */
     public static void updateSession(String token, SessionService session) throws ControllerException {
         try {
@@ -117,8 +125,8 @@ public class SessionController {
             mapper.registerModule(new JavaTimeModule());
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            URL url = new URL("http://localhost:8080/session-service/update");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("https://localhost:8080/session-service/update");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);

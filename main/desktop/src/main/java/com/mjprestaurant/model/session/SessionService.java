@@ -2,62 +2,40 @@ package com.mjprestaurant.model.session;
 
 import java.time.LocalDateTime;
 
+/**
+ * Classe que representa una sessió de servei d'una taula al restaurant.
+ * @author Patricia Oliva
+ */
 public class SessionService {
     private Long id; 
     
     /**
-     * Class for holding the state of the Sessions service. 
-     * Open when the clients arrive, closed when they finish ordering, paid when they pay
+     * Enumeració dels possibles estats de la sessió.
      */
     public enum SessionServiceStatus {
         OPEN,
-        CLOSED,
-        PAID
+        CLOSED, 
+        PAID   
     }
+    private Long idTable;
+    private int numTable;
+    private int maxClients;
+    private int waiterId;
+    private int clients;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private SessionServiceStatus status;
+    private int rating;
+    private String comment;
     
     /**
-     * References the table to which this SessionService belongs.
+     * Constructor per defecte.
      */
-    private Long idTable;
-    /**
-    * Will hold the table number when the entry is created.
-    */
-    private int numTable;
-    /**
-    * Will hold the table maximum clients when the entry is created.
-    */
-    private int maxClients;
-    /**
-     * The id of the waiter that is responsible of this SessionService.
-     */
-    private int waiterId;
-    /**
-     * The amount of clients sitting on the table on this SessionService.
-     */
-    private int clients;
-    /**
-     * When the SessionService is created.
-     */
-    private LocalDateTime startDate;
-    /**
-     * When the SessionService is finished.
-     */
-    private LocalDateTime endDate;
-    /**
-     * The status of the SessionService.
-     */
-    private SessionServiceStatus status;
-    /**
-     * The users ratting of the service.
-     */
-    private int rating;
-    /**
-     * A comment of the SessionService left by the user.
-     */
-    private String comment;
-        
     public SessionService(){};
 
+    /**
+     * Constructor amb tots els atributs, inclòs l'identificador.
+     */
     public SessionService(Long id, Long idTable, int numTable, int maxClients, int waiterId, int clients, LocalDateTime startDate, LocalDateTime endDate, SessionServiceStatus status, int rating, String comment) {
         this.id = id;
         this.idTable = idTable;
@@ -72,7 +50,10 @@ public class SessionService {
         this.comment = comment;
     }
     
-    public SessionService( Long idTable,int numTable, int maxClients, int waiterId, int clients, LocalDateTime startDate, LocalDateTime endDate, SessionServiceStatus status, int rating, String comment) {
+    /**
+     * Constructor sense l'identificador.
+     */
+    public SessionService(Long idTable,int numTable, int maxClients, int waiterId, int clients, LocalDateTime startDate, LocalDateTime endDate, SessionServiceStatus status, int rating, String comment) {
         this.idTable = idTable;
         this.numTable = numTable;
         this.maxClients = maxClients;
@@ -85,6 +66,9 @@ public class SessionService {
         this.comment = comment;
     }
     
+    /**
+     * Constructor de còpia.
+     */
     public SessionService(SessionService orig) {
         this.id = orig.id;
         this.idTable = orig.idTable;
@@ -99,90 +83,145 @@ public class SessionService {
         this.comment = orig.comment;
     }
 
+    /** @return l'identificador de la sessió */
     public Long getId() {
         return id;
     }
 
+    /** @return el número de la taula */
     public int getNumTable() {
         return numTable;
     }
 
+    /** @return l'identificador de la taula */
     public Long getIdTable() {
         return idTable;
     }
 
+    /** @return el nombre màxim de clients */
     public int getMaxClients() {
         return maxClients;
     }
 
+    /** @return l'identificador del cambrer */
     public int getWaiterId() {
         return waiterId;
     }
 
+    /** @return el nombre actual de clients */
     public int getClients() {
         return clients;
     }
 
+    /** @return la data i hora d'inici de la sessió */
     public LocalDateTime getStartDate() {
         return startDate;
     }
 
+    /** @return la data i hora de finalització de la sessió */
     public LocalDateTime getEndDate() {
         return endDate;
     }
 
+    /** @return l'estat actual de la sessió */
     public SessionServiceStatus getStatus() {
         return status;
     }
 
+    /** @return la valoració de la sessió */
     public int getRating() {
         return rating;
     }
 
+    /** @return el comentari de la sessió */
     public String getComment() {
         return comment;
     }
 
+    /** 
+     * Assigna l'identificador de la sessió.
+     * @param id identificador de la sessió
+     */
     public void setId(Long id) {
         this.id = id;
     }
     
+    /** 
+     * Assigna l'identificador de la taula.
+     * @param idTable identificador de la taula
+     */
     public void setIdTable(Long idTable) {
         this.idTable = idTable;
     }
 
+    /** 
+     * Assigna el número de la taula.
+     * @param numTable número de la taula
+     */
     public void setNumTable(int numTable) {
         this.numTable = numTable;
     }
 
+    /** 
+     * Assigna el nombre màxim de clients.
+     * @param maxClients nombre màxim de clients
+     */
     public void setMaxClients(int maxClients) {
         this.maxClients = maxClients;
     }
 
+    /** 
+     * Assigna l'identificador del cambrer.
+     * @param waiterId identificador del cambrer
+     */
     public void setWaiterId(int waiterId) {
         this.waiterId = waiterId;
     }
 
+    /** 
+     * Assigna el nombre actual de clients.
+     * @param clients nombre de clients
+     */
     public void setClients(int clients) {
         this.clients = clients;
     }
 
+    /** 
+     * Assigna la data i hora d'inici.
+     * @param startDate data i hora d'inici
+     */
     public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
+    /** 
+     * Assigna la data i hora de finalització.
+     * @param endDate data i hora de finalització
+     */
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
+    /** 
+     * Assigna l'estat de la sessió.
+     * @param status estat de la sessió
+     */
     public void setStatus(SessionServiceStatus status) {
         this.status = status;
     }
 
+    /** 
+     * Assigna la valoració de la sessió.
+     * @param rating valoració (per exemple, de 0 a 5)
+     */
     public void setRating(int rating) {
         this.rating = rating;
     }
 
+    /** 
+     * Assigna el comentari de la sessió.
+     * @param comment comentari
+     */
     public void setComment(String comment) {
         this.comment = comment;
     }

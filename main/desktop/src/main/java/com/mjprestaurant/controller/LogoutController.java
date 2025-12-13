@@ -1,8 +1,9 @@
 package com.mjprestaurant.controller;
 
-import java.net.HttpURLConnection;
+
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JOptionPane;
 
 import com.mjprestaurant.model.ControllerException;
@@ -48,7 +49,7 @@ public class LogoutController {
     public void logout() throws ControllerException {
         try {
             String token = userWindow.getUsername(); 
-            HttpURLConnection conn = (HttpURLConnection) new URL("http://localhost:8080/logout").openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://localhost:8080/logout").openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
