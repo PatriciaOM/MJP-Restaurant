@@ -140,7 +140,7 @@ class TableSessionViewModel(
             try {
                 // Canviem estat a PAID i posem data fi
                 val closedSession = session.copy(
-                    status = SessionStatus.PAID,
+                    status = SessionStatus.CLOSED,
                     endDate = getCurrentTimestamp()
                 )
                 val response = repository.updateSession(token, closedSession)
