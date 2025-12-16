@@ -54,6 +54,7 @@ class TableSessionViewModel(
 
     /**
      * Inicialitza la pantalla carregant l'estat actual de la taula.
+     * Es considera ocupada qualsevol taula que no tingui l'estat CLOSED.
      */
     fun loadTableSession(token: String, tableId: Long) {
         viewModelScope.launch {
@@ -66,17 +67,18 @@ class TableSessionViewModel(
                 if (response.isSuccessful) {
                     val allSessions = response.body()?.sessionServices ?: emptyList()
 
-                    // Busquem si hi ha una sessió activa per aquesta taula
+                    // Busquem qualsevol sessió que no estigui tancada (OPEN, PAYING, SERVED...)
                     val activeSession = allSessions.find { session ->
-                        session.idTable == tableId && session.status == SessionStatus.OPEN
+                        session.idTable == tableId && session.status != SessionStatus.CLOSED
                     }
 
                     if (activeSession != null) {
                         currentSession.value = activeSession
-                        // Intentem carregar la comanda associada
+                        // Carreguem la comanda usant la ID de la sessió trobada
                         loadOrder(token, activeSession.id!!)
                     } else {
-                        isLoading.value = false // Taula lliure
+                        isLoading.value = false // Taula realment lliure
+                        clearLocalState()
                     }
                 } else {
                     errorMessage.value = "Error servidor: ${response.code()}"
@@ -91,10 +93,13 @@ class TableSessionViewModel(
 
     /**
      * Obre una taula creant una nova sessió al servidor.
+     * Gestiona automàticament la recuperació de sessions si la taula ja estava ocupada (423).
      */
     fun openTable(token: String, tableId: Long, diners: Int) {
         viewModelScope.launch {
             isLoading.value = true
+            clearLocalState()
+
             try {
                 val newSession = SessionService(
                     idTable = tableId,
@@ -107,6 +112,12 @@ class TableSessionViewModel(
                 )
                 val response = repository.createSession(token, newSession)
 
+                // Si el servidor retorna Locked (423), recuperem la sessió que bloqueja la taula
+                if (response.code() == 423) {
+                    recoverBlockedSession(token, tableId)
+                    return@launch
+                }
+
                 // Validem si la creació ha estat exitosa
                 val body = response.body()
                 val isSuccess = response.isSuccessful &&
@@ -117,7 +128,6 @@ class TableSessionViewModel(
                     val createdSession = body?.sessionServices?.firstOrNull()
                     if (createdSession != null) {
                         currentSession.value = createdSession
-                        // Un cop creada la sessió, inicialitzem la comanda
                         createInitialOrder(token, createdSession.id!!)
                     }
                 } else {
@@ -131,6 +141,71 @@ class TableSessionViewModel(
             }
         }
     }
+
+    /**
+     * Recupera una sessió activa quan no es pot crear una de nova.
+     * Si troba una sessió TANCADA (cas Zombie), la REOBRE i crea una comanda neta.
+     */
+    private fun recoverBlockedSession(token: String, tableId: Long) {
+        viewModelScope.launch {
+            try {
+                val response = repository.getSessions(token)
+                val allSessions = response.body()?.sessionServices ?: emptyList()
+
+                // Estratègia 1: Busquem sessió explícitament oberta (o no tancada)
+                var blockedSession = allSessions.find { session ->
+                    session.idTable == tableId && session.status != SessionStatus.CLOSED
+                }
+
+                // Estratègia 2: Si el servidor diu que està bloquejada (423) però nosaltres
+                // només veiem sessions TANCADES, agafem la més recent (última ID).
+                if (blockedSession == null) {
+                    blockedSession = allSessions
+                        .filter { it.idTable == tableId }
+                        .maxByOrNull { it.id ?: 0 }
+                }
+
+                if (blockedSession != null) {
+                    var isRevived = false // Flag per saber si hem forçat l'obertura
+
+                    // SI LA SESSIÓ ESTÀ TANCADA (Cas Zombi):
+                    // Hem de "reviure-la" (posar-la en OPEN) perquè el servidor ens deixi crear comandes.
+                    if (blockedSession!!.status == SessionStatus.CLOSED) {
+                        val revivedSession = blockedSession!!.copy(
+                            status = SessionStatus.OPEN,
+                            endDate = null // Important: treure la data de fi
+                        )
+                        val updateResponse = repository.updateSession(token, revivedSession)
+
+                        if (updateResponse.isSuccessful) {
+                            // Si l'actualització va bé, usem la sessió "revivida"
+                            blockedSession = updateResponse.body()?.sessionServices?.firstOrNull() ?: revivedSession
+                            isRevived = true
+                        }
+                    }
+
+                    currentSession.value = blockedSession
+
+                    // CANVI CLAU: Si hem "revivid" la sessió, vol dir que per l'usuari és una taula NOVA.
+                    // Per tant, IGNOREM l'ordre antiga i en creem una de nova inicial.
+                    if (isRevived) {
+                        createInitialOrder(token, blockedSession!!.id!!)
+                    } else {
+                        // Si ja estava oberta, simplement recuperem l'estat (continuar sessió)
+                        loadOrder(token, blockedSession!!.id!!)
+                    }
+
+                } else {
+                    errorMessage.value = "Error: Taula bloquejada però sense cap sessió (ni tancada) a la BD."
+                    isLoading.value = false
+                }
+            } catch (e: Exception) {
+                errorMessage.value = "Error recuperant sessió: ${e.message}"
+                isLoading.value = false
+            }
+        }
+    }
+
     // --- Tancar Taula (Cobrar) ---
     fun closeTable(token: String, onSuccess: () -> Unit) {
         val session = currentSession.value ?: return
@@ -138,7 +213,7 @@ class TableSessionViewModel(
         viewModelScope.launch {
             isLoading.value = true
             try {
-                // Canviem estat a PAID i posem data fi
+                // Canviem estat a CLOSED i posem data fi
                 val closedSession = session.copy(
                     status = SessionStatus.CLOSED,
                     endDate = getCurrentTimestamp()
@@ -146,6 +221,7 @@ class TableSessionViewModel(
                 val response = repository.updateSession(token, closedSession)
 
                 if (response.isSuccessful) {
+                    clearLocalState()
                     onSuccess()
                 } else {
                     errorMessage.value = "Error al tancar: ${response.code()}"
@@ -191,7 +267,6 @@ class TableSessionViewModel(
             }
 
             var errors = 0
-            // Fem una còpia de la llista per iterar sense problemes de concurrència
             val itemsToSend = cartItems.toList()
 
             itemsToSend.forEach { dish ->
@@ -205,16 +280,9 @@ class TableSessionViewModel(
 
             if (errors == 0) {
                 try {
-                    // Creem una còpia de l'ordre amb l'estat canviat
                     val updatedOrder = currentOrder.value!!.copy(state = OrderStatus.SENDED)
-                    val updateResponse = repository.updateOrder(token, updatedOrder)
-
-                    if (updateResponse.isSuccessful) {
-                        currentOrder.value = updatedOrder
-                        println("Ordre marcada com a SENDED")
-                    } else {
-                        println("Plats enviats, però error actualitzant estat Order: ${updateResponse.code()}")
-                    }
+                    repository.updateOrder(token, updatedOrder)
+                    currentOrder.value = updatedOrder
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -235,17 +303,35 @@ class TableSessionViewModel(
 
     // --- FUNCIONS PRIVADES ---
 
+    private fun clearLocalState() {
+        currentSession.value = null
+        currentOrder.value = null
+        cartItems.clear()
+        sentItems.clear()
+    }
+
     private fun loadOrder(token: String, sessionId: Long) {
         viewModelScope.launch {
             try {
+                // Utilitzem getOrderBySession que ja implementa la cerca per ID de sessió correctament
                 val response = repository.getOrderBySession(token, sessionId)
                 val body = response.body()
 
                 if (response.isSuccessful && !body?.items.isNullOrEmpty()) {
-                    currentOrder.value = body?.items?.firstOrNull()
-                    isLoading.value = false
+                    // MILLORA: En lloc d'agafar la primera comanda, busquem la més recent que estigui ACTIVA.
+                    // Ordenem per ID descendent per assegurar que agafem l'última creada (cas sessions reutilitzades).
+                    val activeOrder = body?.items
+                        ?.filter { it.state == OrderStatus.OPEN || it.state == OrderStatus.SENDED }
+                        ?.maxByOrNull { it.id ?: 0 }
+
+                    if (activeOrder != null) {
+                        currentOrder.value = activeOrder
+                        loadSentItems(token, activeOrder.id!!)
+                    } else {
+                        // Si només hi ha comandes velles (pagades/tancades), en creem una de nova
+                        createInitialOrder(token, sessionId)
+                    }
                 } else {
-                    // Si no trobem comanda, la creem automàticament
                     createInitialOrder(token, sessionId)
                 }
             } catch (e: Exception) {
@@ -285,7 +371,13 @@ class TableSessionViewModel(
                                 !body?.items.isNullOrEmpty())
 
                 if (isSuccess) {
-                    currentOrder.value = body?.items?.firstOrNull()
+                    // Assegurem que agafem l'ordre nova (OPEN i ID més alt), no una antiga reciclada
+                    val createdOrder = body?.items
+                        ?.filter { it.state == OrderStatus.OPEN }
+                        ?.maxByOrNull { it.id ?: 0 }
+                        ?: body?.items?.firstOrNull()
+
+                    currentOrder.value = createdOrder
                 } else {
                     errorMessage.value = "Error inicialitzant comanda."
                 }
@@ -297,21 +389,19 @@ class TableSessionViewModel(
         }
     }
 
-    /**
-     * Intenta obtenir l'ordre existent o la crea si no existeix.
-     * Retorna l'objecte Order o null si falla tot el procés.
-     */
     private suspend fun fetchOrCreateOrder(token: String, sessionId: Long): Order? {
-        // Intent 1: GET
         try {
             val response = repository.getOrderBySession(token, sessionId)
             val body = response.body()
             if (response.isSuccessful && !body?.items.isNullOrEmpty()) {
-                return body?.items?.firstOrNull()
+                // Prioritzem l'ordre activa més recent
+                return body?.items
+                    ?.filter { it.state == OrderStatus.OPEN || it.state == OrderStatus.SENDED }
+                    ?.maxByOrNull { it.id ?: 0 }
+                    ?: body?.items?.firstOrNull()
             }
         } catch (e: Exception) { e.printStackTrace() }
 
-        // Intent 2: CREATE
         try {
             val newOrder = Order(
                 idSessionService = sessionId,
@@ -325,7 +415,11 @@ class TableSessionViewModel(
                             !body?.items.isNullOrEmpty())
 
             if (isSuccess) {
-                return body?.items?.firstOrNull()
+                // Prioritzem l'ordre nova
+                return body?.items
+                    ?.filter { it.state == OrderStatus.OPEN }
+                    ?.maxByOrNull { it.id ?: 0 }
+                    ?: body?.items?.firstOrNull()
             }
         } catch (e: Exception) { e.printStackTrace() }
 
