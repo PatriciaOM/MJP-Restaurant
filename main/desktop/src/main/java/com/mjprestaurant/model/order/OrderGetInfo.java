@@ -1,43 +1,42 @@
 package com.mjprestaurant.model.order;
 
 /**
- * Classe que conté la informació de la comanda
- * @author Patricia Oliva
+ * Class for holding the information of an Order get request
+ * @author Joan Renau Valls
  */
 public class OrderGetInfo {    
     /**
-     * Representa els diferents mètodes de cerca del servidor
+     * Represents the different search methods for this endpoint.
      */
     public enum SearchType{
         ALL,
         BY_ID,
-        BY_SESSION_SERVICE
+        BY_SESSION_SERVICE_ID
     }
-    
+      
     /**
-     * Token de sessió
+     * A valid session token with the required permissions.
      */
     private String sessionToken;
     private Order order;
     private SearchType searchType;
     private Long id;
-     
-    /**
-     * Constructor per defecte
-     */
+    private Long sessionServiceId;
+ 
+
     public OrderGetInfo(){}
    
-    /**
-     * Constructor que rep el token de sessió
-     * @param sessionToken token de sessió
+     /**
+     * Constructor for getting an Order by Id. I takes two parameters the session token and the Id.
+     * @param sessionToken
      */
     public OrderGetInfo(String sessionToken) {
         this.sessionToken = sessionToken;
         this.searchType = SearchType.ALL;
     }
    
-    /**
-     * Constructor per cercar una comanda per id
+     /**
+     * Constructor for getting an Order by Id. I takes two parameters the session token and the Id.
      * @param sessionToken
      * @param id 
      */
@@ -46,24 +45,32 @@ public class OrderGetInfo {
         this.id = id;
         this.searchType = SearchType.BY_ID;
     }
+    
+    public OrderGetInfo(String sessionToken, Long searchVal, SearchType searchType) {
+        this.sessionToken = sessionToken;
+        this.searchType = searchType;
+        switch (searchType){
+            case BY_ID:
+                this.id = searchVal;
+                break;
+            case BY_SESSION_SERVICE_ID:
+                this.sessionServiceId = searchVal;
+                break;
+            default: 
+                throw new IllegalArgumentException(String.format("Search type %s not suprted for Long type ", searchType));
+        }
+    }
        
-    /**
-     * Constructor que rep tota la informació
-     * @param sessionToken token de la sessió
-     * @param order comanda
-     * @param searchType tipus de cerca
-     * @param id id de la comanda
-     */
     public OrderGetInfo(String sessionToken, Order order, SearchType searchType, Long id) {
         this.sessionToken = sessionToken;
         this.order = order;
         this.searchType = searchType;
         this.id = id;
     }  
-        
+       
     /**
-     * Constructor que rep l'objecte 
-     * @param orig objecte
+     * Copy constructor
+     * @param orig original Order
      */
     public OrderGetInfo(OrderGetInfo orig) {
         this.sessionToken = orig.sessionToken;
@@ -72,66 +79,45 @@ public class OrderGetInfo {
         this.id = orig.id;
     }
            
-    /**
-     * Inicialitza el token de sessió
-     * @param val token de sessió
-     */
     public void setSessionToken(String val) {
         this.sessionToken = val;
     }
     
-    /**
-     * Retorna el token de sessió
-     * @return token de sessió
-     */
     public String getSessionToken() {
         return this.sessionToken;
     }
 
-    /**
-     * Retorna la comanda
-     * @return comanda
-     */
     public Order getOrder() {
         return order;
     }
 
-    /**
-     * Inicialitza l'id de la comanda
-     * @param id id de la comanda
-     */
-    public void setId(Long id) {
-        this.id = id;
+    public void setSearchType(SearchType searchType) {
+        this.searchType = searchType;
     }
 
-    /**
-     * Inicialitza el missatge de l'acció
-     * @param requestItem missatge d'èxit
-     */
-    public void setMessageData(Long requestItem) {
-        setId(requestItem);
-    }
-
-    /**
-     * Retorna el tipus de cerca
-     * @return tipus de cerca
-     */
     public SearchType getSearchType() {
         return searchType;
     }
 
-    /**
-     * Retorna l'id de la comanda
-     * @return id de comanda
-     */
+    public void setId(Long id) {
+        this.id = id;
+    }
     public Long getId() {
         return id;
     }
+
+    public void setSessionServiceId(Long sessionServiceId) {
+        this.sessionServiceId = sessionServiceId;
+    }
+
+    public Long getSessionServiceId() {
+        return sessionServiceId;
+    }
     
-    /**
-     * Retorna el missatge de l'acció feta
-     * @return missatge d'èxit
-     */
+    public void setMessageData(Long requestItem) {
+        setId(requestItem);
+    }
+    
     public Long getMessageData() {
         return this.getId();
     }

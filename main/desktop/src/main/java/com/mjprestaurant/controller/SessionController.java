@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mjprestaurant.model.ControllerException;
 import com.mjprestaurant.model.session.SessionService;
+import com.mjprestaurant.model.session.SessionService.SessionServiceStatus;
 import com.mjprestaurant.model.session.SessionServiceGetInfo;
 import com.mjprestaurant.model.session.SessionServiceGetResponse;
 import com.mjprestaurant.model.session.SessionServiceUpdateInfo;
@@ -12,6 +13,7 @@ import com.mjprestaurant.model.session.SessionServiceUpdateInfo;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -150,5 +152,49 @@ public class SessionController {
             throw new ControllerException("Error de conexión al servidor.");
         }
     }
+
+    public SessionService getActiveSessionByTableId(String token, Long tableId) throws ControllerException {
+        List<SessionService> sessions = getSessionsByTableId(token, tableId);
+
+        if (sessions.isEmpty()) return null;
+
+        // 1️⃣ Filtrar solo las sesiones de esta mesa que no estén pagadas
+        List<SessionService> candidateSessions = sessions.stream()
+                .filter(s -> s.getIdTable().equals(tableId))
+                .filter(s -> s.getStatus() != SessionServiceStatus.PAID) // incluir OPEN, SENDED, CLOSED pero no pagadas
+                .sorted(Comparator.comparing(SessionService::getStartDate)
+                        .thenComparing(SessionService::getId).reversed()) // más reciente primero
+                .toList();
+
+        if (candidateSessions.isEmpty()) return null;
+
+        // 2️⃣ Seleccionar la sesión más reciente
+        SessionService activeSession = candidateSessions.get(0);
+
+        // 3️⃣ Opcional: cerrar las demás sesiones antiguas
+        for (int i = 1; i < candidateSessions.size(); i++) {
+            SessionService oldSession = candidateSessions.get(i);
+            if (oldSession.getStatus() != SessionServiceStatus.CLOSED) {
+                oldSession.setStatus(SessionServiceStatus.CLOSED);
+                try {
+                    updateSession(token, oldSession);
+                    System.out.println("Sesión antigua cerrada automáticamente: " + oldSession.getId());
+                } catch (ControllerException e) {
+                    e.printStackTrace();
+                    System.err.println("No se pudo cerrar la sesión antigua: " + oldSession.getId());
+                }
+            }
+        }
+
+        System.out.println("Sesión activa seleccionada: " 
+                + activeSession.getId() + " - " 
+                + activeSession.getStatus() + " - " 
+                + activeSession.getStartDate() + " - mesa:" 
+                + activeSession.getIdTable());
+
+        return activeSession;
+    }
+
+
 }
 
