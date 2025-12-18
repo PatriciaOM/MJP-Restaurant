@@ -83,6 +83,19 @@ public abstract class Manager<
     }
     
     /**
+     * validates the data of a create request
+     * @return 
+     */
+    protected <Info extends InfoData & AuthorizedQueryInfo<ItemsType>> boolean createValidations(Info info) {return true;}
+    
+    
+    /**
+     * validates the data of a create request
+     * @return 
+     */
+    protected <Info extends InfoData & AuthorizedQueryInfo<ItemsType>> boolean updateValidations(Info info) {return true;}
+    
+    /**
      * Handles the create requests
      * @param <Info> Contains the request information after being deserialized
      * @param <ReturnType> The type of the Class that will hold the returned information before being serialized
@@ -101,6 +114,7 @@ public abstract class Manager<
             
         if (!checkCreatePermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        createValidations(info);
         ItemsType data = info.getMessageData();
 //        List<MessageDataType> existingEntries = getRepository().findById(data.getId());
 //        if(tables.size() != 0)
@@ -123,11 +137,10 @@ public abstract class Manager<
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (!checkGetPermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        List<Dish> dishes = info.findAllItems(this.getRepository());
-        List<ItemsType> dishes = this.findItems(this.getRepository(), info);
+        List<ItemsType> items = this.findItems(this.getRepository(), info);
 
         response.setMessageStatus("Success");
-        response.setMessageData(dishes);
+        response.setMessageData(items);
         return response;
     }
     
@@ -143,6 +156,10 @@ public abstract class Manager<
         }
         return ret;
     }
+    
+    
+    
+    
     
     /**
      * Handles the update requests
@@ -161,6 +178,7 @@ public abstract class Manager<
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (!checkUpdatePermisions(info.getSessionToken()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        updateValidations(info);
         ItemsType dataEntry = info.getMessageData();
         if(dataEntry.getId() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

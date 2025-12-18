@@ -33,13 +33,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import testUtils.Credentials;
 import testUtils.TestDefaultCrud;
 
 
-@ExtendWith(OutputCaptureExtension.class)
+//@ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@ActiveProfiles("test")
 public class OrderItemManagerTest extends TestDefaultCrud<
         Long,
         OrderItem,
@@ -71,72 +75,72 @@ public class OrderItemManagerTest extends TestDefaultCrud<
     
     public String getResourceUri() {return this.resourceUri;}
     
-    static OrderItem initialOrderItem = new OrderItem(
-            1L,
-            1L,
-            3,
-            5.3f,
-            "Les nostres Braves",
-            "Nomes per valents",
-            DishCategory.APPETIZER
-    );
-      
-    static OrderItem mockOrderItem1 = new OrderItem(
-            1L,
-            2L,
-            1,
-            5.3f,
-            "Braves",
-            "El classic",
-            DishCategory.APPETIZER
-    );    
-    
-    static OrderItem mockOrderItem2 = new OrderItem(
-            1L,
-            3L,
-            1,
-            5.3f,
-            "Les nostres Braves",
-            "Nomes per valents",
-            DishCategory.APPETIZER
-    ); 
-    
-    static OrderItem mockOrderItem3 = new OrderItem(
-            1L,
-            4L,
-            1,
-            5.3f,
-            "Arros amb llet",
-            "y canyella",
-            DishCategory.DESSERT
-    );  
-    
-    static OrderItem mockSessionService3 = new OrderItem(
-    );
-    
-    
-    List<OrderItem> allItems = List.of(initialOrderItem, mockOrderItem1, mockOrderItem2, mockOrderItem3);
-    
-    static OrderItem noExsistingOrderItem = new OrderItem(
-            5000L,
-            1L,
-            4L,
-            1,
-            5.3f,
-            "Aigua",
-            "Wue fa la vista clara",
-            DishCategory.DRINK
-    );
-    
-    static OrderItem updatedSessionService = new OrderItem(
-            1L,
-            1L,
-            3,
-            500.3f,
-            "Les nostres Braves",
-            "Nomes per valents",
-            DishCategory.APPETIZER
-    );
+//    static OrderItem initialOrderItem = new OrderItem(
+//            1L,
+//            1L,
+//            3,
+//            5.3f,
+//            "Les nostres Braves",
+//            "Nomes per valents",
+//            DishCategory.APPETIZER
+//    );
+//      
+//    static OrderItem mockOrderItem1 = new OrderItem(
+//            1L,
+//            2L,
+//            1,
+//            5.3f,
+//            "Braves",
+//            "El classic",
+//            DishCategory.APPETIZER
+//    );    
+//    
+//    static OrderItem mockOrderItem2 = new OrderItem(
+//            1L,
+//            3L,
+//            1,
+//            5.3f,
+//            "Les nostres Braves",
+//            "Nomes per valents",
+//            DishCategory.APPETIZER
+//    ); 
+//    
+//    static OrderItem mockOrderItem3 = new OrderItem(
+//            1L,
+//            4L,
+//            1,
+//            5.3f,
+//            "Arros amb llet",
+//            "y canyella",
+//            DishCategory.DESSERT
+//    );  
+//    
+//    static OrderItem mockSessionService3 = new OrderItem(
+//    );
+//    
+//    
+//    List<OrderItem> allItems = List.of(initialOrderItem, mockOrderItem1, mockOrderItem2, mockOrderItem3);
+//    
+//    static OrderItem noExsistingOrderItem = new OrderItem(
+//            5000L,
+//            1L,
+//            4L,
+//            1,
+//            5.3f,
+//            "Aigua",
+//            "Wue fa la vista clara",
+//            DishCategory.DRINK
+//    );
+//    
+//    static OrderItem updatedSessionService = new OrderItem(
+//            1L,
+//            1L,
+//            3,
+//            500.3f,
+//            "Les nostres Braves",
+//            "Nomes per valents",
+//            DishCategory.APPETIZER
+//    );
         
     @Override
     protected Credentials getUserCredentials() {
@@ -151,22 +155,22 @@ public class OrderItemManagerTest extends TestDefaultCrud<
 
     @Override
     protected OrderItem getInitialItem() {
-        return initialOrderItem;
+        return defaultData.initialOrderItem;
     }
 
     @Override
     protected OrderItem getUpdatedItem() {
-        return updatedSessionService;
+        return defaultData.updatedOrderItem;
     }
 
     @Override
     protected List<OrderItem> getAllTestItems() {
-        return this.allItems;
+        return defaultData.allOrderItem;
     }
     
     @Override
     protected OrderItem getNoExistingItem() {
-        return noExsistingOrderItem;
+        return defaultData.noExsistingOrderItem;
     }  
     
     @Override
@@ -232,17 +236,58 @@ public class OrderItemManagerTest extends TestDefaultCrud<
     
     @Override
     public String getClassName() {
-        return "SessionService";
+        return "OrderItem";
     }
        
     @Test
     @Order(001)
     void setup(){
+        basicSetup("OrderItem tests setup");
+        
+        setDefaultDataLogins();  
+        
+        defaultData.initTablesData();
+        createDefaultDataTables();
+        System.out.println("---------------------");
+        defaultData.initSessionServicesData();        
+        createDefaultDataSessionService();
+        System.out.println("---------------------");
+        defaultData.initOrderData();
+        createDefaultDataOrder();
+        System.out.println("---------------------");
+        defaultData.initOrderItemData();
+        System.out.println("!!!!!!!!!!!!!! Printing all orders");
+//        for (OrderItem orderItem : defaultData.allOrderItem) {
+//            System.out.println("OrderItem druing setup" + gson.toJson(orderItem));
+//        }
+        OrderItem orderIt;
+        orderIt = defaultData.initialOrderItem;
+        System.out.println("InitialOrderItemId: " + orderIt.getId());
+        System.out.println("InitialOrderItemName: " + orderIt.getName());
+        System.out.println("InitialOrderItem: " + gson.toJson(orderIt));
+        
+        System.out.println("" );
+        orderIt = defaultData.allOrderItem.get(0);
+        System.out.println("InitialOrderItemId: " + orderIt.getId());
+        System.out.println("InitialOrderItemName: " + orderIt.getName());
+        System.out.println("InitialOrderItem: " + gson.toJson(orderIt));
+        System.out.println("!!!!!!!!!!!!!!");
+        
+        System.out.println("Setting Up");
         basicSetup("setup");
+        System.out.println("settedUp");
         assertNotNull(this.getUserCredentials().getSessionToken()); // TODO maybe delete
         assertNotNull(this.getAdminCredentials().getSessionToken()); // TODO maybe delete
         userSessionToken = this.getUserCredentials().getSessionToken(); // TODO delete
         adminSessionToken = this.getAdminCredentials().getSessionToken(); // TODO delete
+        
+        
+        System.out.println(" - - - - - - - - -");
+        System.out.println(" Printing all orders afetr setting up");
+        for (OrderItem orderItem : defaultData.allOrderItem) {
+            System.out.println("OrderItem after setup" + gson.toJson(orderItem));
+        }
+        System.out.println("THE END");
     }
     
     @Test
@@ -273,7 +318,7 @@ public class OrderItemManagerTest extends TestDefaultCrud<
       
     @Test
     @Order(550)
-    void getNoExistingSessionServcieById(){
+    void getNoExistingOrderItemById(){
         getNoExistingItemById("getNoExisting" + getClassName() + "ById");
     }
     

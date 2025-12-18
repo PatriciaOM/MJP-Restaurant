@@ -8,17 +8,32 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import mjp.server.ServerMJP.database.SessionService;
+import mjp.server.ServerMJP.database.TableRestaurant;
+import mjp.server.ServerMJP.database.Order;
+import mjp.server.ServerMJP.database.OrderItem;
 import mjp.server.ServerMJP.database.User;
+import mjp.server.TestData;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.AuthorizedQueryInfo;
 import mjp.server.queryData.LoginInfo;
+import mjp.server.queryData.order.OrderCreateInfo;
+import mjp.server.queryData.orderItem.OrderItemCreateInfo;
+import mjp.server.queryData.sessionService.SessionServiceCreateInfo;
+import mjp.server.queryData.table.TableCreateInfo;
+import mjp.server.queryData.table.TableGetInfo;
 import mjp.server.queryData.user.UserUpdateInfo;
 import mjp.server.responseData.LoginResponse;
+import mjp.server.responseData.order.OrderCreateResponse;
+import mjp.server.responseData.orderItem.OrderItemCreateResponse;
+import mjp.server.responseData.sessionService.SessionServiceCreateResponse;
+import mjp.server.responseData.table.TableCreateResponse;
 import mjp.server.uitls.serializers.LocalDateAdapter;
 import mjp.server.uitls.serializers.LocalDateTimeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import org.junit.jupiter.api.Order;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -32,32 +47,8 @@ import org.springframework.http.ResponseEntity;
  * @author  Joan Renau Valls
  */
 public abstract class TestDefault {
-//    protected class Credentials {
-//        String username;
-//        String password;
-//        String sessionToken;
-//
-//        public Credentials(String username, String password, String sessionToken) {
-//            this.username = username;
-//            this.password = password;
-//            this.sessionToken = sessionToken;
-//        }
-//
-//        public String getUsername() {return username;}
-//
-//        public String getPassword() {return password;}
-//
-//        public String getSessionToken() {return sessionToken;}
-//
-//        public void setUsername(String username) {this.username = username;}
-//
-//        public void setPassword(String password) {this.password = password;}
-//
-//        public void setSessionToken(String sessionToken) {this.sessionToken = sessionToken;}
-//        
-//        
-//    }
-    
+
+    public static TestData defaultData = new TestData();
     private static final String RESET = "\033[0m";
     private static final String CYAN = "\033[36m";
     
@@ -166,25 +157,134 @@ public abstract class TestDefault {
         }
     }
     
-//    protected abstract Credentials getUserCredentials();
-//    protected abstract Credentials getAdminCredentials();
-//    
-//    
-//    
-//    protected void basicSetup(String testname){
-//        printTestName(testname);
-//        Credentials userCred = getUserCredentials();
-//        Credentials adminCred = getAdminCredentials();
-//
-//        getUserCredentials().setSessionToken(this.login(userCred.getUsername(), userCred.getPassword()));
-//        getAdminCredentials().setSessionToken(this.login(adminCred.getUsername(), adminCred.getPassword()));
-//        System.out.println("usersSessionToken=" + userCred.getSessionToken());
-//        System.out.println("adminSessionToken=" + adminCred.getSessionToken());
-//        User user = this.getUserBySessionToken(userCred.getSessionToken());
-//        User admin = this.getUserBySessionToken(adminCred.getSessionToken());
-//        System.out.println("User user to json: " + gson.toJson(user));
-//        System.out.println("Admin user to json: " + gson.toJson(admin));
-//        assertThat(user.getRole()).isEqualTo(UserRole.USER);
-//        assertThat(admin.getRole()).isEqualTo(UserRole.ADMIN);
+    public void setDefaultDataLogins() {
+        Credentials user = defaultData.userCredentials;
+        user.setSessionToken(this.login(user.getUsername(), user.getPassword()));
+        Credentials admin = defaultData.adminCredentials;
+        admin.setSessionToken(this.login(admin.getUsername(), admin.getPassword()));
+    }
+    
+//    public void refreshDefaultDataTables() {
+//        defaultData.initTablesData();
+//        for (int i = 0; i < defaultData.allTables.size(); i++) {
+//            TableRestaurant table = defaultData.allTables.get(i);
+//            assertNotNull(table.getId());
+//            TableGetInfo info = new TableGetInfo(defaultData.adminCredentials.getSessionToken(), table.getId());
+//            ResponseEntity<String> response = makePostRequest("/table/get", info);
+//            System.out.println(String.format("%s: Asked for table %s, and got %s", i, table.getId(), response.getBody()));
+//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//            TableRestaurant newTable = gson.fromJson(response.getBody(), TableRestaurant.class);
+//            defaultData.allTables.set(i, table);
+//        }
 //    }
+    
+    public void createDefaultDataTables() {
+//        defaultData.initTablesData();
+        String url = makeUrl("/table/create");
+        for (int i = 0; i < defaultData.allTables.size(); i++) {
+            TableRestaurant table = defaultData.allTables.get(i);
+            String sessionToken = defaultData.adminCredentials.getSessionToken();
+            assertNotNull(sessionToken);
+            assertNotNull(table);
+            table.setId(null);
+            assertNull(table.getId());
+            TableCreateInfo info = new TableCreateInfo(sessionToken, table);
+
+            ResponseEntity<String> response = makePostRequest(url, info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//            if (response.getStatusCode() == HttpStatus.OK) {
+            TableCreateResponse responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
+            TableRestaurant createdTable = responseObject.getTable();
+            assertNotNull(createdTable.getId());
+            defaultData.allTables.set(i, createdTable);
+//            }
+        }
+        defaultData.refreshTables();
+        assertNotNull(defaultData.allTables.get(0).getId());
+    }
+    
+    public void createDefaultDataSessionService(){
+        assertNotNull(defaultData.allTables.get(0).getId());
+        assertNotNull(defaultData.initialTable.getId());
+//        defaultData.initTablesData();
+        String url = makeUrl("/session-service/create");
+        for (int i = 0; i < defaultData.allSessionService.size(); i++) {
+            System.out.println("Creating sessionService: " + i);
+            SessionService sessionService = defaultData.allSessionService.get(i);
+            String sessionToken = defaultData.adminCredentials.getSessionToken();
+            assertNotNull(sessionToken);
+            assertNotNull(sessionService);
+//            sessionService.setId(null);   //This should be redundant
+            assertNull(sessionService.getId()); // Get shulre the line above is redundant
+            assertNotNull(sessionService.getIdTable()); 
+            SessionServiceCreateInfo info = new SessionServiceCreateInfo(sessionToken, sessionService);
+            ResponseEntity<String> response = makePostRequest(url, info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            SessionServiceCreateResponse responseObject = gson.fromJson(response.getBody(), SessionServiceCreateResponse.class);
+            List<SessionService> createdSessionServcie = responseObject.getMessageData();
+            assertThat(createdSessionServcie.size()).isEqualTo(1);
+            assertNotNull(createdSessionServcie.get(0).getId());
+            defaultData.allSessionService.set(i, createdSessionServcie.get(0));
+        }
+        defaultData.refreshSessionService();
+    }
+    
+    public void createDefaultDataOrder(){
+        assertNotNull(defaultData.allSessionService.get(0).getId());
+        assertNotNull(defaultData.initialSessionService.getId());
+//        defaultData.initTablesData();
+        String url = makeUrl("/order/create");
+            System.out.println("Creating order::::::::::::::: " );
+        for (int i = 0; i < defaultData.allOrder.size(); i++) {
+            System.out.println("Creating Order: " + i);
+            Order order = defaultData.allOrder.get(i);
+            String sessionToken = defaultData.adminCredentials.getSessionToken();
+            assertNotNull(sessionToken);
+            assertNotNull(order);
+//            order.setId(null);   //This should be redundant
+            assertNull(order.getId()); // Get shulre the line above is redundant
+            assertNotNull(order.getIdSessionService()); 
+            OrderCreateInfo info = new OrderCreateInfo(sessionToken, order);
+            ResponseEntity<String> response = makePostRequest(url, info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            OrderCreateResponse responseObject = gson.fromJson(response.getBody(), OrderCreateResponse.class);
+            List<Order> createdorder = responseObject.getMessageData();
+            assertThat(createdorder.size()).isEqualTo(1);
+            assertNotNull(createdorder.get(0).getId());
+            defaultData.allOrder.set(i, createdorder.get(0));
+        }
+        defaultData.refreshOrder();
+    }   
+    
+    public void createDefaultDataOrderItem(){
+        assertNotNull(defaultData.allOrder.get(0).getId());
+        assertNotNull(defaultData.initialOrder.getId());
+//        defaultData.initTablesData();
+        String url = makeUrl("/order-item/create");
+        System.out.println("Creating order item::::::::::::::: " );
+        for (int i = 0; i < defaultData.allOrderItem.size(); i++) {
+            System.out.println("Creating OrderItem: " + i);
+            OrderItem orderItem = defaultData.allOrderItem.get(i);
+            String sessionToken = defaultData.adminCredentials.getSessionToken();
+            assertNotNull(sessionToken);
+            assertNotNull(orderItem);
+//            order.setId(null);   //This should be redundant
+            assertNull(orderItem.getId()); // Get shulre the line above is redundant
+            assertNotNull(orderItem.getIdOrder()); 
+            OrderItemCreateInfo info = new OrderItemCreateInfo(sessionToken, orderItem);
+            ResponseEntity<String> response = makePostRequest(url, info);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            OrderItemCreateResponse responseObject = gson.fromJson(response.getBody(), OrderItemCreateResponse.class);
+            List<OrderItem> createdOrderItem = responseObject.getMessageData();
+            assertThat(createdOrderItem.size()).isEqualTo(1);
+            assertNotNull(createdOrderItem.get(0).getId());
+            defaultData.allOrderItem.set(i, createdOrderItem.get(0));
+        }
+        defaultData.refreshOrderItem();
+    }
+    
+    
+    
+   
+
 }

@@ -13,4 +13,6 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface OrderItemRepository extends CrudRepository<OrderItem, Long>{
     OrderItem findById(long id);
+    List<OrderItem> findByIdOrder(long idOrder);
+    
 }

@@ -91,4 +91,5 @@ public class SessionManager {
             return false;
         return user.getRole() == UserRole.ADMIN;
     }
+    
 }

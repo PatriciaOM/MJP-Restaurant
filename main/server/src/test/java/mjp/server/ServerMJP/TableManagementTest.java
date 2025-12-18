@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mjp.server.ServerMJP.database.TableRestaurant;
 import mjp.server.ServerMJP.database.User;
+import mjp.server.TestData;
 import mjp.server.dataClasses.UserRole;
 import mjp.server.queryData.table.TableCreateInfo;
 import mjp.server.queryData.table.TableDeleteInfo;
@@ -34,6 +35,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import testUtils.TestDefault;
 
 /**
@@ -45,13 +47,14 @@ import testUtils.TestDefault;
 @ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class TableManagementTest extends TestDefault {
     private static String userSessionToken;
     private static String adminSessionToken;
-    private static final TableRestaurant initialTable = new TableRestaurant(10, 4);
-    private static final TableRestaurant updatedTable = new TableRestaurant(10, 2);
-    private static final TableRestaurant mockTable1 = new TableRestaurant(5, 2);
-    private static final TableRestaurant mockTable2 = new TableRestaurant(4, 6);
+//    private static final TableRestaurant initialTable = TestDefault.defaultData.initialTable;
+//    private static final TableRestaurant updatedTable = TestDefault.defaultData.updatedTable;
+//    private static final TableRestaurant mockTable1 = TestDefault.defaultData.mockTable1;
+//    private static final TableRestaurant mockTable2 = TestDefault.defaultData.mockTable2;
     private static final long noExistingId = 50000;
     Gson gson = (new GsonBuilder()).registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();  //TODO do smth with this line. Probably it should be a service dont know i can put services on a junitClass
     
@@ -67,6 +70,7 @@ public class TableManagementTest extends TestDefault {
     @Test
     @Order(001)
     void setup(){
+        defaultData.initTablesData();
         printTestName("setup");
         userSessionToken = this.login("Twiki", "Tuki");
         adminSessionToken = this.login("Ping", "Pong");
@@ -85,7 +89,7 @@ public class TableManagementTest extends TestDefault {
     void createTableWhithNoSessionToken(){
         printTestName("createTableWhithNoSessionToken");
         String url = makeUrl("/table/create");//
-        TableRestaurant table = initialTable;
+        TableRestaurant table = defaultData.initialTable;
         TableCreateInfo info = new TableCreateInfo(null, table);
         
         ResponseEntity<String> response = makePostRequest(url, info);
@@ -94,11 +98,11 @@ public class TableManagementTest extends TestDefault {
     
     
     @Test
-    @Order(100)
+    @Order(200)
     void createTableWhithNoTable(){
         printTestName("createTableWhithNoTable");
         String url = makeUrl("/table/create");//
-        TableRestaurant table = initialTable;
+        TableRestaurant table = defaultData.initialTable;
         TableCreateInfo info = new TableCreateInfo(adminSessionToken, null);
         
         ResponseEntity<String> response = makePostRequest(url, info);
@@ -110,7 +114,7 @@ public class TableManagementTest extends TestDefault {
     void createTableWithInvalidCredentials(){
         printTestName("createTableWithInvalidCredentials");
         String url = makeUrl("/table/create");
-        TableRestaurant table = initialTable;
+        TableRestaurant table = defaultData.initialTable;
         TableCreateInfo info = new TableCreateInfo(userSessionToken, table);
         
         ResponseEntity<String> response = makePostRequest(url, info);
@@ -122,7 +126,7 @@ public class TableManagementTest extends TestDefault {
     void createTableTwice(){
         printTestName("createTable");
         String url = makeUrl("/table/create");
-        TableRestaurant table = initialTable;
+        TableRestaurant table = defaultData.initialTable;
         TableCreateInfo info = new TableCreateInfo(adminSessionToken, table);
         
         ResponseEntity<String> response = makePostRequest(url, info);
@@ -133,9 +137,11 @@ public class TableManagementTest extends TestDefault {
         assertThat(tableResponse.getNum()).isEqualTo(table.getNum());
         assertThat(tableResponse.getMaxGuests()).isEqualTo(table.getMaxGuests());
         
-        initialTable.setId(tableResponse.getId());
-        updatedTable.setId(tableResponse.getId());
-        assertThat(gson.toJson(tableResponse)).isEqualTo(gson.toJson(initialTable));
+        defaultData.initialTable.setId(tableResponse.getId());
+        defaultData.initialTable.setId(tableResponse.getId());
+        defaultData.updatedTable.setId(tableResponse.getId());
+        defaultData.updatedTable.setId(tableResponse.getId());
+        assertThat(gson.toJson(tableResponse)).isEqualTo(gson.toJson(defaultData.initialTable));
         
         
         response = makePostRequest(url, info);
@@ -147,24 +153,30 @@ public class TableManagementTest extends TestDefault {
     void createMoreTablesAndGetAll(){
         printTestName("createMoreTablesAndGetAll");
         String url = makeUrl("/table/create");
+        TableCreateResponse responseObject;
         
-        TableCreateInfo info = new TableCreateInfo(adminSessionToken, mockTable1);
+        TableCreateInfo info = new TableCreateInfo(adminSessionToken, defaultData.mockTable1);
         ResponseEntity<String> response = makePostRequest(url, info);
+        TableCreateResponse responseTable; 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
+        defaultData.mockTable1.setId(responseObject.getTable().getId());
         
-        info = new TableCreateInfo(adminSessionToken, mockTable2);
+        info = new TableCreateInfo(adminSessionToken, defaultData.mockTable2);
         response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        responseObject = gson.fromJson(response.getBody(), TableCreateResponse.class);
+        defaultData.mockTable2.setId(responseObject.getTable().getId());
         
         url = makeUrl("/table/get");
         TableGetInfo getInfo = new TableGetInfo(userSessionToken);
         response = makePostRequest(url, getInfo);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        TableGetResponse responseObject = gson.fromJson(response.getBody(), TableGetResponse.class);
-        List<TableRestaurant> tables = responseObject.getTables();
+        TableGetResponse getResponseTable = gson.fromJson(response.getBody(), TableGetResponse.class);
+        List<TableRestaurant> tables = getResponseTable.getTables();
         assertThat(tables.size()).isEqualTo(3);
                 
-        ArrayList<Integer> CurrentTables = new ArrayList(List.of(this.initialTable.getNum(), this.mockTable1.getNum(), this.mockTable2.getNum()));
+        ArrayList<Integer> CurrentTables = new ArrayList(List.of(defaultData.initialTable.getNum(), defaultData.mockTable1.getNum(), defaultData.mockTable2.getNum()));
         for (TableRestaurant table : tables){
             assertThat(CurrentTables.remove(Integer.valueOf(table.getNum()))).isEqualTo(true);
         }
@@ -176,8 +188,8 @@ public class TableManagementTest extends TestDefault {
     void getTableWithNoSessionToken() {
         printTestName("getTableWithNoSessionToken");
         String url = makeUrl("/table/get");
-        assertNotNull(initialTable.getId());
-        TableGetInfo info = new TableGetInfo(null, initialTable.getNum());
+        assertNotNull(defaultData.initialTable.getId());
+        TableGetInfo info = new TableGetInfo(null, defaultData.initialTable.getNum());
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -188,8 +200,8 @@ public class TableManagementTest extends TestDefault {
     void getTableWithInvalidSessionToken() {
         printTestName("getTableWithInvalidSessionToken");
         String url = makeUrl("/table/get");
-        assertNotNull(initialTable.getId());
-        TableGetInfo info = new TableGetInfo("INVALID_SESSION_TOKEN", initialTable.getNum());
+        assertNotNull(defaultData.initialTable.getId());
+        TableGetInfo info = new TableGetInfo("INVALID_SESSION_TOKEN", defaultData.initialTable.getNum());
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -200,7 +212,7 @@ public class TableManagementTest extends TestDefault {
     void getTableWithNoExistingId(){
         printTestName("getTableById");
         String url = makeUrl("/table/get");
-        assertNotNull(initialTable.getId());
+        assertNotNull(defaultData.initialTable.getId());
         
         TableGetInfo info = new TableGetInfo(userSessionToken, noExistingId);
         ResponseEntity<String> response = makePostRequest(url, info);
@@ -212,15 +224,15 @@ public class TableManagementTest extends TestDefault {
     void getTableById(){
         printTestName("getTableById");
         String url = makeUrl("/table/get");
-        assertNotNull(initialTable.getId());
-        TableGetInfo info = new TableGetInfo(userSessionToken, initialTable.getId());
+        assertNotNull(defaultData.initialTable.getId());
+        TableGetInfo info = new TableGetInfo(userSessionToken, defaultData.initialTable.getId());
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         TableGetResponse responseObject = gson.fromJson(response.getBody(), TableGetResponse.class);
         List<TableRestaurant> tables = responseObject.getTables();
         assertThat(tables.size()).isEqualTo(1);
-        assertThat(gson.toJson(tables.get(0))).isEqualTo(gson.toJson(initialTable));
+        assertThat(gson.toJson(tables.get(0))).isEqualTo(gson.toJson(defaultData.initialTable));
     }  
     
     @Test
@@ -228,15 +240,15 @@ public class TableManagementTest extends TestDefault {
     void getTableByNumber(){
         printTestName("getTableByNumber");
         String url = makeUrl("/table/get");
-        assertNotNull(initialTable.getId());
-        TableGetInfo info = new TableGetInfo(userSessionToken, initialTable.getNum());
+        assertNotNull(defaultData.initialTable.getId());
+        TableGetInfo info = new TableGetInfo(userSessionToken, defaultData.initialTable.getNum());
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         TableGetResponse responseObject = gson.fromJson(response.getBody(), TableGetResponse.class);
         List<TableRestaurant> tables = responseObject.getTables();
         assertThat(tables.size()).isEqualTo(1);
-        assertThat(gson.toJson(tables.get(0))).isEqualTo(gson.toJson(initialTable));
+        assertThat(gson.toJson(tables.get(0))).isEqualTo(gson.toJson(defaultData.initialTable));
     }
          
     @Test
@@ -244,7 +256,7 @@ public class TableManagementTest extends TestDefault {
     void updateWithNoSessionToken(){
         printTestName("updateWithNoSessionToken");
         String url = makeUrl("/table/update");
-        TableUpdateInfo info = new TableUpdateInfo(null, updatedTable);
+        TableUpdateInfo info = new TableUpdateInfo(null, defaultData.updatedTable);
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -256,7 +268,7 @@ public class TableManagementTest extends TestDefault {
     void updateWithInvalidSessionToken(){
         printTestName("updateWithNoSessionToken");
         String url = makeUrl("/table/update");
-        TableUpdateInfo info = new TableUpdateInfo("invalid_session_token", updatedTable);
+        TableUpdateInfo info = new TableUpdateInfo("invalid_session_token", defaultData.updatedTable);
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -281,7 +293,7 @@ public class TableManagementTest extends TestDefault {
             "/table/update",
             "/table/update",
             new TableUpdateInfo(),
-            updatedTable,
+            defaultData.updatedTable,
             adminSessionToken
         );
     }
@@ -291,21 +303,21 @@ public class TableManagementTest extends TestDefault {
     void updateTable(){
         printTestName("updateTable");
         String url = makeUrl("/table/update");
-        TableUpdateInfo info = new TableUpdateInfo(adminSessionToken, updatedTable);
+        TableUpdateInfo info = new TableUpdateInfo(adminSessionToken, defaultData.updatedTable);
         
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         TableRestaurant table = gson.fromJson(response.getBody(), TableUpdateResponse.class).getTable();
-        assertThat(gson.toJson(table)).isEqualTo(gson.toJson(updatedTable));
+        assertThat(gson.toJson(table)).isEqualTo(gson.toJson(defaultData.updatedTable));
         url = makeUrl("/table/get");
-        TableGetInfo getInfo = new TableGetInfo(userSessionToken, initialTable.getId());
+        TableGetInfo getInfo = new TableGetInfo(userSessionToken, defaultData.initialTable.getId());
         response = makePostRequest(url, getInfo);
         System.out.println("Checking the table has ben updted: " + response.getBody());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<TableRestaurant> tableList = gson.fromJson(response.getBody(), TableGetResponse.class).getTables();
         assertThat(tableList.size()).isEqualTo(1);
         table = tableList.get(0);
-        assertThat(gson.toJson(table)).isEqualTo(gson.toJson(updatedTable));        
+        assertThat(gson.toJson(table)).isEqualTo(gson.toJson(defaultData.updatedTable));        
     }
    
     @Test
@@ -341,13 +353,13 @@ public class TableManagementTest extends TestDefault {
         printTestName("deleteTable");
         
         url = makeUrl("/table/get");
-        assertNotNull(updatedTable.getId());
-        getInfo = new TableGetInfo(userSessionToken, initialTable.getId());
+        assertNotNull(defaultData.updatedTable.getId());
+        getInfo = new TableGetInfo(userSessionToken, defaultData.initialTable.getId());
         ResponseEntity<String> getResponse = makePostRequest(url, getInfo);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         
         url = makeUrl("/table/delete");
-        info = new TableDeleteInfo(adminSessionToken, updatedTable.getId());
+        info = new TableDeleteInfo(adminSessionToken, defaultData.updatedTable.getId());
         ResponseEntity<String> response = makePostRequest(url, info);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         

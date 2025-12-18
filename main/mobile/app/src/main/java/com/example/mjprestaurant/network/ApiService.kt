@@ -24,6 +24,7 @@ import com.example.mjprestaurant.model.order.request.OrderDeleteInfo
 import com.example.mjprestaurant.model.order.response.OrderResponse
 // Imports de Línies de Comanda (OrderItem) <-- AQUESTS FALTAVEN
 import com.example.mjprestaurant.model.order.request.OrderItemCreateInfo
+import com.example.mjprestaurant.model.order.request.OrderItemGetInfo
 import com.example.mjprestaurant.model.order.response.OrderItemResponse
 
 import retrofit2.Response
@@ -47,7 +48,7 @@ interface ApiService {
 
     // --- ESTAT DE TAULES (VISUALITZACIÓ) ---
 
-    @POST("table-status")
+    @POST("table/status")
     suspend fun getTableStatus(@Body body: TableStatusRequest): Response<TableStatusResponse>
 
     // --- GESTIÓ DE PLATS (MENÚ) ---
@@ -103,5 +104,11 @@ interface ApiService {
      */
     @POST("order-item/create")
     suspend fun addOrderItem(@Body body: OrderItemCreateInfo): Response<OrderItemResponse>
+    /**
+     * Obté els items d'una comanda.
+     * Aquest endpoint és necessari per llistar el que s'ha demanat.
+     */
+    @POST("order-item/get")
+    suspend fun getOrderItems(@Body body: OrderItemGetInfo): Response<OrderItemResponse>
 
 }

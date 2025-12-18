@@ -102,6 +102,4 @@ public class Order implements DatabaseEntry<Long> {
     public Status getState() {
         return state;
     }
-
-    
 }

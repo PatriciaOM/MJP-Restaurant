@@ -15,26 +15,26 @@ import mjp.server.responseData.ResponseData;
  */
 public class OrderResponse extends ResponseData implements CrudResponse<Order> {
     String messageStatus;
-    List<Order> Items;
+    List<Order> items;
     
     OrderResponse(){};
     
-    OrderResponse(String messageStatus, List<Order> Items) {
+    OrderResponse(String messageStatus, List<Order> items) {
         this.messageStatus = messageStatus;
-        this.Items = Items;
+        this.items = items;
     }
     
     OrderResponse(OrderResponse orig) {
         this.messageStatus = orig.messageStatus;
-        this.Items = orig.Items;
+        this.items = orig.items;
     }
     
-    public void setItems(List<Order> Items) {
-        this.Items = Items;
+    public void setItems(List<Order> items) {
+        this.items = items;
     }
     
     public List<Order> getItems() {
-        return this.Items;
+        return this.items;
     }
 
     @Override
