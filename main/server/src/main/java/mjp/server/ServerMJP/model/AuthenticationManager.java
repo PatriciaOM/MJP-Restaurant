@@ -21,6 +21,7 @@ import mjp.server.ServerMJP.database.UserRepository;
 import mjp.server.queryData.TableStatusInfo;
 import mjp.server.responseData.TableStatusResponse;
 import mjp.server.responseData.TableStatusResponseElement;
+import mjp.server.uitls.Utils;
 
 /**
  * This class is responsible for handling the the requests received by the {@link mjp.server.ServerMJP.Controller.Controller}.
@@ -58,8 +59,11 @@ public class AuthenticationManager {
         if (allMatchingUsers.size() != 1) 
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         User user = allMatchingUsers.get(0);
-        if (!user.getPassword().equals(password))
+//        if (!user.getPassword().equals(password))
+        if (!Utils.checkEncrypted(password, user.getPassword())){
+            System.out.print(String.format(">>>>>>>>>>>> UNAUTHORIZED::: inPassowrd %s hashedPassword %s", password, user.getPassword()) );
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         String sessionToken = this.sessionManager.addSession(user);
         return new LoginResponse(sessionToken, user.getRole());
     }

@@ -6,6 +6,7 @@ package mjp.server.uitls;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  *
@@ -17,12 +18,21 @@ public class Utils {
      * @param iterable
      * @return 
      */
-    public static <Sdaf> List<Sdaf> staticConvertIterableToList(Iterable<Sdaf> iterable) {
-        List<Sdaf> ret = new ArrayList();
-        for (Sdaf item : iterable){
+    public static <Type> List<Type> staticConvertIterableToList(Iterable<Type> iterable) {
+        List<Type> ret = new ArrayList();
+        for (Type item : iterable){
             ret.add(item);
         }
         return ret;
+    } 
+   
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    public static String encrypt(String password) {
+        return encoder.encode(password);
     }
-    
+
+    public static boolean checkEncrypted(String password, String hash) {
+        return encoder.matches(password, hash);
+    }
 }
