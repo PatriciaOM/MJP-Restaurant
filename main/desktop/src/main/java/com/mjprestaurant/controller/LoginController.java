@@ -1,9 +1,9 @@
 package com.mjprestaurant.controller;
 
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjprestaurant.view.LoginFrame;
@@ -61,7 +61,7 @@ public class LoginController {
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(userToSend);
 
-            HttpURLConnection conn = (HttpURLConnection) new URL("http://localhost:8080/login").openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) new URL("https://localhost:8080/login").openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
@@ -84,12 +84,8 @@ public class LoginController {
                     new AdminController(admin, login, this);
 
                 } else if (responseUser.role.equals(UserRole.USER.getRole())) {
-                    waiter = new WaiterFrame(username);
-                    waiter.setLocationRelativeTo(null);
-                    waiter.setVisible(true);
-
-                    // Creamos LogoutController
-                    new LogoutController(waiter, login);
+                    // Creamos el WaiterController con token y loginFrame
+                    WaiterController waiterController = new WaiterController(responseUser.getToken(), login);
                 }
 
             } else if (conn.getResponseCode() == 401) {

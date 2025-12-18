@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"com.mjprestaurant.app"},{"l":"com.mjprestaurant.controller"},{"l":"com.mjprestaurant.model"},{"l":"com.mjprestaurant.model.dish"},{"l":"com.mjprestaurant.model.table"},{"l":"com.mjprestaurant.model.user"},{"l":"com.mjprestaurant.utils"},{"l":"com.mjprestaurant.view"}];updateSearchResults();

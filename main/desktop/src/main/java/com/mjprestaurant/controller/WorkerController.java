@@ -3,7 +3,6 @@ package com.mjprestaurant.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -11,6 +10,7 @@ import java.util.Map;
 import java.time.*;
 import java.time.format.*;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JOptionPane;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -228,7 +228,7 @@ public class WorkerController implements ActionListener {
                 mapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
                 String json = mapper.writeValueAsString(userCreate);
 
-                HttpURLConnection conn = (HttpURLConnection) new URL("http://localhost:8080/user/create").openConnection();
+                HttpsURLConnection conn = (HttpsURLConnection) new URL("https://localhost:8080/user/create").openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setDoOutput(true);
@@ -293,8 +293,8 @@ public class WorkerController implements ActionListener {
                 mapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
                 String json = mapper.writeValueAsString(userDelete);
 
-                URL url = new URL("http://localhost:8080/user/delete");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                URL url = new URL("https://localhost:8080/user/delete");
+                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
                 conn.setRequestMethod("POST"); 
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setDoOutput(true);
@@ -343,8 +343,8 @@ public class WorkerController implements ActionListener {
             mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            URL url = new URL("http://localhost:8080/user/get");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL("https://localhost:8080/user/get");
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
@@ -480,8 +480,8 @@ public class WorkerController implements ActionListener {
                     UserUpdateInfo updateInfo = new UserUpdateInfo(token, user);
 
                     try {
-                        URL url = new URL("http://localhost:8080/user/update");
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        URL url = new URL("https://localhost:8080/user/update");
+                        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
                         conn.setRequestMethod("POST"); 
                         conn.setRequestProperty("Content-Type", "application/json");
                         conn.setDoOutput(true);

@@ -1,0 +1,25 @@
+--no-fonts
+-classpath
+'C:/Users/hp/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.2/jackson-databind-2.15.2.jar;C:/Users/hp/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.2/jackson-annotations-2.15.2.jar;C:/Users/hp/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.2/jackson-core-2.15.2.jar;C:/Users/hp/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.17.0/jackson-datatype-jsr310-2.17.0.jar'
+-encoding
+'UTF-8'
+-protected
+-source
+'17'
+-sourcepath
+'C:/Users/hp/Desktop/MJPRestaurant/main/desktop/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2025. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/hp/Desktop/MJPRestaurant/main/desktop/target/reports/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'desktop 1.0-SNAPSHOT API'
+-use
+-version
+-windowtitle
+'desktop 1.0-SNAPSHOT API'
