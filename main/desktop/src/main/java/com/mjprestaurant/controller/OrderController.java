@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mjprestaurant.model.ControllerException;
+import com.mjprestaurant.model.dish.DishGetInfo.SearchType;
 import com.mjprestaurant.model.order.Order;
 import com.mjprestaurant.model.order.OrderGetInfo;
 import com.mjprestaurant.model.order.OrderGetResponse;
@@ -120,7 +121,7 @@ public class OrderController {
             conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
 
-            OrderGetInfo request = new OrderGetInfo(token, sessionId);
+            OrderGetInfo request = new OrderGetInfo(token, sessionId, OrderGetInfo.SearchType.BY_SESSION_SERVICE_ID);
 
             String jsonBody = mapper.writeValueAsString(request);
 

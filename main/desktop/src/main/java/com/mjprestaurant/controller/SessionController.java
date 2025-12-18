@@ -13,6 +13,7 @@ import com.mjprestaurant.model.session.SessionServiceUpdateInfo;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
@@ -154,46 +155,39 @@ public class SessionController {
     }
 
     public SessionService getActiveSessionByTableId(String token, Long tableId) throws ControllerException {
-        List<SessionService> sessions = getSessionsByTableId(token, tableId);
 
+        List<SessionService> sessions = getSessionsByTableId(token, tableId);
         if (sessions.isEmpty()) return null;
 
-        // 1️⃣ Filtrar solo las sesiones de esta mesa que no estén pagadas
-        List<SessionService> candidateSessions = sessions.stream()
+        LocalDate today = LocalDate.now();
+
+        // Solo sesiones de HOY, no pagadas
+        List<SessionService> todaySessions = sessions.stream()
                 .filter(s -> s.getIdTable().equals(tableId))
-                .filter(s -> s.getStatus() != SessionServiceStatus.PAID) // incluir OPEN, SENDED, CLOSED pero no pagadas
+                .filter(s -> s.getStatus() != SessionServiceStatus.PAID)
+                .filter(s -> s.getStartDate() != null)
+                .filter(s -> s.getStartDate().toLocalDate().equals(today))
                 .sorted(Comparator.comparing(SessionService::getStartDate)
-                        .thenComparing(SessionService::getId).reversed()) // más reciente primero
+                        .thenComparing(SessionService::getId)
+                        .reversed())
                 .toList();
 
-        if (candidateSessions.isEmpty()) return null;
+        if (todaySessions.isEmpty()) return null;
 
-        // 2️⃣ Seleccionar la sesión más reciente
-        SessionService activeSession = candidateSessions.get(0);
+        SessionService activeSession = todaySessions.get(0);
 
-        // 3️⃣ Opcional: cerrar las demás sesiones antiguas
-        for (int i = 1; i < candidateSessions.size(); i++) {
-            SessionService oldSession = candidateSessions.get(i);
+        // Cerrar duplicadas de HOY
+        for (int i = 1; i < todaySessions.size(); i++) {
+            SessionService oldSession = todaySessions.get(i);
             if (oldSession.getStatus() != SessionServiceStatus.CLOSED) {
                 oldSession.setStatus(SessionServiceStatus.CLOSED);
-                try {
-                    updateSession(token, oldSession);
-                    System.out.println("Sesión antigua cerrada automáticamente: " + oldSession.getId());
-                } catch (ControllerException e) {
-                    e.printStackTrace();
-                    System.err.println("No se pudo cerrar la sesión antigua: " + oldSession.getId());
-                }
+                updateSession(token, oldSession);
             }
         }
 
-        System.out.println("Sesión activa seleccionada: " 
-                + activeSession.getId() + " - " 
-                + activeSession.getStatus() + " - " 
-                + activeSession.getStartDate() + " - mesa:" 
-                + activeSession.getIdTable());
-
         return activeSession;
     }
+
 
 
 }

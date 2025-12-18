@@ -197,9 +197,9 @@ public class WaiterFrame extends AbstractFrame {
         try {
             OrderController orderController = new OrderController();
             SessionController sessionController = new SessionController();
-            List<Order> orders = orderController.getOrdersByTableId(token, tableId);
-            SessionService service = sessionController.getSessionByTableId(token, tableId);
-            //Order order = orderController.getOrderBySessionServiceId(token, service.getId());
+            
+            SessionService service = sessionController.getActiveSessionByTableId(token, tableId);
+            
             boolean tableWithOrdersActive = false;
 
             if (service == null) {
@@ -207,32 +207,42 @@ public class WaiterFrame extends AbstractFrame {
                 return;
             }
 
-            /*if (order == null) {
-                JOptionPane.showMessageDialog(this, "No hi ha ordres obertes.");
-                return;
-            }*/
-
-            /*int response = JOptionPane.showConfirmDialog(
-                this,
-                "Existeix una comanda oberta, ¿ha sortit de la cuina?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION
-            );
-
-            if (response == JOptionPane.YES_OPTION) {
-                order.setState(Order.Status.SERVED);
-                orderController.updateOrder(token, order);
-                JOptionPane.showMessageDialog(this, "Ordre servida.");
-                refresh();
-            }*/
+            List<Order> orders = orderController.getOrdersBySessionId(token, service.getId());
 
             if (orders == null || orders.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "No hi ha ordres obertes.");
                 return;
             }
 
+            // Comprovar si totes les ordres estan SERVED
+            boolean allServed = orders.stream().allMatch(o -> o.getState() == Order.Status.SERVED);
+
+            // Si totes estan SERVED i la sessió està CLOSED, preguntar per PAID
+            if (allServed && service.getStatus() == SessionServiceStatus.CLOSED) {
+                int sessionResponse = JOptionPane.showConfirmDialog(
+                        this,
+                        "La sessió està tancada, pagar?",
+                        "Confirmar",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (sessionResponse == JOptionPane.YES_OPTION) {
+                    service.setStatus(SessionServiceStatus.PAID);
+                    sessionController.updateSession(token, service);
+                    JOptionPane.showMessageDialog(this, "Sessió actualitzada a PAGADA.");
+                    refresh();
+                }
+            } else if (allServed) {
+                JOptionPane.showMessageDialog(this, "No hi ha cap sessió activa.");
+            }
+
+            List<Order> activeOrders = orders.stream().filter(o -> o.getState() == Order.Status.OPEN || o.getState() == Order.Status.SENDED).toList();
+            if (activeOrders.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No hi ha ordres obertes.");
+                return;
+            }
             // Processar qualsevol ordre SENDED
-            for (Order o : orders) {
+            for (Order o : activeOrders) {
                 if (o.getState() == Order.Status.SENDED ||o.getState() == Order.Status.OPEN) {
                     tableWithOrdersActive = true;
                     int response = JOptionPane.showConfirmDialog(
@@ -258,111 +268,11 @@ public class WaiterFrame extends AbstractFrame {
             System.out.println("Estado: " + service.getStatus());
             orders.forEach(s -> System.out.println("Ordre: " + s.getId() + " - " + s.getState() + " - " + " - sesión: " + s.getIdSessionService()));
 
-            // Comprovar si totes les ordres estan SERVED
-            boolean allServed = orders.stream().allMatch(o -> o.getState() == Order.Status.SERVED);
-
-            // Si totes estan SERVED i la sessió està CLOSED, preguntar per PAID
-            if (allServed && service.getStatus() == SessionServiceStatus.CLOSED) {
-                int sessionResponse = JOptionPane.showConfirmDialog(
-                        this,
-                        "La sessió està tancada, pagar?",
-                        "Confirmar",
-                        JOptionPane.YES_NO_OPTION
-                );
-
-                if (sessionResponse == JOptionPane.YES_OPTION) {
-                    service.setStatus(SessionServiceStatus.PAID);
-                    sessionController.updateSession(token, service);
-                    JOptionPane.showMessageDialog(this, "Sessió actualitzada a PAGADA.");
-                    refresh();
-                }
-            } else if (allServed) {
-                JOptionPane.showMessageDialog(this, "No hi ha cap sessió activa.");
-            }
 
         } catch (ControllerException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al consultar la sessió o les ordres: " + e.getMessage());
         }
     }
-
-    /*private void handleTableClick(Long tableId) {
-        try {
-            OrderController orderController = new OrderController();
-            SessionController sessionController = new SessionController();
-
-            // 1️⃣ Obtener la sesión activa (autocorrección incluida)
-            SessionService service = sessionController.getActiveSessionByTableId(token, tableId);
-
-            if (service == null) {
-                JOptionPane.showMessageDialog(this, "No hi ha cap sessió activa.");
-                return;
-            }
-
-            // 2️⃣ Obtener todas las órdenes de la sesión
-            List<Order> orders = orderController.getOrdersBySessionId(token, service.getId());
-            System.out.println("Mesa: " + tableId);
-            System.out.println("Sesión activa ID: " + service.getId());
-            System.out.println("Comensales: " + service.getClients());
-            System.out.println("Estado: " + service.getStatus());
-            orders.forEach(s -> System.out.println("Ordre: " + s.getId() + " - " + s.getState() + " - " + " - sesión: " + s.getIdSessionService()));
-            if (orders.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No hi ha ordres obertes.");
-                return;
-            }
-
-            // 3️⃣ Procesar órdenes SENDED
-            boolean updatedAny = false;
-            for (Order order : orders) {
-                if (order.getState() == Order.Status.SENDED) {
-                    int response = JOptionPane.showConfirmDialog(
-                            this,
-                            "Existeix una comanda oberta, ¿ha sortit de la cuina?",
-                            "Confirmar",
-                            JOptionPane.YES_NO_OPTION
-                    );
-
-                    if (response == JOptionPane.YES_OPTION) {
-                        order.setState(Order.Status.SERVED);
-                        orderController.updateOrder(token, order);
-                        updatedAny = true;
-                    }
-                }
-            }
-
-            if (updatedAny) {
-                JOptionPane.showMessageDialog(this, "Ordres actualitzades.");
-                refresh();
-            }
-
-            // 4️⃣ Comprobar si todas las órdenes están SERVED
-            boolean allServed = orders.stream()
-                    .allMatch(o -> o.getState() == Order.Status.SERVED);
-
-            // 5️⃣ Si todas están SERVED y la sesión está CLOSED → opción de ponerla PAID
-            if (allServed && service.getStatus() == SessionServiceStatus.CLOSED) {
-                int payResponse = JOptionPane.showConfirmDialog(
-                        this,
-                        "Totes les comandes estan servides. Marcar la sessió com PAGADA?",
-                        "Confirmar",
-                        JOptionPane.YES_NO_OPTION
-                );
-
-                if (payResponse == JOptionPane.YES_OPTION) {
-                    service.setStatus(SessionServiceStatus.PAID);
-                    sessionController.updateSession(token, service);
-                    JOptionPane.showMessageDialog(this, "Sessió marcada com PAGADA.");
-                    refresh();
-                }
-            }
-
-        } catch (ControllerException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Error al consultar la sessió o les ordres: " + e.getMessage()
-            );
-        }
-    }*/
 
 }
